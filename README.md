@@ -1,6 +1,23 @@
 # homebridge-eDomoticz
-Domoticz Plugin (unofficial unstable beta), **& currently broken**.
-Stick with [eDomoticz Legacy Shim](https://github.com/PatchworkBoy/eDomoticz) for now - sorry!!
+Taking my [eDomoticz Legacy Shim](https://github.com/PatchworkBoy/eDomoticz) and 
+making it into a fully-fledged uptodate Homebridge-Plugin 
+for [Homebridge](https://github.com/nfarina/homebridge) v0.2.1x
+
+Supports:
+- Switches (Light / Socket On & Off & status)
+- Temperature Sensors (Current Temperature, deg C)
+- Power Meters (General, kWh - Current Consumption, Total Consumption)
+- General Usage Sensors (eg: CPU%, Mem%, HDD% from Motherboard Sensors Hardware Device)
+
+Todo:
+- [x] Respect Room setting if defined in config.json
+- [x] kWh (electricity usage)
+- [x] General % usage
+- [ ] Brightness
+- [ ] Hue
+- [ ] m3 (gas usage)
+
+## Supports
 
 ## Installation
 ```

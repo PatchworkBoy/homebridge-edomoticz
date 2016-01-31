@@ -1,5 +1,8 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-//
+// V0.0.3 - 2016/01/32
+//		- Added General Usage Sensors (reads Data string from Domoticz idx object)
+// V0.0.2 - 2016/01/31
+//		- Electric Consumption sensors now working! Displays Current and Total Consumption (kWh)
 // V0.0.1 - 2016/01/31
 //      - Initial version
 //      - I make no claims to the quality of this shim. Function over form!
@@ -33,7 +36,8 @@
 // - Switch                 (onValue, offValue options)
 // - TemperatureSensor      ()
 // - Battery                (batteryThreshold option)
-// - Power Meter??
+// - Power Meter			()
+// - Usage Sensors 		 	() [eg: CPU Load, Disk Load, Mem Load from Motherboard Sensors Hardware Device]
 
 
 var Service, Characteristic, types, hapLegacyTypes;
@@ -48,6 +52,8 @@ module.exports = function(homebridge) {
   fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
   fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
   fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
+  fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
+  fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
 
   homebridge.registerAccessory("homebridge-eDomoticz", "eDomoticz", eDomoticzAccessory)
   homebridge.registerPlatform("homebridge-eDomoticz", "eDomoticz", eDomoticzPlatform);
@@ -61,7 +67,7 @@ function eDomoticzPlatform(log, config) {
 	this.room = config["roomid"];
 }
 
-// Handy Utility Functions
+/* Handy Utility Functions */
 function sortByKey(array, key) {
 	return array.sort(function(a, b) {
 		var x = a[key];
@@ -92,11 +98,14 @@ function fixInheritance(subclass, superclass) {
         subclass.prototype[mn] = proto[mn];
     }
 }
-// End of Utility Functions
+/* End of Utility Functions */
 
-// Define Custom Services & Characteristics
+
+/* Define Custom Services & Characteristics */
+
+// PowerMeter Characteristics
 eDomoticzPlatform.TotalConsumption = function() {
-	Characteristic.call(this, 'Total Consumption', 'E863F10C-079E-48FF-8F27-9C2605A29F52');
+	Characteristic.call(this, 'Total Consumption', 'E863F10C-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -105,20 +114,35 @@ eDomoticzPlatform.TotalConsumption = function() {
 };
 
 eDomoticzPlatform.CurrentConsumption = function() {
-	Characteristic.call(this, 'Current Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52');
+	Characteristic.call(this, 'Current Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
 	})
 	this.value = this.getDefaultValue();
 };
-
+// The PowerMeter itself
 eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
-	Service.call(this, displayName, '00000001-0000-1000-8000-135D67EC4377', subtype);
+	Service.call(this, displayName, '00000001-0000-1000-8000-135D67EC4377', subtype); //these UUIDs will conflict with YamahaAVR at the moment
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
 };
-// End of Custom Services & Characteristics
+
+// Usage Meter Characteristics
+eDomoticzPlatform.CurrentUsage = function() {
+	Characteristic.call(this, 'Current Usage', 'E863F10D-079F-49FF-8F28-9C2606A29F53'); //these UUIDs will conflict with YamahaAVR at the moment
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// The Usage Meter itself
+eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
+	Service.call(this, displayName, '00000002-0000-1000-8000-135D67EC4378', subtype); //these UUIDs will conflict with YamahaAVR at the moment
+	this.addCharacteristic(new eDomoticzPlatform.CurrentUsage);
+};
+/* End of Custom Services & Characteristics */
 
 eDomoticzPlatform.prototype = {
 	accessories: function(callback) {
@@ -251,7 +275,7 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-	getTPower: function(callback) {
+	getStringValue: function(callback) {
 		request.get({
 			url: this.status_url,
 			json: true
@@ -361,10 +385,13 @@ eDomoticzAccessory.prototype = {
 				if (this.subType == "kWh") {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
-					MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getTPower.bind(this));
+					MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
 					services.push(MeterDeviceService);
 					break;
-				} else {
+				} else if (this.subType == "Percentage") {
+					var UsageDeviceService = new eDomoticzPlatform.UsageDeviceService("Current Usage");
+					UsageDeviceService.getCharacteristic(eDomoticzPlatform.CurrentUsage).on('get', this.getStringValue.bind(this));
+					services.push(UsageDeviceService);
 					break;
 				}
 			}
