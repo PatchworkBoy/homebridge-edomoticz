@@ -1,0 +1,37 @@
+{
+  "name": "homebridge-eDomoticz",
+  "version": "0.0.1",
+  "description": "homebridge-plugin for Domoticz https://github.com/nfarina/homebridge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patchworkboy/homebridge-eDomoticz.git"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "homebridge-plugin",
+    "eDomoticz",
+    "Domoticz"
+  ],
+  "engines": {
+   "node": ">=0.12.0",
+   "homebridge": ">=0.2.5"
+ },
+
+  "dependencies": {
+    "inherits": "^2.0.1",
+    "request": "2.65.x",
+    "core-util-is": "^1.0.1",
+    "util": "^0.10.x"
+
+  },
+  "author": "PatchworkBoy (aka Marci) <apatchworkboy@gmail.com> (https://github.com/patchworkboy)",
+  "license": "CC0",
+  "bugs": {
+    "url": "https://github.com/patchworkboy/homebridge-eDomoticz/issues"
+  },
+  "homepage": "https://github.com/patchworkboy/homebridge-eDomoticz#readme"
+}
