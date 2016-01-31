@@ -115,8 +115,8 @@ eDomoticzPlatform.CurrentConsumption = function() {
 
 eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 	Service.call(this, displayName, '00000001-0000-1000-8000-135D67EC4377', subtype);
-	this.addCharacteristic(eDomoticzPlatform.CurrentConsumption);
-	this.addOptionalCharacteristic(eDomoticzPlatform.TotalConsumption);
+	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
+	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
 };
 // End of Custom Services & Characteristics
 
