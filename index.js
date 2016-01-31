@@ -1,8 +1,10 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.0.3 - 2016/01/32
-//		- Added General Usage Sensors (reads Data string from Domoticz idx object)
+// V0.0.4 - 2016/01/31
+//		- Fixed 'Siri Name' disappearance
+// V0.0.3 - 2016/01/31
+//		- Added General Usage Sensors (Type: General, SubType: Percentage)
 // V0.0.2 - 2016/01/31
-//		- Electric Consumption sensors now working! Displays Current and Total Consumption (kWh)
+//		- Added Electric Consumption sensors (Type: General, SubType: kWh)
 // V0.0.1 - 2016/01/31
 //      - Initial version
 //      - I make no claims to the quality of this shim. Function over form!
@@ -130,7 +132,7 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 
 // Usage Meter Characteristics
 eDomoticzPlatform.CurrentUsage = function() {
-	Characteristic.call(this, 'Current Usage', 'E863F10D-079F-49FF-8F28-9C2606A29F53'); //these UUIDs will conflict with YamahaAVR at the moment
+	Characteristic.call(this, 'Current Usage', 'E863F10E-079F-49FF-8F37-9C2605A29F55'); //these UUIDs will conflict with YamahaAVR at the moment
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -171,10 +173,8 @@ eDomoticzPlatform.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						//if (s.Type != "General") {  	//uncomment to bypass kWh sensors which cause error at the moment
-							accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel);
-							foundAccessories.push(accessory);
-						//} 							//uncomment to bypass kWh sensors which cause error at the moment
+						accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel);
+						foundAccessories.push(accessory);
 					})
 				}
 				callbackLater();
@@ -192,7 +192,6 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.IsScene = IsScene;		// Domoticz Scenes ignored for now...
 	this.status = status;
 	this.idx = idx;
-	this.displayName = name;
 	this.name = name;
 	this.haveDimmer = haveDimmer;	// Dimming not supported at the moment - needs adding. Ditto RGB etc.
 	this.maxDimLevel = maxDimLevel; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
@@ -358,13 +357,13 @@ eDomoticzAccessory.prototype = {
 	getServices: function() {
 		var services = []
 		var informationService = new Service.AccessoryInformation();
-		informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.model).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.Type + "idx" + this.idx);
+		informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
 		services.push(informationService);
 		switch (true) {
 		case this.Type == "Lighting 1" || this.Type == "Lighting 2" || this.Type == "Scene":
 			{
 				if (this.Image == "Light") {
-					var lightbulbService = new Service.Lightbulb();
+					var lightbulbService = new Service.Lightbulb(this.name);
 					lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
 					/* if( this.haveDimmer == true ) {
 		                lightbulbService
@@ -374,7 +373,7 @@ eDomoticzAccessory.prototype = {
 		            } */
 					services.push(lightbulbService);
 				} else {
-					var switchService = new Service.Switch();
+					var switchService = new Service.Switch(this.name);
 					switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
 					services.push(switchService);
 				}
@@ -397,14 +396,14 @@ eDomoticzAccessory.prototype = {
 			}
 		case this.Type == "Switch":
 			{
-				var switchService = new Service.Switch();
+				var switchService = new Service.Switch(this.name);
 				switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
 				services.push(switchService);
 				break;
 			}
 		case this.Type == "Temp" || this.Type == "Temp + Humidity + Baro":
 			{
-				var temperatureSensorService = new Service.TemperatureSensor();
+				var temperatureSensorService = new Service.TemperatureSensor(this.name);
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
 					minValue: -100
@@ -417,7 +416,7 @@ eDomoticzAccessory.prototype = {
 			}
 		default:
 			{
-				var switchService = new Service.Switch();
+				var switchService = new Service.Switch(this.name);
 					switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
 					services.push(switchService);
 				break;
