@@ -4,9 +4,7 @@
 //      - Initial version
 //      - I make no claims to the quality of this shim. Function over form!
 //
-//
 // ** Remember to add platform to config.json **
-//
 //
 // Example config.json content:
 //
@@ -24,7 +22,7 @@
 //         "server": "127.0.0.1",	// or "user:pass@ip"
 //         "port": "8080",
 //		   "roomid": 0  			// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//     	}],
+//		}],
 //
 // 		"accessories":[]
 // }
@@ -39,6 +37,9 @@
 
 
 var Service, Characteristic, types, hapLegacyTypes;
+var request = require("request");
+var inherits = require('util').inherits;
+
 module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
@@ -51,9 +52,6 @@ module.exports = function(homebridge) {
   homebridge.registerAccessory("homebridge-eDomoticz", "eDomoticz", eDomoticzAccessory)
   homebridge.registerPlatform("homebridge-eDomoticz", "eDomoticz", eDomoticzPlatform);
 }
-
-var request = require("request");
-var inherits = require('util').inherits;
 
 function eDomoticzPlatform(log, config) {
 	this.log = log;
@@ -131,6 +129,7 @@ eDomoticzPlatform.prototype = {
 		function callbackLater() {
 			if (--asyncCalls == 0) callback(foundAccessories);
 		}
+
 		this.log("Fetching Domoticz lights and switches...");
 
 		asyncCalls++;
@@ -383,7 +382,7 @@ eDomoticzAccessory.prototype = {
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
 					minValue: -100
 				});
-				if (this.batteryRef && this.batteryRef < 101) {
+				if (this.batteryRef && this.batteryRef < 101) { // if batteryRef == 255 we're running on mains
 					temperatureSensorService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
 				}
 				services.push(temperatureSensorService);
