@@ -9,22 +9,22 @@
 // Example config.json content:
 //
 // {
-// 		"bridge": {
+// 	"bridge": {
 //         "name": "Homebridge",
 //         "username": "CC:21:3E:E4:DE:33", // << Randomize this...
 //         "port": 51826,
 //         "pin": "031-45-154",
 //     	},
 //
-// 		"platforms": [{
+// 	"platforms": [{
 //         "platform": "eDomoticz",
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",	// or "user:pass@ip"
 //         "port": "8080",
-//		   "roomid": 0  			// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//		}],
+//		   "roomid": 0  	// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
+//	}],
 //
-// 		"accessories":[]
+// 	"accessories":[]
 // }
 //
 //
@@ -165,7 +165,7 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.log = log;
 	this.server = server;
 	this.port = port;
-	this.IsScene = IsScene;			// Domoticz Scenes ignored for now...
+	this.IsScene = IsScene;		// Domoticz Scenes ignored for now...
 	this.status = status;
 	this.idx = idx;
 	this.displayName = name;
