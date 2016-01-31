@@ -1,5 +1,6 @@
 # homebridge-eDomoticz
-Domoticz Plugin (unofficial unstable beta), currently broken.
+Domoticz Plugin (unofficial unstable beta), & currently broken.
+Stick with [eDomoticz Legacy Shim](https://github.com/PatchworkBoy/eDomoticz) for now - sorry!!
 
 ## Installation
 ```
