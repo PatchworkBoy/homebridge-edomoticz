@@ -1,4 +1,3 @@
-//
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
 //
 // V0.0.1 - 2016/01/31
@@ -12,34 +11,31 @@
 // Example config.json content:
 //
 // {
-// "bridge": {
+// 		"bridge": {
 //         "name": "Homebridge",
 //         "username": "CC:21:3E:E4:DE:33", // << Randomize this...
 //         "port": 51826,
 //         "pin": "031-45-154",
-//     },
+//     	},
 //
-// "platforms": [
-//     {
+// 		"platforms": [{
 //         "platform": "eDomoticz",
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",	// or "user:pass@ip"
 //         "port": "8080",
 //		   "roomid": 0  			// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//     }
-// ],
+//     	}],
 //
-// "accessories":[]
-//
+// 		"accessories":[]
 // }
 //
 //
-// SUPORTED TYPES:
+// SUPPORTED TYPES:
 // - Lightbulb              (haveDimmer, onValue, offValue options)
 // - Switch                 (onValue, offValue options)
 // - TemperatureSensor      ()
 // - Battery                (batteryThreshold option)
-// - Power Meter
+// - Power Meter??
 
 
 var Service, Characteristic, types, hapLegacyTypes;
@@ -77,7 +73,7 @@ function sortByKey(array, key) {
 }
 
 function roundToHalf(value) {
-	var converted = parseFloat(value); // Make sure we have a number
+	var converted = parseFloat(value);
 	var decimal = (converted - parseInt(converted, 10));
 	decimal = Math.round(decimal * 10);
 	if (decimal == 5) {
@@ -136,7 +132,7 @@ eDomoticzPlatform.prototype = {
 			if (--asyncCalls == 0) callback(foundAccessories);
 		}
 		this.log("Fetching Domoticz lights and switches...");
-		//Get Devices
+
 		asyncCalls++;
 		var domurl;
 		if (!(this.roomid) || this.roomid == 0) {
@@ -152,10 +148,10 @@ eDomoticzPlatform.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						//if (s.Type != "General") {
+						//if (s.Type != "General") {  	//uncomment to bypass kWh sensors which cause error at the moment
 							accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel);
 							foundAccessories.push(accessory);
-						//}
+						//} 							//uncomment to bypass kWh sensors which cause error at the moment
 					})
 				}
 				callbackLater();
@@ -170,23 +166,24 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.log = log;
 	this.server = server;
 	this.port = port;
-	this.IsScene = IsScene;
+	this.IsScene = IsScene;			// Domoticz Scenes ignored for now...
 	this.status = status;
 	this.idx = idx;
 	this.displayName = name;
 	this.name = name;
-	this.haveDimmer = haveDimmer;
+	this.haveDimmer = haveDimmer;	// Dimming not supported at the moment - needs adding. Ditto RGB etc.
 	this.maxDimLevel = maxDimLevel; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
 	this.subType = subType;
 	this.Type = Type;
 	this.batteryRef = batteryRef;
 	this.onValue = "On";
 	this.offValue = "Off";
-	this.param = "switchlight"; //need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for other types.
+	this.param = "switchlight"; 	//need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for all other types.
 	this.access_url = "http://" + this.server + ":" + this.port + "/json.htm?";
 	this.control_url = this.access_url + "type=command&param=" + this.param + "&idx=" + this.idx;
 	this.status_url = this.access_url + "type=devices&rid=" + this.idx;
 }
+
 eDomoticzAccessory.prototype = {
 	identify: function(callback) {
 		callback();
@@ -394,10 +391,9 @@ eDomoticzAccessory.prototype = {
 			}
 		default:
 			{
-				var lightbulbService = new Service.Lightbulb();
-				lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-				lightbulbService.addCharacteristic(new Characteristic.Brightness()).on('set', this.setValue.bind(this)).on('get', this.getValue.bind(this));
-				services.push(lightbulbService);
+				var switchService = new Service.Switch();
+					switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+					services.push(switchService);
 				break;
 			}
 		}
