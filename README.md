@@ -1,2 +1,2 @@
 # homebridge-eDomoticz
-Domoticz Plugin (unstable beta)
+Domoticz Plugin (unofficial unstable beta)
