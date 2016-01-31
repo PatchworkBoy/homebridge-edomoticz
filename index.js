@@ -359,7 +359,7 @@ eDomoticzAccessory.prototype = {
 		case this.Type == "General":
 			{
 				if (this.subType == "kWh") {
-					var MeterDeviceService = eDomoticzPlatform.MeterDeviceService("Power Usage");
+					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getTPower.bind(this));
 					services.push(MeterDeviceService);
