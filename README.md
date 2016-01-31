@@ -1,6 +1,5 @@
 # homebridge-eDomoticz
-Taking my [eDomoticz Legacy Shim](https://github.com/PatchworkBoy/eDomoticz) and 
-making it into a fully-fledged up-to-date Homebridge-Plugin 
+A fully-fledged up-to-date Homebridge-Plugin 
 for [Homebridge](https://github.com/nfarina/homebridge) v0.2.1x
 
 Supports:
