@@ -10,7 +10,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - General Usage Sensors (eg: CPU%, Mem%, HDD% from Motherboard Sensors Hardware Device)
 
 ###Todo:
-- [ ] homebridge plugin 2.0 support - https://github.com/nfarina/homebridge/pull/497
+- [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [x] Respect Room setting if defined in config.json
 - [x] kWh (electricity usage)
 - [x] General % usage
