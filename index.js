@@ -160,7 +160,7 @@ eDomoticzPlatform.prototype = {
 
 		asyncCalls++;
 		var domurl;
-		if (!(this.roomid) || this.roomid == 0) {
+		if (!(this.room) || this.room == 0) {
 			domurl = "http://" + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
 		} else {
 			domurl = "http://" + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
