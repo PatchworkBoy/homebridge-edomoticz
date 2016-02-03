@@ -1,4 +1,7 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.0.5 - 2016/02/03
+//    - Added YouLess counter support (Type: YouLess Meter, SubType: YouLess counter)
+//    - Expanded Temp sensor to include humidity & pressure (if present)
 // V0.0.4 - 2016/01/31
 //		- Fixed 'Siri Name' disappearance
 // V0.0.3 - 2016/01/31
@@ -26,7 +29,7 @@
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",	// or "user:pass@ip"
 //         "port": "8080",
-//		   "roomid": 0  	// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
+//		     "roomid": 0  	// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
 //	}],
 //
 // 	"accessories":[]
@@ -37,6 +40,9 @@
 // - Lightbulb              (haveDimmer, onValue, offValue options)
 // - Switch                 (onValue, offValue options)
 // - TemperatureSensor      ()
+// - Temp & Humidity Sensor
+// - Temp & Humidity & Barometer
+// - YouLess Meter
 // - Battery                (batteryThreshold option)
 // - Power Meter			()
 // - Usage Sensors 		 	() [eg: CPU Load, Disk Load, Mem Load from Motherboard Sensors Hardware Device]
@@ -56,6 +62,8 @@ module.exports = function(homebridge) {
   fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
   fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
   fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
+  fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
+  fixInheritance(eDomoticzPlatform.Barometer, Characteristic);
 
   homebridge.registerAccessory("homebridge-eDomoticz", "eDomoticz", eDomoticzAccessory)
   homebridge.registerPlatform("homebridge-eDomoticz", "eDomoticz", eDomoticzPlatform);
@@ -115,6 +123,15 @@ eDomoticzPlatform.TotalConsumption = function() {
 	this.value = this.getDefaultValue();
 };
 
+eDomoticzPlatform.TodayConsumption = function() {
+	Characteristic.call(this, 'Consumption Today', 'E863F10E-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	});
+	this.value = this.getDefaultValue();
+};
+
 eDomoticzPlatform.CurrentConsumption = function() {
 	Characteristic.call(this, 'Current Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
 	this.setProps({
@@ -128,6 +145,7 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 	Service.call(this, displayName, '00000001-0000-1000-8000-135D67EC4377', subtype); //these UUIDs will conflict with YamahaAVR at the moment
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
+  this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
 };
 
 // Usage Meter Characteristics
@@ -143,6 +161,16 @@ eDomoticzPlatform.CurrentUsage = function() {
 eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
 	Service.call(this, displayName, '00000002-0000-1000-8000-135D67EC4378', subtype); //these UUIDs will conflict with YamahaAVR at the moment
 	this.addCharacteristic(new eDomoticzPlatform.CurrentUsage);
+};
+
+// Barometer Characteristic
+eDomoticzPlatform.Barometer = function() {
+	Characteristic.call(this, 'Pressure', 'E863F10E-079F-49FF-8F37-9C2605A29F55'); //these UUIDs will conflict with YamahaAVR at the moment
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
 };
 /* End of Custom Services & Characteristics */
 
@@ -293,6 +321,44 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
+  getYLTodayValue: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.CounterToday;
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+  getYLTotalValue: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = roundToHalf(s.Counter) + " kWh";
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
 	getCPower: function(callback) {
 		request.get({
 			url: this.status_url,
@@ -323,6 +389,44 @@ eDomoticzAccessory.prototype = {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
 						value = roundToHalf(s.Temp);
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+  getHumidity: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = roundToHalf(s.Humidity);
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+  getPressure: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = roundToHalf(s.Barometer) + "hPa";
 					})
 				}
 				callback(null, value);
@@ -379,12 +483,17 @@ eDomoticzAccessory.prototype = {
 				}
 				break;
 			}
-		case this.Type == "General":
+		case this.Type == "General" || this.Type == "YouLess Meter":
 			{
-				if (this.subType == "kWh") {
+				if (this.subType == "kWh" || this.subType == "YouLess counter") {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
-					MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+					if (this.subType == "kWh") {
+            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+          } else if (this.subType == "YouLess counter") {
+            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
+            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+          }
 					services.push(MeterDeviceService);
 					break;
 				} else if (this.subType == "Percentage") {
@@ -401,13 +510,19 @@ eDomoticzAccessory.prototype = {
 				services.push(switchService);
 				break;
 			}
-		case this.Type == "Temp" || this.Type == "Temp + Humidity + Baro":
+		case this.Type == "Temp" || this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro":
 			{
 				var temperatureSensorService = new Service.TemperatureSensor(this.name);
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
 					minValue: -100
 				});
+        if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
+          temperatureSensorService.addOptionalCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
+          if (this.Type == "Temp + Humidity + Baro"){
+            temperatureSensorService.addOptionalCharacteristic(new eDomoticz.Barometer()).on('get', this.getPressure.bind(this));
+          }
+        }
 				if (this.batteryRef && this.batteryRef < 101) { // if batteryRef == 255 we're running on mains
 					temperatureSensorService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
 				}

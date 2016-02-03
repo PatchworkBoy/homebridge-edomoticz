@@ -1,12 +1,14 @@
 # homebridge-eDomoticz
-A fully-fledged up-to-date Homebridge-Plugin 
-for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1x 
+A fully-fledged up-to-date Homebridge-Plugin
+for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1x
 and [Domoticz](https://github.com/domoticz/domoticz)
 
 ##Supports:
 - Switches (Light / Socket On & Off, & reflected status)
 - Temperature Sensors (Current Temperature, deg C)
-- Power Meters (General, kWh - Current Consumption, Total Consumption)
+- Temperature & Humidity Sensors (as above + Humidity, %)
+- Temperature & Humidity & Pressure Sensors (as above + Pressure, hPa)
+- Power Meters (General / YouLess Meter, kWh / YouLess counter - Current Consumption, Total Consumption, [Today Consumption - YouLess])
 - General Usage Sensors (eg: CPU%, Mem%, HDD% from Motherboard Sensors Hardware Device)
 
 ###Todo:
@@ -14,11 +16,14 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - [x] Respect Room setting if defined in config.json
 - [x] kWh (electricity usage)
 - [x] General % usage
-- [ ] Improve kWh & General % usage code for correct val type (int) and unit rather than relying on string
+- [ ] Improve val types with val type (int) and unit rather than relying on string
 - [ ] Brightness
 - [ ] Hue
 - [ ] m3 (gas usage)
-- [ ] ...more sensors!
+- [x] Humidity
+- [x] Pressure
+- [x] YouLess Meter
+- [ ] ...more sensors (ongoing)!
 
 ## Installation
 ```
