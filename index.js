@@ -2,6 +2,7 @@
 // V0.0.5 - 2016/02/03
 //    - Added YouLess counter support (Type: YouLess Meter, SubType: YouLess counter)
 //    - Expanded Temp sensor to include humidity & pressure (if present)
+//    - fixed UUID generation
 // V0.0.4 - 2016/01/31
 //		- Fixed 'Siri Name' disappearance
 // V0.0.3 - 2016/01/31
@@ -48,7 +49,7 @@
 // - Usage Sensors 		 	() [eg: CPU Load, Disk Load, Mem Load from Motherboard Sensors Hardware Device]
 
 
-var Service, Characteristic, types, hapLegacyTypes;
+var Service, Characteristic, types, uuid, hapLegacyTypes;
 var request = require("request");
 var inherits = require('util').inherits;
 
@@ -56,6 +57,7 @@ module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
   types = homebridge.hapLegacyTypes;
+  uuid = homebridge.hap.uuid;
 
   fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
   fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
@@ -115,7 +117,8 @@ function fixInheritance(subclass, superclass) {
 
 // PowerMeter Characteristics
 eDomoticzPlatform.TotalConsumption = function() {
-	Characteristic.call(this, 'Total Consumption', 'E863F10C-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
+  var charUUID = uuid.generate('eDomoticz:customchar:TotalConsumption');
+	Characteristic.call(this, 'Total Consumption', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -124,7 +127,8 @@ eDomoticzPlatform.TotalConsumption = function() {
 };
 
 eDomoticzPlatform.TodayConsumption = function() {
-	Characteristic.call(this, 'Consumption Today', 'E863F10E-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
+  var charUUID = uuid.generate('eDomoticz:customchar:TodayConsumption');
+	Characteristic.call(this, 'Consumption Today', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -133,7 +137,8 @@ eDomoticzPlatform.TodayConsumption = function() {
 };
 
 eDomoticzPlatform.CurrentConsumption = function() {
-	Characteristic.call(this, 'Current Consumption', 'E863F10D-079E-48FF-8F27-9C2605A29F52'); //these UUIDs will conflict with YamahaAVR at the moment
+  var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
+	Characteristic.call(this, 'Current Consumption', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -142,7 +147,8 @@ eDomoticzPlatform.CurrentConsumption = function() {
 };
 // The PowerMeter itself
 eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
-	Service.call(this, displayName, '00000001-0000-1000-8000-135D67EC4377', subtype); //these UUIDs will conflict with YamahaAVR at the moment
+  var serviceUUID = uuid.generate('eDomoticz:powermeter:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
   this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
@@ -150,7 +156,8 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 
 // Usage Meter Characteristics
 eDomoticzPlatform.CurrentUsage = function() {
-	Characteristic.call(this, 'Current Usage', 'E863F10E-079F-49FF-8F37-9C2605A29F55'); //these UUIDs will conflict with YamahaAVR at the moment
+  var charUUID = uuid.generate('eDomoticz:customchar:CurrentUsage');
+	Characteristic.call(this, 'Current Usage', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -159,7 +166,8 @@ eDomoticzPlatform.CurrentUsage = function() {
 };
 // The Usage Meter itself
 eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
-	Service.call(this, displayName, '00000002-0000-1000-8000-135D67EC4378', subtype); //these UUIDs will conflict with YamahaAVR at the moment
+  var serviceUUID = uuid.generate('eDomoticz:usagedevice:customservice');
+  Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentUsage);
 };
 
