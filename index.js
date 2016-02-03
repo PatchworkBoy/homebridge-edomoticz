@@ -173,7 +173,8 @@ eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
 
 // Barometer Characteristic
 eDomoticzPlatform.Barometer = function() {
-	Characteristic.call(this, 'Pressure', 'E863F10E-079F-49FF-8F37-9C2605A29F55'); //these UUIDs will conflict with YamahaAVR at the moment
+  var charUUID = uuid.generate('eDomoticz:customchar:CurrentPressure');
+	Characteristic.call(this, 'Pressure', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
