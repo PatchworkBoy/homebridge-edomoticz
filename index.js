@@ -500,8 +500,8 @@ eDomoticzAccessory.prototype = {
 					if (this.subType == "kWh") {
             MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
           } else if (this.subType == "YouLess counter") {
-            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
-            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TotalConsumption()).on('get', this.getYLTotalValue.bind(this));
+            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TodayConsumption()).on('get', this.getYLTodayValue.bind(this));
           }
 					services.push(MeterDeviceService);
 					break;
@@ -527,9 +527,9 @@ eDomoticzAccessory.prototype = {
 					minValue: -100
 				});
         if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
-          temperatureSensorService.addOptionalCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
+          temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
           if (this.Type == "Temp + Humidity + Baro"){
-            temperatureSensorService.addOptionalCharacteristic(new eDomoticz.Barometer()).on('get', this.getPressure.bind(this));
+            temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
           }
         }
 				if (this.batteryRef && this.batteryRef < 101) { // if batteryRef == 255 we're running on mains
