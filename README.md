@@ -8,8 +8,9 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Temperature Sensors (Current Temperature, deg C)
 - Temperature & Humidity Sensors (as above + Humidity, %)
 - Temperature & Humidity & Pressure Sensors (as above + Pressure, hPa)
-- Power Meters (General / YouLess Meter, kWh / YouLess counter - Current Consumption, Total Consumption, [Today Consumption - YouLess])
+- Power Meters (General / YouLess Meter, kWh / YouLess counter - Current Consumption, Total Consumption, [Today Consumption - YouLess only])
 - General Usage Sensors (eg: CPU%, Mem%, HDD% from Motherboard Sensors Hardware Device)
+- DarkSkies Virtual Weather Sensor (Barometer, Wind, Solar Radiation, Rainfall, Visibility)
 
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support

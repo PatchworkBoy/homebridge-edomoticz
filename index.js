@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.0.6 - 2016/02/03
+//	  - Full DarkSkies Virtual Sensor support (Rain, Wind, Barometer, Solar Radiation, Visibility
 // V0.0.5 - 2016/02/03
 //    - Added YouLess counter support (Type: YouLess Meter, SubType: YouLess counter)
 //    - Expanded Temp sensor to include humidity & pressure (if present)
@@ -66,6 +68,16 @@ module.exports = function(homebridge) {
   fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
   fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
   fixInheritance(eDomoticzPlatform.Barometer, Characteristic);
+  fixInheritance(eDomoticzPlatform.WindSpeed, Characteristic);
+  fixInheritance(eDomoticzPlatform.WindChill, Characteristic);
+  fixInheritance(eDomoticzPlatform.WindDirection, Characteristic);
+  fixInheritance(eDomoticzPlatform.WindDeviceService, Service);
+  fixInheritance(eDomoticzPlatform.Rainfall, Characteristic);
+  fixInheritance(eDomoticzPlatform.RainDeviceService, Service);
+  fixInheritance(eDomoticzPlatform.Visibility, Characteristic);
+  fixInheritance(eDomoticzPlatform.VisibilityDeviceService, Service);
+  fixInheritance(eDomoticzPlatform.SolRad, Characteristic);
+  fixInheritance(eDomoticzPlatform.SolRadDeviceService, Service);
 
   homebridge.registerAccessory("homebridge-eDomoticz", "eDomoticz", eDomoticzAccessory)
   homebridge.registerPlatform("homebridge-eDomoticz", "eDomoticz", eDomoticzPlatform);
@@ -151,7 +163,7 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
-  this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
+    this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
 };
 
 // Usage Meter Characteristics
@@ -170,7 +182,93 @@ eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
   Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentUsage);
 };
-
+// DarkSkies WindSpeed Characteristic
+eDomoticzPlatform.WindSpeed = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:WindSpeed');
+	Characteristic.call(this, 'Wind Speed', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies WindChill Characteristic
+eDomoticzPlatform.WindChill = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:WindChill');
+	Characteristic.call(this, 'Wind Chill', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies WindDirection Characteristic
+eDomoticzPlatform.WindDirection = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:WindDirection');
+	Characteristic.call(this, 'Wind Direction', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies Virtual Wind Sensor
+eDomoticzPlatform.WindDeviceService = function(displayName, subtype) {
+  var serviceUUID = uuid.generate('eDomoticz:winddevice:customservice');
+  Service.call(this, displayName, serviceUUID, subtype);
+	this.addCharacteristic(new eDomoticzPlatform.WindSpeed);
+	//this.addOptionalCharacteristic(new eDomoticzPlatform.WindChill);
+	this.addOptionalCharacteristic(new eDomoticzPlatform.WindDirection);
+	this.addOptionalCharacteristic(new Characteristic.CurrentTemperature);
+};
+// DarkSkies Rain Characteristics
+eDomoticzPlatform.Rainfall = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:Rainfall');
+	Characteristic.call(this, 'Amount today', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies Rain Meter itself
+eDomoticzPlatform.RainDeviceService = function(displayName, subtype) {
+  var serviceUUID = uuid.generate('eDomoticz:raindevice:customservice');
+  Service.call(this, displayName, serviceUUID, subtype);
+	this.addCharacteristic(new eDomoticzPlatform.Rainfall);
+};
+// DarkSkies Visibility Characteristics
+eDomoticzPlatform.Visibility = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:Visibility');
+	Characteristic.call(this, 'Distance', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies Visibility Meter itself
+eDomoticzPlatform.VisibilityDeviceService = function(displayName, subtype) {
+  var serviceUUID = uuid.generate('eDomoticz:visibilitydevice:customservice');
+  Service.call(this, displayName, serviceUUID, subtype);
+	this.addCharacteristic(new eDomoticzPlatform.Visibility);
+};
+// DarkSkies Solar Radiation Characteristics
+eDomoticzPlatform.SolRad = function() {
+  var charUUID = uuid.generate('eDomoticz:customchar:SolRad');
+	Characteristic.call(this, 'Radiation', charUUID);
+	this.setProps({
+		format: 'string',
+		perms: [Characteristic.Perms.READ]
+	})
+	this.value = this.getDefaultValue();
+};
+// DarkSkies Solar Radiation Meter itself
+eDomoticzPlatform.SolRadDeviceService = function(displayName, subtype) {
+  var serviceUUID = uuid.generate('eDomoticz:solraddevice:customservice');
+  Service.call(this, displayName, serviceUUID, subtype);
+	this.addCharacteristic(new eDomoticzPlatform.SolRad);
+};
 // Barometer Characteristic
 eDomoticzPlatform.Barometer = function() {
   var charUUID = uuid.generate('eDomoticz:customchar:CurrentPressure');
@@ -287,6 +385,25 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
+	getRainfall: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.Rain + "mm";
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
 	setValue: function(level, callback) {
 		var url = this.control_url;
 		this.log("Dummy Value-Set Operation in progress");
@@ -330,7 +447,7 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-  getYLTodayValue: function(callback) {
+    getYLTodayValue: function(callback) {
 		request.get({
 			url: this.status_url,
 			json: true
@@ -349,7 +466,7 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-  getYLTotalValue: function(callback) {
+    getYLTotalValue: function(callback) {
 		request.get({
 			url: this.status_url,
 			json: true
@@ -360,6 +477,63 @@ eDomoticzAccessory.prototype = {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
 						value = roundToHalf(s.Counter) + " kWh";
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+	getWindSpeed: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.Speed;
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+	getWindChill: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.Chill;
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+	getWindDirection: function(callback) {
+		request.get({
+			url: this.status_url,
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.Direction + " ("+s.DirectionStr+")";
 					})
 				}
 				callback(null, value);
@@ -406,7 +580,7 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-  getHumidity: function(callback) {
+    getHumidity: function(callback) {
 		request.get({
 			url: this.status_url,
 			json: true
@@ -425,7 +599,7 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-  getPressure: function(callback) {
+    getPressure: function(callback) {
 		request.get({
 			url: this.status_url,
 			json: true
@@ -498,17 +672,27 @@ eDomoticzAccessory.prototype = {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
 					if (this.subType == "kWh") {
-            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
-          } else if (this.subType == "YouLess counter") {
-            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TotalConsumption()).on('get', this.getYLTotalValue.bind(this));
-            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TodayConsumption()).on('get', this.getYLTodayValue.bind(this));
-          }
+			            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+			          } else if (this.subType == "YouLess counter") {
+			            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TotalConsumption()).on('get', this.getYLTotalValue.bind(this));
+			            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TodayConsumption()).on('get', this.getYLTodayValue.bind(this));
+			          }
 					services.push(MeterDeviceService);
 					break;
 				} else if (this.subType == "Percentage") {
 					var UsageDeviceService = new eDomoticzPlatform.UsageDeviceService("Current Usage");
 					UsageDeviceService.getCharacteristic(eDomoticzPlatform.CurrentUsage).on('get', this.getStringValue.bind(this));
 					services.push(UsageDeviceService);
+					break;
+				} else if (this.subType == "Visibility") {
+					var VisibilityDeviceService = new eDomoticzPlatform.VisibilityDeviceService("Current Distance");
+					VisibilityDeviceService.getCharacteristic(eDomoticzPlatform.Visibility).on('get', this.getStringValue.bind(this));
+					services.push(VisibilityDeviceService);
+					break;
+				} else if (this.subType == "Solar Radiation"){
+					var SolRadDeviceService = new eDomoticzPlatform.SolRadDeviceService("Current radiation");
+					SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
+					services.push(SolRadDeviceService);
 					break;
 				}
 			}
@@ -526,18 +710,36 @@ eDomoticzAccessory.prototype = {
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
 					minValue: -100
 				});
-        if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
-          temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
-          if (this.Type == "Temp + Humidity + Baro"){
-            temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
-          }
-        }
+		        if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
+		          temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
+		          if (this.Type == "Temp + Humidity + Baro"){
+		            temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
+		          }
+		        }
 				if (this.batteryRef && this.batteryRef < 101) { // if batteryRef == 255 we're running on mains
 					temperatureSensorService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
 				}
 				services.push(temperatureSensorService);
 				break;
 			}
+		case this.Type == "Wind":
+			{
+				var windService = new eDomoticzPlatform.WindDeviceService(this.name);
+				windService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
+				windService.getCharacteristic(eDomoticzPlatform.WindSpeed).on('get', this.getWindSpeed.bind(this));
+				//windService.getCharacteristic(eDomoticzPlatform.WindChill).on('get', this.getWindChill.bind(this));
+				windService.getCharacteristic(eDomoticzPlatform.WindDirection).on('get', this.getWindDirection.bind(this));
+				services.push(windService);
+				break;
+			}
+		case this.Type == "Rain":
+			{
+				var rainService = new eDomoticzPlatform.RainDeviceService(this.name);
+				rainService.getCharacteristic(eDomoticzPlatform.Rainfall).on('get', this.getRainfall.bind(this));
+				services.push(rainService);
+				break;
+			}
+
 		default:
 			{
 				var switchService = new Service.Switch(this.name);
