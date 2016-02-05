@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.0.7 - 2016/02/05
+//	  - Fixed Today counter and WindChill characteristic
 // V0.0.6 - 2016/02/03
 //	  - Full DarkSkies Virtual Sensor support (Rain, Wind, Barometer, Solar Radiation, Visibility
 // V0.0.5 - 2016/02/03
@@ -130,7 +132,7 @@ function fixInheritance(subclass, superclass) {
 // PowerMeter Characteristics
 eDomoticzPlatform.TotalConsumption = function() {
   var charUUID = uuid.generate('eDomoticz:customchar:TotalConsumption');
-	Characteristic.call(this, 'Total Consumption', charUUID);
+	Characteristic.call(this, 'Total', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -140,7 +142,7 @@ eDomoticzPlatform.TotalConsumption = function() {
 
 eDomoticzPlatform.TodayConsumption = function() {
   var charUUID = uuid.generate('eDomoticz:customchar:TodayConsumption');
-	Characteristic.call(this, 'Consumption Today', charUUID);
+	Characteristic.call(this, 'Today', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -150,7 +152,7 @@ eDomoticzPlatform.TodayConsumption = function() {
 
 eDomoticzPlatform.CurrentConsumption = function() {
   var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
-	Characteristic.call(this, 'Current Consumption', charUUID);
+	Characteristic.call(this, 'Current', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
@@ -163,7 +165,7 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
 	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
-    this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
+  this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
 };
 
 // Usage Meter Characteristics
@@ -217,7 +219,7 @@ eDomoticzPlatform.WindDeviceService = function(displayName, subtype) {
   var serviceUUID = uuid.generate('eDomoticz:winddevice:customservice');
   Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.WindSpeed);
-	//this.addOptionalCharacteristic(new eDomoticzPlatform.WindChill);
+	this.addOptionalCharacteristic(new eDomoticzPlatform.WindChill);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.WindDirection);
 	this.addOptionalCharacteristic(new Characteristic.CurrentTemperature);
 };
@@ -333,6 +335,7 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.subType = subType;
 	this.Type = Type;
 	this.batteryRef = batteryRef;
+	this.CounterToday = 1;
 	this.onValue = "On";
 	this.offValue = "Off";
 	this.param = "switchlight"; 	//need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for all other types.
@@ -514,7 +517,7 @@ eDomoticzAccessory.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						value = s.Chill;
+						value = String(s.Chill);
 					})
 				}
 				callback(null, value);
@@ -672,11 +675,11 @@ eDomoticzAccessory.prototype = {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
 					if (this.subType == "kWh") {
-			            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
-			          } else if (this.subType == "YouLess counter") {
-			            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TotalConsumption()).on('get', this.getYLTotalValue.bind(this));
-			            MeterDeviceService.addCharacteristic(new eDomoticzPlatform.TodayConsumption()).on('get', this.getYLTodayValue.bind(this));
-			          }
+            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+			    } else if (this.subType == "YouLess counter") {
+            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
+			    }
+	        MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
 					services.push(MeterDeviceService);
 					break;
 				} else if (this.subType == "Percentage") {
@@ -727,7 +730,7 @@ eDomoticzAccessory.prototype = {
 				var windService = new eDomoticzPlatform.WindDeviceService(this.name);
 				windService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
 				windService.getCharacteristic(eDomoticzPlatform.WindSpeed).on('get', this.getWindSpeed.bind(this));
-				//windService.getCharacteristic(eDomoticzPlatform.WindChill).on('get', this.getWindChill.bind(this));
+				windService.getCharacteristic(eDomoticzPlatform.WindChill).on('get', this.getWindChill.bind(this));
 				windService.getCharacteristic(eDomoticzPlatform.WindDirection).on('get', this.getWindDirection.bind(this));
 				services.push(windService);
 				break;
