@@ -59,4 +59,4 @@ sudo npm install -g patchworkboy/homebridge-eDomoticz
 ## Tips
 
 ### Issues pairing to Homebridge when you have a lot of Domoticz sensors...
-If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit. DO this by creating a room within Domoticz. Add only the devices you wish to be exposed to HomeKit to this new room within Domoticz, and then get it's roomidx number. set "roomid" in your config.json file to this room number.
+If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit. Do this by creating a room within Domoticz. Add only the devices you wish to be exposed to HomeKit to this new room within Domoticz, and then get it's roomidx number. set "roomid" in your config.json file to this room number.
