@@ -28,7 +28,12 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 
 ## Installation
 ```
-sudo npm install -g patchworkboy/homebridge-eDomoticz
+sudo npm install -g homebridge-edomoticz
+```
+
+## Update
+```
+sudo npm update -g homebridge-edomoticz
 ```
 
 ## Configuration
