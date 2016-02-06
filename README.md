@@ -14,13 +14,13 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
+- [ ] Improve val types with val type (int) and unit rather than relying on string
+- [ ] Hue/RGB
+- [ ] m3 (gas usage)
+- [x] Brightness/Dimming
 - [x] Respect Room setting if defined in config.json
 - [x] kWh (electricity usage)
 - [x] General % usage
-- [ ] Improve val types with val type (int) and unit rather than relying on string
-- [ ] Brightness/Dimming
-- [ ] Hue/RGB
-- [ ] m3 (gas usage)
 - [x] Humidity
 - [x] Pressure
 - [x] YouLess Meter

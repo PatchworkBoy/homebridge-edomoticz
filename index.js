@@ -1,4 +1,7 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.4 - 2016/02/06
+//    - removed extraneous cruft from Base64
+//	  - enable dimming
 // V0.1.2 - 2016/02/05
 //    - Added SSL Protocol support
 //    - authorization header rather than within URL
@@ -55,56 +58,92 @@
 // - Battery                (batteryThreshold option)
 // - Power Meter			()
 // - Usage Sensors 		 	() [eg: CPU Load, Disk Load, Mem Load from Motherboard Sensors Hardware Device]
-
-
 var Service, Characteristic, types, uuid, hapLegacyTypes;
 var request = require("request");
 var inherits = require('util').inherits;
-
 module.exports = function(homebridge) {
-  Service = homebridge.hap.Service;
-  Characteristic = homebridge.hap.Characteristic;
-  types = homebridge.hapLegacyTypes;
-  uuid = homebridge.hap.uuid;
-
-  fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
-  fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
-  fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
-  fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
-  fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
-  fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
-  fixInheritance(eDomoticzPlatform.Barometer, Characteristic);
-  fixInheritance(eDomoticzPlatform.WindSpeed, Characteristic);
-  fixInheritance(eDomoticzPlatform.WindChill, Characteristic);
-  fixInheritance(eDomoticzPlatform.WindDirection, Characteristic);
-  fixInheritance(eDomoticzPlatform.WindDeviceService, Service);
-  fixInheritance(eDomoticzPlatform.Rainfall, Characteristic);
-  fixInheritance(eDomoticzPlatform.RainDeviceService, Service);
-  fixInheritance(eDomoticzPlatform.Visibility, Characteristic);
-  fixInheritance(eDomoticzPlatform.VisibilityDeviceService, Service);
-  fixInheritance(eDomoticzPlatform.SolRad, Characteristic);
-  fixInheritance(eDomoticzPlatform.SolRadDeviceService, Service);
-
-  homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory)
-  homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
+	Service = homebridge.hap.Service;
+	Characteristic = homebridge.hap.Characteristic;
+	types = homebridge.hapLegacyTypes;
+	uuid = homebridge.hap.uuid;
+	fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
+	fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
+	fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
+	fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
+	fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
+	fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
+	fixInheritance(eDomoticzPlatform.Barometer, Characteristic);
+	fixInheritance(eDomoticzPlatform.WindSpeed, Characteristic);
+	fixInheritance(eDomoticzPlatform.WindChill, Characteristic);
+	fixInheritance(eDomoticzPlatform.WindDirection, Characteristic);
+	fixInheritance(eDomoticzPlatform.WindDeviceService, Service);
+	fixInheritance(eDomoticzPlatform.Rainfall, Characteristic);
+	fixInheritance(eDomoticzPlatform.RainDeviceService, Service);
+	fixInheritance(eDomoticzPlatform.Visibility, Characteristic);
+	fixInheritance(eDomoticzPlatform.VisibilityDeviceService, Service);
+	fixInheritance(eDomoticzPlatform.SolRad, Characteristic);
+	fixInheritance(eDomoticzPlatform.SolRadDeviceService, Service);
+	homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory)
+	homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 }
 
 function eDomoticzPlatform(log, config) {
 	this.log = log;
 	this.config = config;
-  this.server = config["server"];
-  if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1){
-    tmparr = this.server.split("@");
-    var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
-    this.authstr = Base64.encode(tmparr[0]);
-    this.server = tmparr[1];
-  }
-  this.ssl = config["ssl"];
-  this.port = config["port"];
+	this.server = config["server"];
+	if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
+		tmparr = this.server.split("@");
+		var Base64 = {
+			_keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+			encode: function(e) {
+				var t = "";
+				var n, r, i, s, o, u, a;
+				var f = 0;
+				e = Base64._utf8_encode(e);
+				while (f < e.length) {
+					n = e.charCodeAt(f++);
+					r = e.charCodeAt(f++);
+					i = e.charCodeAt(f++);
+					s = n >> 2;
+					o = (n & 3) << 4 | r >> 4;
+					u = (r & 15) << 2 | i >> 6;
+					a = i & 63;
+					if (isNaN(r)) {
+						u = a = 64;
+					} else if (isNaN(i)) {
+						a = 64;
+					}
+					t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a);
+				}
+				return t;
+			},
+			_utf8_encode: function(e) {
+				e = e.replace(/\r\n/g, "\n");
+				var t = "";
+				for (var n = 0; n < e.length; n++) {
+					var r = e.charCodeAt(n);
+					if (r < 128) {
+						t += String.fromCharCode(r);
+					} else if (r > 127 && r < 2048) {
+						t += String.fromCharCode(r >> 6 | 192);
+						t += String.fromCharCode(r & 63 | 128);
+					} else {
+						t += String.fromCharCode(r >> 12 | 224);
+						t += String.fromCharCode(r >> 6 & 63 | 128);
+						t += String.fromCharCode(r & 63 | 128);
+					}
+				}
+				return t;
+			}
+		}
+		this.authstr = Base64.encode(tmparr[0]);
+		this.server = tmparr[1];
+	}
+	this.ssl = config["ssl"];
+	this.port = config["port"];
 	this.room = config["roomid"];
-}
+} /* Handy Utility Functions */
 
-/* Handy Utility Functions */
 function sortByKey(array, key) {
 	return array.sort(function(a, b) {
 		var x = a[key];
@@ -128,21 +167,17 @@ function roundToHalf(value) {
 }
 
 function fixInheritance(subclass, superclass) {
-    var proto = subclass.prototype;
-    inherits(subclass, superclass);
-    subclass.prototype.parent = superclass.prototype;
-    for (var mn in proto) {
-        subclass.prototype[mn] = proto[mn];
-    }
-}
-/* End of Utility Functions */
-
-
+	var proto = subclass.prototype;
+	inherits(subclass, superclass);
+	subclass.prototype.parent = superclass.prototype;
+	for (var mn in proto) {
+		subclass.prototype[mn] = proto[mn];
+	}
+} /* End of Utility Functions */
 /* Define Custom Services & Characteristics */
-
 // PowerMeter Characteristics
 eDomoticzPlatform.TotalConsumption = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:TotalConsumption');
+	var charUUID = uuid.generate('eDomoticz:customchar:TotalConsumption');
 	Characteristic.call(this, 'Total', charUUID);
 	this.setProps({
 		format: 'string',
@@ -150,9 +185,8 @@ eDomoticzPlatform.TotalConsumption = function() {
 	});
 	this.value = this.getDefaultValue();
 };
-
 eDomoticzPlatform.TodayConsumption = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:TodayConsumption');
+	var charUUID = uuid.generate('eDomoticz:customchar:TodayConsumption');
 	Characteristic.call(this, 'Today', charUUID);
 	this.setProps({
 		format: 'string',
@@ -160,9 +194,8 @@ eDomoticzPlatform.TodayConsumption = function() {
 	});
 	this.value = this.getDefaultValue();
 };
-
 eDomoticzPlatform.CurrentConsumption = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
+	var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
 	Characteristic.call(this, 'Current', charUUID);
 	this.setProps({
 		format: 'string',
@@ -172,16 +205,15 @@ eDomoticzPlatform.CurrentConsumption = function() {
 };
 // The PowerMeter itself
 eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:powermeter:customservice');
+	var serviceUUID = uuid.generate('eDomoticz:powermeter:customservice');
 	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption);
-  this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
+	this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption);
 };
-
 // Usage Meter Characteristics
 eDomoticzPlatform.CurrentUsage = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:CurrentUsage');
+	var charUUID = uuid.generate('eDomoticz:customchar:CurrentUsage');
 	Characteristic.call(this, 'Current Usage', charUUID);
 	this.setProps({
 		format: 'string',
@@ -191,13 +223,13 @@ eDomoticzPlatform.CurrentUsage = function() {
 };
 // The Usage Meter itself
 eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:usagedevice:customservice');
-  Service.call(this, displayName, serviceUUID, subtype);
+	var serviceUUID = uuid.generate('eDomoticz:usagedevice:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.CurrentUsage);
 };
 // DarkSkies WindSpeed Characteristic
 eDomoticzPlatform.WindSpeed = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:WindSpeed');
+	var charUUID = uuid.generate('eDomoticz:customchar:WindSpeed');
 	Characteristic.call(this, 'Wind Speed', charUUID);
 	this.setProps({
 		format: 'string',
@@ -207,7 +239,7 @@ eDomoticzPlatform.WindSpeed = function() {
 };
 // DarkSkies WindChill Characteristic
 eDomoticzPlatform.WindChill = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:WindChill');
+	var charUUID = uuid.generate('eDomoticz:customchar:WindChill');
 	Characteristic.call(this, 'Wind Chill', charUUID);
 	this.setProps({
 		format: 'string',
@@ -217,7 +249,7 @@ eDomoticzPlatform.WindChill = function() {
 };
 // DarkSkies WindDirection Characteristic
 eDomoticzPlatform.WindDirection = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:WindDirection');
+	var charUUID = uuid.generate('eDomoticz:customchar:WindDirection');
 	Characteristic.call(this, 'Wind Direction', charUUID);
 	this.setProps({
 		format: 'string',
@@ -227,8 +259,8 @@ eDomoticzPlatform.WindDirection = function() {
 };
 // DarkSkies Virtual Wind Sensor
 eDomoticzPlatform.WindDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:winddevice:customservice');
-  Service.call(this, displayName, serviceUUID, subtype);
+	var serviceUUID = uuid.generate('eDomoticz:winddevice:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.WindSpeed);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.WindChill);
 	this.addOptionalCharacteristic(new eDomoticzPlatform.WindDirection);
@@ -236,7 +268,7 @@ eDomoticzPlatform.WindDeviceService = function(displayName, subtype) {
 };
 // DarkSkies Rain Characteristics
 eDomoticzPlatform.Rainfall = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:Rainfall');
+	var charUUID = uuid.generate('eDomoticz:customchar:Rainfall');
 	Characteristic.call(this, 'Amount today', charUUID);
 	this.setProps({
 		format: 'string',
@@ -246,13 +278,13 @@ eDomoticzPlatform.Rainfall = function() {
 };
 // DarkSkies Rain Meter itself
 eDomoticzPlatform.RainDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:raindevice:customservice');
-  Service.call(this, displayName, serviceUUID, subtype);
+	var serviceUUID = uuid.generate('eDomoticz:raindevice:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.Rainfall);
 };
 // DarkSkies Visibility Characteristics
 eDomoticzPlatform.Visibility = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:Visibility');
+	var charUUID = uuid.generate('eDomoticz:customchar:Visibility');
 	Characteristic.call(this, 'Distance', charUUID);
 	this.setProps({
 		format: 'string',
@@ -262,13 +294,13 @@ eDomoticzPlatform.Visibility = function() {
 };
 // DarkSkies Visibility Meter itself
 eDomoticzPlatform.VisibilityDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:visibilitydevice:customservice');
-  Service.call(this, displayName, serviceUUID, subtype);
+	var serviceUUID = uuid.generate('eDomoticz:visibilitydevice:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.Visibility);
 };
 // DarkSkies Solar Radiation Characteristics
 eDomoticzPlatform.SolRad = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:SolRad');
+	var charUUID = uuid.generate('eDomoticz:customchar:SolRad');
 	Characteristic.call(this, 'Radiation', charUUID);
 	this.setProps({
 		format: 'string',
@@ -278,22 +310,20 @@ eDomoticzPlatform.SolRad = function() {
 };
 // DarkSkies Solar Radiation Meter itself
 eDomoticzPlatform.SolRadDeviceService = function(displayName, subtype) {
-  var serviceUUID = uuid.generate('eDomoticz:solraddevice:customservice');
-  Service.call(this, displayName, serviceUUID, subtype);
+	var serviceUUID = uuid.generate('eDomoticz:solraddevice:customservice');
+	Service.call(this, displayName, serviceUUID, subtype);
 	this.addCharacteristic(new eDomoticzPlatform.SolRad);
 };
 // Barometer Characteristic
 eDomoticzPlatform.Barometer = function() {
-  var charUUID = uuid.generate('eDomoticz:customchar:CurrentPressure');
+	var charUUID = uuid.generate('eDomoticz:customchar:CurrentPressure');
 	Characteristic.call(this, 'Pressure', charUUID);
 	this.setProps({
 		format: 'string',
 		perms: [Characteristic.Perms.READ]
 	})
 	this.value = this.getDefaultValue();
-};
-/* End of Custom Services & Characteristics */
-
+}; /* End of Custom Services & Characteristics */
 eDomoticzPlatform.prototype = {
 	accessories: function(callback) {
 		var that = this;
@@ -303,24 +333,24 @@ eDomoticzPlatform.prototype = {
 		function callbackLater() {
 			if (--asyncCalls == 0) callback(foundAccessories);
 		}
-
 		this.log("Fetching Domoticz lights and switches...");
-
 		asyncCalls++;
 		var domurl;
-    var prot = (this.ssl==1) ? "https://" : "http://";
+		var prot = (this.ssl == 1) ? "https://" : "http://";
 		if (!(this.room) || this.room == 0) {
 			domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
 		} else {
 			domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
 		}
-    var myopt;
-    if (this.authstr){
-      myopt = {'Authorization':this.authstr};
-    }
+		var myopt;
+		if (this.authstr) {
+			myopt = {
+				'Authorization': this.authstr
+			};
+		}
 		request.get({
 			url: domurl,
-      headers: myopt,
+			headers: myopt,
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -343,11 +373,11 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.log = log;
 	this.server = server;
 	this.port = port;
-	this.IsScene = IsScene;		// Domoticz Scenes ignored for now...
+	this.IsScene = IsScene; // Domoticz Scenes ignored for now...
 	this.status = status;
 	this.idx = idx;
 	this.name = name;
-	this.haveDimmer = haveDimmer;	// Dimming not supported at the moment - needs adding. Ditto RGB etc.
+	this.haveDimmer = haveDimmer; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
 	this.maxDimLevel = maxDimLevel; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
 	this.subType = subType;
 	this.Type = Type;
@@ -355,13 +385,12 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.CounterToday = 1;
 	this.onValue = "On";
 	this.offValue = "Off";
-	this.param = "switchlight"; 	//need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for all other types.
+	this.param = "switchlight"; //need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for all other types.
 	this.access_url = "http://" + this.server + ":" + this.port + "/json.htm?";
 	this.control_url = this.access_url + "type=command&param=" + this.param + "&idx=" + this.idx;
 	this.status_url = this.access_url + "type=devices&rid=" + this.idx;
-  this.authstr = (auth) ? auth : '';
+	this.authstr = (auth) ? auth : '';
 }
-
 eDomoticzAccessory.prototype = {
 	identify: function(callback) {
 		callback();
@@ -377,9 +406,9 @@ eDomoticzAccessory.prototype = {
 		}
 		request.put({
 			url: url,
-      header: {
-        'Authorization':that.authstr
-      }
+			header: {
+				'Authorization': that.authstr
+			}
 		}, function(err, response) {
 			if (err) {
 				that.log("There was a problem sending command to" + that.name);
@@ -391,12 +420,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getPowerState: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -414,12 +443,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getRainfall: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -436,18 +465,78 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-	setValue: function(level, callback) {
-		var url = this.control_url;
-		this.log("Dummy Value-Set Operation in progress");
-		callback();
-	},
-	getValue: function(callback) {
-    var that = this;
+	setdValue: function(level, callback) {
+		var url, that = this;
+
+		if (!(that.factor)){
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
+				if (!err && response.statusCode == 200) {
+						if (json['result'] != undefined) {
+							var sArray = sortByKey(json['result'], "Name");
+							sArray.map(function(s) {
+								that.factor = 100/s.MaxDimLevel;
+							})
+						}
+					} else {
+						this.log("There was a problem connecting to Domoticz.");
+					}
+			});
+		}
+		var dim = (level / that.factor == 15)?16:level / that.factor;
+		url = that.control_url + "&switchcmd=Set%20Level&level="+dim;
+		request.put({
+			url: url,
+			header: {
+				'Authorization': that.authstr
+			}
+		}, function(err, response) {
+			if (err) {
+				that.log("There was a problem sending command to" + that.name);
+				that.log(response);
+			} else {
+				that.log(that.name + " sent command succesfully");
+			}
+			callback();
+		}.bind(this));
+	},
+	getdValue: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
+			if (!err && response.statusCode == 200) {
+				var value
+				if (json['result'] != undefined) {
+					var sArray = sortByKey(json['result'], "Name");
+					sArray.map(function(s) {
+						value = s.LevelInt;
+						that.factor = 100/s.MaxDimLevel;
+						value = value*that.factor;
+					})
+				}
+				callback(null, value);
+			} else {
+				this.log("There was a problem connecting to Domoticz.");
+			}
+		}.bind(this));
+	},
+	getValue: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -465,12 +554,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getStringValue: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -487,15 +576,15 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-    getYLTodayValue: function(callback) {
-      var that = this;
-  		request.get({
-  			url: that.status_url,
-        header: {
-          'Authorization':that.authstr
-        },
-  			json: true
-  		}, function(err, response, json) {
+	getYLTodayValue: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -510,15 +599,15 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-    getYLTotalValue: function(callback) {
-      var that = this;
-  		request.get({
-  			url: that.status_url,
-        header: {
-          'Authorization':that.authstr
-        },
-  			json: true
-  		}, function(err, response, json) {
+	getYLTotalValue: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -534,12 +623,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getWindSpeed: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -557,12 +646,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getWindChill: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -583,9 +672,9 @@ eDomoticzAccessory.prototype = {
 		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -593,7 +682,7 @@ eDomoticzAccessory.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						value = s.Direction + " ("+s.DirectionStr+")";
+						value = s.Direction + " (" + s.DirectionStr + ")";
 					})
 				}
 				callback(null, value);
@@ -603,12 +692,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getCPower: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -626,12 +715,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getTemperature: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -648,15 +737,15 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-    getHumidity: function(callback) {
-      var that = this;
-  		request.get({
-  			url: that.status_url,
-        header: {
-          'Authorization':that.authstr
-        },
-  			json: true
-  		}, function(err, response, json) {
+	getHumidity: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -671,15 +760,15 @@ eDomoticzAccessory.prototype = {
 			}
 		}.bind(this));
 	},
-    getPressure: function(callback) {
-      var that = this;
-  		request.get({
-  			url: that.status_url,
-        header: {
-          'Authorization':that.authstr
-        },
-  			json: true
-  		}, function(err, response, json) {
+	getPressure: function(callback) {
+		var that = this;
+		request.get({
+			url: that.status_url,
+			header: {
+				'Authorization': that.authstr
+			},
+			json: true
+		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -695,12 +784,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getLowBatteryStatus: function(callback) {
-    var that = this;
+		var that = this;
 		request.get({
 			url: that.status_url,
-      header: {
-        'Authorization':that.authstr
-      },
+			header: {
+				'Authorization': that.authstr
+			},
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -732,12 +821,20 @@ eDomoticzAccessory.prototype = {
 				if (this.Image == "Light") {
 					var lightbulbService = new Service.Lightbulb(this.name);
 					lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-					/* if( this.haveDimmer == true ) {
-		                lightbulbService
-		                    .addCharacteristic(new Characteristic.Brightness())
-		                    .on('set', this.setValue.bind(this))
-		                    .on('get', this.getValue.bind(this));
-		            } */
+					if( this.haveDimmer == true ) {
+	          lightbulbService
+	              .addCharacteristic(new Characteristic.Brightness())
+	              .on('set', this.setdValue.bind(this))
+	              .on('get', this.getdValue.bind(this));
+		      }
+					services.push(lightbulbService);
+				} else if( this.haveDimmer == true ) {
+					var lightbulbService = new Service.Lightbulb(this.name);
+					lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+						lightbulbService
+								.addCharacteristic(new Characteristic.Brightness())
+								.on('set', this.setdValue.bind(this))
+								.on('get', this.getdValue.bind(this));
 					services.push(lightbulbService);
 				} else {
 					var switchService = new Service.Switch(this.name);
@@ -752,11 +849,11 @@ eDomoticzAccessory.prototype = {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
 					if (this.subType == "kWh") {
-            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
-			    } else if (this.subType == "YouLess counter") {
-            MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
-			    }
-	        MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+						MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+					} else if (this.subType == "YouLess counter") {
+						MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
+					}
+					MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
 					services.push(MeterDeviceService);
 					break;
 				} else if (this.subType == "Percentage") {
@@ -769,7 +866,7 @@ eDomoticzAccessory.prototype = {
 					VisibilityDeviceService.getCharacteristic(eDomoticzPlatform.Visibility).on('get', this.getStringValue.bind(this));
 					services.push(VisibilityDeviceService);
 					break;
-				} else if (this.subType == "Solar Radiation"){
+				} else if (this.subType == "Solar Radiation") {
 					var SolRadDeviceService = new eDomoticzPlatform.SolRadDeviceService("Current radiation");
 					SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
 					services.push(SolRadDeviceService);
@@ -790,12 +887,12 @@ eDomoticzAccessory.prototype = {
 				temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
 					minValue: -100
 				});
-		        if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
-		          temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
-		          if (this.Type == "Temp + Humidity + Baro"){
-		            temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
-		          }
-		        }
+				if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
+					temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
+					if (this.Type == "Temp + Humidity + Baro") {
+						temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
+					}
+				}
 				if (this.batteryRef && this.batteryRef < 101) { // if batteryRef == 255 we're running on mains
 					temperatureSensorService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
 				}
@@ -819,12 +916,11 @@ eDomoticzAccessory.prototype = {
 				services.push(rainService);
 				break;
 			}
-
 		default:
 			{
 				var switchService = new Service.Switch(this.name);
-					switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-					services.push(switchService);
+				switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+				services.push(switchService);
 				break;
 			}
 		}
