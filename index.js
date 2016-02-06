@@ -1,4 +1,7 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.0.8 - 2016/02/05
+//    - Added SSL Protocol support
+//    - authorization header rather than within URL
 // V0.0.7 - 2016/02/05
 //	  - Fixed Today counter and WindChill characteristic
 // V0.0.6 - 2016/02/03
@@ -34,8 +37,9 @@
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",	// or "user:pass@ip"
 //         "port": "8080",
-//		     "roomid": 0  	// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//	}],
+//		     "roomid": 0 , 	// 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
+//	       "ssl": 0
+//      }],
 //
 // 	"accessories":[]
 // }
@@ -88,8 +92,14 @@ module.exports = function(homebridge) {
 function eDomoticzPlatform(log, config) {
 	this.log = log;
 	this.config = config;
-	this.server = config["server"];
-	this.port = config["port"];
+  this.server = config["server"];
+  if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1){
+    tmparr = this.server.split("@");
+    this.authstr = btoa(tmparr[0]);
+    this.server = tmparr[1];
+  }
+  this.ssl = config["ssl"];
+  this.port = config["port"];
 	this.room = config["roomid"];
 }
 
@@ -297,20 +307,26 @@ eDomoticzPlatform.prototype = {
 
 		asyncCalls++;
 		var domurl;
+    var prot = (this.ssl==1) ? "https://" : "http://";
 		if (!(this.room) || this.room == 0) {
-			domurl = "http://" + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
+			domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
 		} else {
-			domurl = "http://" + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
+			domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
 		}
+    var myopt;
+    if (this.authstr){
+      myopt = {'Authorization':this.authstr};
+    }
 		request.get({
 			url: domurl,
+      headers: myopt,
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel);
+						accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr);
 						foundAccessories.push(accessory);
 					})
 				}
@@ -322,7 +338,7 @@ eDomoticzPlatform.prototype = {
 	}
 }
 
-function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef) {
+function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth) {
 	this.log = log;
 	this.server = server;
 	this.port = port;
@@ -342,6 +358,7 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.access_url = "http://" + this.server + ":" + this.port + "/json.htm?";
 	this.control_url = this.access_url + "type=command&param=" + this.param + "&idx=" + this.idx;
 	this.status_url = this.access_url + "type=devices&rid=" + this.idx;
+  this.authstr = (auth) ? auth : '';
 }
 
 eDomoticzAccessory.prototype = {
@@ -358,7 +375,10 @@ eDomoticzAccessory.prototype = {
 			that.log("Setting power state to off");
 		}
 		request.put({
-			url: url
+			url: url,
+      header: {
+        'Authorization':that.authstr
+      }
 		}, function(err, response) {
 			if (err) {
 				that.log("There was a problem sending command to" + that.name);
@@ -370,8 +390,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getPowerState: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -384,13 +408,17 @@ eDomoticzAccessory.prototype = {
 				}
 				callback(null, value);
 			} else {
-				this.log("There was a problem connecting to Domoticz.");
+				that.log("There was a problem connecting to Domoticz.");
 			}
 		}.bind(this));
 	},
 	getRainfall: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -413,8 +441,12 @@ eDomoticzAccessory.prototype = {
 		callback();
 	},
 	getValue: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -432,8 +464,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getStringValue: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -451,10 +487,14 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
     getYLTodayValue: function(callback) {
-		request.get({
-			url: this.status_url,
-			json: true
-		}, function(err, response, json) {
+      var that = this;
+  		request.get({
+  			url: that.status_url,
+        header: {
+          'Authorization':that.authstr
+        },
+  			json: true
+  		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -470,10 +510,14 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
     getYLTotalValue: function(callback) {
-		request.get({
-			url: this.status_url,
-			json: true
-		}, function(err, response, json) {
+      var that = this;
+  		request.get({
+  			url: that.status_url,
+        header: {
+          'Authorization':that.authstr
+        },
+  			json: true
+  		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -489,8 +533,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getWindSpeed: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -508,8 +556,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getWindChill: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -527,8 +579,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getWindDirection: function(callback) {
+		rvar that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -546,8 +602,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getCPower: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -565,8 +625,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getTemperature: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
@@ -584,10 +648,14 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
     getHumidity: function(callback) {
-		request.get({
-			url: this.status_url,
-			json: true
-		}, function(err, response, json) {
+      var that = this;
+  		request.get({
+  			url: that.status_url,
+        header: {
+          'Authorization':that.authstr
+        },
+  			json: true
+  		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -603,10 +671,14 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
     getPressure: function(callback) {
-		request.get({
-			url: this.status_url,
-			json: true
-		}, function(err, response, json) {
+      var that = this;
+  		request.get({
+  			url: that.status_url,
+        header: {
+          'Authorization':that.authstr
+        },
+  			json: true
+  		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
 				var value
 				if (json['result'] != undefined) {
@@ -622,8 +694,12 @@ eDomoticzAccessory.prototype = {
 		}.bind(this));
 	},
 	getLowBatteryStatus: function(callback) {
+    var that = this;
 		request.get({
-			url: this.status_url,
+			url: that.status_url,
+      header: {
+        'Authorization':that.authstr
+      },
 			json: true
 		}, function(err, response, json) {
 			if (!err && response.statusCode == 200) {
