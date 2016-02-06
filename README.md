@@ -64,6 +64,12 @@ sudo npm update -g homebridge-edomoticz
 
 ## Tips
 
+### Authentication
+If Domoticz is set up to use basic or form login authentication, set "server":"user:pass@ip" within config.json. The plugin will internally extract the username and password, base64 encode it and send it as a http authorization header whenever it talks to your Domoticz server.
+
+### SSL
+Set "ssl":1 in config.json to turn on SSL (ie: server connects with https:// rather than http://). You will need to specify your SSL port - usually "port":"443" by default.
+
 ### Issues pairing to Homebridge when you have a lot of Domoticz sensors...
 If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (HomeKit only supports 100 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't). 
 
