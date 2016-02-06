@@ -18,8 +18,8 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - [x] kWh (electricity usage)
 - [x] General % usage
 - [ ] Improve val types with val type (int) and unit rather than relying on string
-- [ ] Brightness
-- [ ] Hue
+- [ ] Brightness/Dimming
+- [ ] Hue/RGB
 - [ ] m3 (gas usage)
 - [x] Humidity
 - [x] Pressure
