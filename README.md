@@ -54,6 +54,7 @@ sudo npm update -g homebridge-edomoticz
             "name": "eDomoticz",
             "server": "127.0.0.1",
             "port": "8080",
+            "ssl": 0,
             "roomid": 0
         }
     ],
