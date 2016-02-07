@@ -878,7 +878,7 @@ eDomoticzAccessory.prototype = {
 				} else {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
 					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
-					services.push(SolRadDeviceService);
+					services.push(MeterDeviceService);
 					break;
 				}
 			}
