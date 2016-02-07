@@ -6,6 +6,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 ##Supports:
 - Sockets (on/off) - Type: Switch, Lighting 1 & Lighting 2
 - Lamps (on/off) - Type: Switch, Lighting 1 & Lighting 2, Light/Switch, with or without dimming
+- Contact Sensors - Type: any, SwitchType: Contact
 - General kWh power meters (e.g.: CC EnvIR via script, Current & Total Consumption) - Type: General / Current, SubType: kWh
 - YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter, SubType: YouLess counter
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General, SubType: Percentage
@@ -24,6 +25,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - [x] Humidity
 - [x] Pressure
 - [x] YouLess Meter
+- [x] Open/Closed contact sensors
 - [ ] ...more sensors (ongoing)!
 
 ## Installation

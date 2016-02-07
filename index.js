@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.8 - 2016/02/07
+//	  - add support for SwitchType: Contact (basic open / closed)
 // V0.1.6 - 2016/02/07
 //	  - add another identifier for Current
 // V0.1.5 - 2016/02/07
@@ -384,6 +386,7 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.haveDimmer = (haveDimmer) ? haveDimmer : ((swType=="Dimmer") ? true : false);
 	this.maxDimLevel = maxDimLevel;
 	this.subType = subType;
+	this.swType = swType;
 	this.Type = Type;
 	this.batteryRef = batteryRef;
 	this.CounterToday = 1;
@@ -571,7 +574,11 @@ eDomoticzAccessory.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						value = s.Data;
+						if (s.SwitchType == "Contact"){
+							value = (value=="Closed")?0:1;
+						} else {
+							value = s.Data;
+						}
 					})
 				}
 				callback(null, value);
@@ -820,6 +827,12 @@ eDomoticzAccessory.prototype = {
 		informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
 		services.push(informationService);
 		switch (true) {
+		case this.swType == "Contact":
+			{
+				var contactService = new Service.ContactSensor(this.name);
+				contactService.getCharacteristic(Characteristic.ContactSensorState).on('get', this.getStringValue.bind(this));
+				break;
+			}
 		case this.Type == "Lighting 1" || this.Type == "Lighting 2" || this.Type == "Scene" || this.Type == "Light/Switch":
 			{
 				if (this.Image == "Light") {
