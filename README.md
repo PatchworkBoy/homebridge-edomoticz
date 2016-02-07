@@ -1,11 +1,11 @@
 # homebridge-eDomoticz
 A fully-fledged up-to-date Homebridge-Plugin
-for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1x
+for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
 
 ##Supports:
-- Sockets (on/off) - Type: Lighting 1 & Lighting 2
-- Lamps (on/off) - Type: Switch
+- Sockets (on/off) - Type: Switch, Lighting 1 & Lighting 2
+- Lamps (on/off) - Type: Switch, Lighting 1 & Lighting 2, Light/Switch, with or without dimming
 - General kWh power meters (e.g.: CC EnvIR via script, Current & Total Consumption) - Type: General, SubType: kWh
 - YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter, SubType: YouLess counter
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General, SubType: Percentage

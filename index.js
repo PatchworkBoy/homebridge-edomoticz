@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.5 - 2016/02/07
+//	  - add another identifier for a dimming light
 // V0.1.4 - 2016/02/06
 //    - removed extraneous cruft from Base64
 //	  - enable dimming
@@ -357,7 +359,7 @@ eDomoticzPlatform.prototype = {
 				if (json['result'] != undefined) {
 					var sArray = sortByKey(json['result'], "Name");
 					sArray.map(function(s) {
-						accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr);
+						accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType);
 						foundAccessories.push(accessory);
 					})
 				}
@@ -369,7 +371,7 @@ eDomoticzPlatform.prototype = {
 	}
 }
 
-function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth) {
+function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth, swType) {
 	this.log = log;
 	this.server = server;
 	this.port = port;
@@ -377,8 +379,8 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
 	this.status = status;
 	this.idx = idx;
 	this.name = name;
-	this.haveDimmer = haveDimmer; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
-	this.maxDimLevel = maxDimLevel; // Dimming not supported at the moment - needs adding. Ditto RGB etc.
+	this.haveDimmer = (haveDimmer) ? haveDimmer : ((swType=="Dimmer") ? true : false);
+	this.maxDimLevel = maxDimLevel;
 	this.subType = subType;
 	this.Type = Type;
 	this.batteryRef = batteryRef;
@@ -488,7 +490,7 @@ eDomoticzAccessory.prototype = {
 					}
 			});
 		}
-		var dim = (level / that.factor == 15)?16:level / that.factor;
+		var dim = (level / that.factor == 15) ? 16 : level / that.factor;
 		url = that.control_url + "&switchcmd=Set%20Level&level="+dim;
 		request.put({
 			url: url,
@@ -816,19 +818,19 @@ eDomoticzAccessory.prototype = {
 		informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
 		services.push(informationService);
 		switch (true) {
-		case this.Type == "Lighting 1" || this.Type == "Lighting 2" || this.Type == "Scene":
+		case this.Type == "Lighting 1" || this.Type == "Lighting 2" || this.Type == "Scene" || this.Type == "Light/Switch":
 			{
 				if (this.Image == "Light") {
 					var lightbulbService = new Service.Lightbulb(this.name);
 					lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-					if( this.haveDimmer == true ) {
+					if (this.haveDimmer == true) {
 	          lightbulbService
 	              .addCharacteristic(new Characteristic.Brightness())
 	              .on('set', this.setdValue.bind(this))
 	              .on('get', this.getdValue.bind(this));
 		      }
 					services.push(lightbulbService);
-				} else if( this.haveDimmer == true ) {
+				} else if (this.haveDimmer == true) {
 					var lightbulbService = new Service.Lightbulb(this.name);
 					lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
 						lightbulbService
