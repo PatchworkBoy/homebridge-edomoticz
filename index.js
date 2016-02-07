@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.6 - 2016/02/07
+//	  - add another identifier for Current
 // V0.1.5 - 2016/02/07
 //	  - add another identifier for a dimming light
 // V0.1.4 - 2016/02/06
@@ -845,7 +847,7 @@ eDomoticzAccessory.prototype = {
 				}
 				break;
 			}
-		case this.Type == "General" || this.Type == "YouLess Meter":
+		case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current":
 			{
 				if (this.subType == "kWh" || this.subType == "YouLess counter") {
 					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
@@ -871,6 +873,11 @@ eDomoticzAccessory.prototype = {
 				} else if (this.subType == "Solar Radiation") {
 					var SolRadDeviceService = new eDomoticzPlatform.SolRadDeviceService("Current radiation");
 					SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
+					services.push(SolRadDeviceService);
+					break;
+				} else {
+					var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
+					MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
 					services.push(SolRadDeviceService);
 					break;
 				}

@@ -6,7 +6,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 ##Supports:
 - Sockets (on/off) - Type: Switch, Lighting 1 & Lighting 2
 - Lamps (on/off) - Type: Switch, Lighting 1 & Lighting 2, Light/Switch, with or without dimming
-- General kWh power meters (e.g.: CC EnvIR via script, Current & Total Consumption) - Type: General, SubType: kWh
+- General kWh power meters (e.g.: CC EnvIR via script, Current & Total Consumption) - Type: General / Current, SubType: kWh
 - YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter, SubType: YouLess counter
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General, SubType: Percentage
 - Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) Type: Temp, Temp + Humidty, Temp + Humidity + Baro
