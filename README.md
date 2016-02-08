@@ -79,3 +79,6 @@ Therefore, to reduce the number of devices exposed from Domoticz, create a roomp
 
 ### Is my <<some accessory>> supported??
 See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL's#Retrieve_status_of_specific_device) - query your device as per the instructions there, and if your device’s Type/SubType aren’t in the ’Supports:' list above then it'll just appear as an On/Off switch. [Open a new issue](https://github.com/PatchworkBoy/homebridge-eDomoticz/issues/new) including the output from the json api and I’ll get look into supporting that particular device more fully!
+
+### I'm seeing an excess of dimmers / brightness faders
+If you refer to 'Is my <<some accessory>> supported??' above and check the device's JSON output, you'll likely find that Domiticz is stating that it's a dimmable device, and my plugin is simply doing as it's told. This is a Domoticz issue, or a user setup issue within Domoticz / Switch config. I'll admit I have suffered from this problem myself, and can't find any way to force Domoticz not to set this. As such to support Dimmers at all within this plugin means users will find odd devices appear to have a dimming ability within Homekit when realistically they don't.

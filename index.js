@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.2.0 - 2016/02/08
+//      - more work relating to dimmers and contact sensors
 // V0.1.9 - 2016/02/07
 //    - hopefully fixes an oopsie related to brightness on EVERY switch.
 // V0.1.8 - 2016/02/07
@@ -371,7 +373,7 @@ eDomoticzPlatform.prototype = {
                 if (json['result'] != undefined) {
                     var sArray = sortByKey(json['result'], "Name");
                     sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, prot);
+                        accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, prot, s.HardwareTypeVal);
                         foundAccessories.push(accessory);
                     })
                 }
@@ -383,8 +385,8 @@ eDomoticzPlatform.prototype = {
     }
 }
 
-function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth, swType, prot) {
-    if ((haveDimmer) || (swType == "Dimmer")) {
+function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth, swType, prot, hwType) {
+    if (((haveDimmer) || (swType == "Dimmer"))&&(hwType!==51)&&(swType!=="On/Off")) {
         this.haveDimmer = true;
         this.maxDimLevel = maxDimLevel;
     } else {
@@ -587,7 +589,7 @@ eDomoticzAccessory.prototype = {
                     var sArray = sortByKey(json['result'], "Name");
                     sArray.map(function(s) {
                         if (s.SwitchType == "Contact") {
-                            value = (value == "Closed") ? 0 : 1;
+                            value = (s.Data == "Closed") ? 0 : 1;
                         } else {
                             value = s.Data;
                         }
@@ -836,6 +838,15 @@ eDomoticzAccessory.prototype = {
     getServices: function() {
         var services = []
         var informationService = new Service.AccessoryInformation();
+        var lightTypes = [
+          'Lighting 1',
+          'Lighting 2',
+          'Lighting 3',
+          'Lighting 4',
+          'Lighting 5',
+          'Lighting 6',
+          'Lighting 7'
+        ];
         informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
         services.push(informationService);
         switch (true) {
@@ -845,7 +856,7 @@ eDomoticzAccessory.prototype = {
                 contactService.getCharacteristic(Characteristic.ContactSensorState).on('get', this.getStringValue.bind(this));
                 break;
             }
-        case this.Type == "Lighting 1" || this.Type == "Lighting 2" || this.Type == "Scene" || this.Type == "Light/Switch":
+        case lightTypes.indexOf(this.Type) > -1 || this.Type == "Scene" || this.Type == "Light/Switch":
             {
                 var lightbulbService = new Service.Lightbulb(this.name);
                 lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
