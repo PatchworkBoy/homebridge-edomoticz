@@ -1,5 +1,5 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.2.0 - 2016/02/08
+// V0.1.10 - 2016/02/08
 //      - more work relating to dimmers and contact sensors
 // V0.1.9 - 2016/02/07
 //    - hopefully fixes an oopsie related to brightness on EVERY switch.
