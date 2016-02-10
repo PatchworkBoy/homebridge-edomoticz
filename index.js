@@ -1019,6 +1019,12 @@ eDomoticzAccessory.prototype = {
                 services.push(rainService);
                 break;
             }
+            default:{
+              var dswitchService = new Service.Switch(this.name);
+              dswitchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+              services.push(dswitchService);
+              break;
+            }
           }
         }
         return services;
