@@ -4,22 +4,29 @@ for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
 
 ##Supports:
-- Sockets (on/off) - Type: Switch, Lighting 1 & Lighting 2
-- Lamps (on/off) - Type: Switch, Lighting 1 & Lighting 2, Light/Switch, with or without dimming
-- Contact Sensors - Type: any, SwitchType: Contact
-- General kWh power meters (e.g.: CC EnvIR via script, Current & Total Consumption) - Type: General / Current, SubType: kWh
-- YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter, SubType: YouLess counter
-- General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General, SubType: Percentage
-- Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) Type: Temp, Temp + Humidty, Temp + Humidity + Baro
-- DarkSkies Virtual Weather Station (Wind, Solar Radiation, Rainfall, Visibility, Barometer) - Various types & subtypes[/list]
+###Standard HomeKit Types:
+- Sockets (on/off) - Domoticz SwitchTypeVal: 0
+- Lamps (on/off) - Domoticz SwitchTypeVal: 0
+- Lamps (dimmer) - Domoticz SwitchTypeVal: 7
+- Contact Sensors - Domoticz SwitchTypeVal: 2
+- Smoke Detectors - Domoticz SwitchTypeVal: 5
+- Motion Sensors - Domoticz SwitchTypeVal: 8
+
+##Provides:
+###Custom HomeKit Types:
+- General kWh power meters - Types: General, Current; SubType: kWh
+- YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter; SubType: YouLess counter
+- General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General; SubType: Percentage
+- Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) - Type: Temp, Temp + Humidty, Temp + Humidity + Baro
+- DarkSkies Virtual Weather Station Sensors (Wind, Solar Radiation, Rainfall, Visibility, Barometer)
 
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
-- [ ] Improve val types with val type (int) and unit rather than relying on string
 - [ ] Hue/RGB
 - [ ] m3 (gas usage)
+- [x] Motion sensors
+- [x] Smoke Detectors
 - [x] Brightness/Dimming
-- [x] Respect Room setting if defined in config.json
 - [x] kWh (electricity usage)
 - [x] General % usage
 - [x] Humidity
@@ -78,4 +85,4 @@ If you have more than 100 devices in Domoticz, you need to limit the number of d
 Therefore, to reduce the number of devices exposed from Domoticz, create a roomplan within Domoticz via Setup > More Options > Plans > roomplan. Add only the devices you wish to be exposed to HomeKit to this new roomplan within Domoticz, and then get it's roomidx number. Set "roomid" in your config.json file to this room number.
 
 ### Is my <<some accessory>> supported??
-See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL's#Retrieve_status_of_specific_device) - query your device as per the instructions there, and if your device’s Type/SubType aren’t in the ’Supports:' list above then it'll just appear as an On/Off switch. [Open a new issue](https://github.com/PatchworkBoy/homebridge-eDomoticz/issues/new) including the output from the json api and I’ll get look into supporting that particular device more fully!
+See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL's#Retrieve_status_of_specific_device) - query your device as per the instructions there, and if your device’s SwitchTypeVal isn't in the 'Supports:' list or Type/SubType aren’t in the ’Provides:' list above then it'll just appear as an On/Off switch. [Open a new issue](https://github.com/PatchworkBoy/homebridge-eDomoticz/issues/new) including the output from the json api and I’ll get look into supporting that particular device more fully!
