@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.12 - 2016/02/18 EddyK69
+//    - add support for P1 Smart Meter (Energy)
 // V0.1.11 - 2016/02/10
 //    - rewritten switch detection to use SwitchTypeVal=0>17
 //    - de-verbosed object selectors & jshint'd end-to-end
@@ -951,8 +953,8 @@ eDomoticzAccessory.prototype = {
           }
         } else { // is a custom sensor
           switch(true){
-            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current":{
-              if (this.subType == "kWh" || this.subType == "YouLess counter") {
+            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "P1 Smart Meter":{
+              if (this.subType == "kWh" || this.subType == "YouLess counter" || this.subType == "Energy") {
                   var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
                   if (this.subType == "kWh") {
