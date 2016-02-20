@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.19 - 2016/02/19
+//    - Corrected UV Type checking (@EddyK69)
 // V0.1.16 - 18 - 2016/02/19
 //    - added P1 Smart Meter Energy subtype support
 //    - more work on Evohome
@@ -1141,7 +1143,7 @@ eDomoticzAccessory.prototype = {
           }
         } else { // is a custom sensor
           switch(true){
-            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current":{
+            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV":{
               if (this.subType == "kWh" || this.subType == "YouLess counter") {
                   var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
