@@ -1,4 +1,7 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.16 & 17 - 2016/02/19
+//    - added P1 Smart Meter Energy subtype support
+//    - more work on Evohome
 // V0.1.14 & 15 - 2016/02/19
 //    - added P1 Smart Meter kWh & Gas type / subtype support
 //    - added UVN800 support (@EddyK69)
@@ -923,7 +926,7 @@ eDomoticzAccessory.prototype = {
                       url = url + temp + "&mode=" + mode;
                       url = (mode == "TemporaryOverride")? "&until=" + now + "&used=true" : "&used=true";
                       that.log("Setting thermostat SetPoint to " + setpoint +", mode to " + mode);
-                      request.put({
+                      var putme = request.put({
                           url: url,
                           header: {
                               'Authorization': 'Basic '+that.authstr
@@ -942,6 +945,7 @@ eDomoticzAccessory.prototype = {
               }
           } else {
               this.log("There was a problem connecting to Domoticz.");
+              callback();
           }
         }.bind(this));
     },
@@ -1209,10 +1213,9 @@ eDomoticzAccessory.prototype = {
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
-                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('get', this.getTemperature.bind(this)).on('set', this.setPoint.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('set', this.setPoint.bind(this)).on('get', this.getTemperature.bind(this));
                 if (this.subType == "Zone"){
-                  HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('set', this.setPoint.bind(this));
-                  HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('get',this.getTempOverride.bind(this)).on('set',this.setTempOverride.bind(this));
+                  HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('set',this.setTempOverride.bind(this)).on('get',this.getTempOverride.bind(this));
                 }
                 services.push(HeatingDeviceService);
                 break;
@@ -1222,7 +1225,7 @@ eDomoticzAccessory.prototype = {
                   var P1GasMeterDeviceService = new eDomoticzPlatform.GasDeviceService("Gas Usage");
                   P1GasMeterDeviceService.getCharacteristic(eDomoticzPlatform.GasConsumption).on('get', this.getStringValue.bind(this));
                   services.push(P1GasMeterDeviceService);
-                } else if (this.subType == "kWh") {
+                } else if (this.subType == "kWh" || this.subType == "Energy") {
                   var P1ElecMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   P1ElecMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
                   P1ElecMeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
