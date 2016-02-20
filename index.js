@@ -1209,10 +1209,10 @@ eDomoticzAccessory.prototype = {
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
-                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('get', this.getTemperature.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('get', this.getTemperature.bind(this)).on('set', this.setPoint.bind(this));
                 if (this.subType == "Zone"){
                   HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('set', this.setPoint.bind(this));
-                  HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('set',this.setTempOverride.bind(this)).on('get',this.getTempOverride.bind(this));
+                  HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('get',this.getTempOverride.bind(this)).on('set',this.setTempOverride.bind(this));
                 }
                 services.push(HeatingDeviceService);
                 break;
