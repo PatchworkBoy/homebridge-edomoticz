@@ -1,5 +1,5 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.1.13 - 2016/02/19
+// V0.1.14 - 2016/02/19
 //    - added P1 Smart Meter kWh & Gas type / subtype support
 //    - added UVN800 support (@EddyK69)
 //    - added preliminary EvoHom / OpenTherm Gateway Thermostat / SetPoint support
