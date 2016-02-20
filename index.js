@@ -968,7 +968,7 @@ eDomoticzAccessory.prototype = {
                     sArray.map(function(s) {
                         var d1 = new Date(s.Until);
                         var diff = d1 - now;
-                        value = (diff/(60*60*1000));
+                        value = (diff/(60*1000));
                         // value = roundToHalf(s.Temp);
                     });
                 }
