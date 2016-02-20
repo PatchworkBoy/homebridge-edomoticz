@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.20 - 2016/02/19
+//    - Dimmers reflect power state
 // V0.1.19 - 2016/02/19
 //    - Corrected UV Type checking (@EddyK69)
 // V0.1.16 - 18 - 2016/02/19
@@ -534,7 +536,11 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                     var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = (s.Data == "On") ? 1 : 0;
+                        if (this.swTypeVal == 7){
+                          value = (s.LevelInt > 0) ? 1 : 0;
+                        } else {
+                          value = (s.Data == "On") ? 1 : 0;
+                        }
                     });
                 }
                 callback(null, value);
