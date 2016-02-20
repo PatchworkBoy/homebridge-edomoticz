@@ -1,5 +1,5 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.1.16 & 17 - 2016/02/19
+// V0.1.16 - 18 - 2016/02/19
 //    - added P1 Smart Meter Energy subtype support
 //    - more work on Evohome
 // V0.1.14 & 15 - 2016/02/19
@@ -895,7 +895,8 @@ eDomoticzAccessory.prototype = {
     },
     setTempOverride: function(setuntil, callback) {
       var url, that = this, temp;
-      var now = new Date.now();
+      var now = new Date();
+      var newnow,isonow;
       var mode;
       if (setuntil < 1) {
         mode = "Auto";
@@ -903,8 +904,8 @@ eDomoticzAccessory.prototype = {
         mode = "PermanentOverride";
       } else {
         mode = "TemporaryOverride";
-        now = now.addMinutes(setuntil);
-        now = now.toISOSttring();
+        newnow = new Date(now.getTime() + (setuntil * 60 * 1000));
+        isonow = newnow.toISOString();
       }
       request.get({
           url: that.status_url,
@@ -924,7 +925,7 @@ eDomoticzAccessory.prototype = {
 
                       url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
                       url = url + temp + "&mode=" + mode;
-                      url = (mode == "TemporaryOverride")? "&until=" + now + "&used=true" : "&used=true";
+                      url = (mode == "TemporaryOverride")? "&until=" + isonow + "&used=true" : "&used=true";
                       that.log("Setting thermostat SetPoint to " + setpoint +", mode to " + mode);
                       var putme = request.put({
                           url: url,
@@ -951,7 +952,7 @@ eDomoticzAccessory.prototype = {
     },
     getTempOverride: function(callback) {
         var that = this;
-        var now = new Date.now();
+        var now = new Date().getTime();
         request.get({
             url: that.status_url,
             header: {
