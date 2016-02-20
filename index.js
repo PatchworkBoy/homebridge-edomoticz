@@ -193,8 +193,8 @@ if (!Date.prototype.toISOString) {
 
   }());
 }
-Date.prototype.addHours = function(h) {
-  this.setTime(this.getTime() + (h*60*60*1000));
+Date.prototype.addMinutes = function(h) {
+  this.setTime(this.getTime() + (h*60*1000));
   return this;
 };
 
@@ -426,11 +426,7 @@ eDomoticzPlatform.prototype = {
         asyncCalls++;
         var domurl;
         var prot = (this.ssl == 1) ? "https://" : "http://";
-        if (!(this.room) || this.room === 0) {
-            domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
-        } else {
-            domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
-        }
+        domurl = (!(this.room) || this.room === 0) ? prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name" : prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
         var myopt;
         if (this.authstr) {
             myopt = {
@@ -672,8 +668,6 @@ eDomoticzAccessory.prototype = {
                             } else {
                               value = Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
                             }
-                        } else if (s.SwitchTypeVal == 1 && s.Type == "P1 Smart Meter" && s.subType == "Gas"){
-                            value = s.CounterToday;
                         } else if (s.SwitchTypeVal == 5) { //smoke
                             if(s.Data=="Off"){
                               value = Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
@@ -906,7 +900,7 @@ eDomoticzAccessory.prototype = {
         mode = "PermanentOverride";
       } else {
         mode = "TemporaryOverride";
-        now = now.addHours(setuntil);
+        now = now.addMinutes(setuntil);
         now = now.toISOSttring();
       }
       request.get({
@@ -1067,7 +1061,6 @@ eDomoticzAccessory.prototype = {
               services.push(contactService);
               break;
             }
-
             case this.swTypeVal == 5:{ //smoke
               var smokeService = new Service.SmokeSensor(this.name);
               smokeService.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getStringValue.bind(this));
@@ -1077,7 +1070,6 @@ eDomoticzAccessory.prototype = {
               services.push(smokeService);
               break;
             }
-
             case this.swTypeVal == 7:{ //dimmer
               var lightbulbService = new Service.Lightbulb(this.name);
               lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
@@ -1214,8 +1206,8 @@ eDomoticzAccessory.prototype = {
             }
             case this.Type == "Heating" || this.Type == "Thermostat":{
                 var HeatingDeviceService = new Service.Thermostat(this.name);
-                HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get');
-                HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get');
+                HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get',this.getState.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('get', this.getTemperature.bind(this));
                 if (this.subType == "Zone"){
