@@ -680,7 +680,7 @@ eDomoticzAccessory.prototype = {
                               value = Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
                             }
                         } else if (s.SwitchTypeVal == 5) { //smoke
-                            if(s.Data=="Off"){
+                            if(s.Data=="Off" || s.Data=="Normal"){
                               value = Characteristic.SmokeDetected.SMOKE_NOT_DETECTED;
                             } else {
                               value = Characteristic.SmokeDetected.SMOKE_DETECTED;
