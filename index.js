@@ -1,4 +1,9 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.23 - 2016/02/20
+//    - merge in bugfixes by @EddyK69 - commit/1ae1020146b5761f1aaa9bd69b6675210a777290
+//    - consistent that/this
+//    - removed some fluff
+//    - globally switched roundToHalf to OneDP
 // V0.1.21 & 22 - 2016/02/20
 //    - More work on Thermostat / SetPoint support
 // V0.1.20 - 2016/02/19
@@ -68,7 +73,7 @@
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",   // or "user:pass@ip"
 //         "port": "8080",
-//           "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
+//         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
 //         "ssl": 0
 //      }],
 //
@@ -215,19 +220,6 @@ function sortByKey(array, key) {
     });
 }
 
-function roundToHalf(value) {
-    var converted = parseFloat(value);
-    var decimal = (converted - parseInt(converted, 10));
-    decimal = Math.round(decimal * 10);
-    if (decimal == 5) {
-        return (parseInt(converted, 10) + 0.5);
-    }
-    if ((decimal < 3) || (decimal > 7)) {
-        return Math.round(converted);
-    } else {
-        return (parseInt(converted, 10) + 0.5);
-    }
-}
 function oneDP(value) {
    var converted = Math.round(value*10)/10;
    var fixed = converted.toFixed(1);
@@ -251,7 +243,7 @@ eDomoticzPlatform.TotalConsumption = function() {
     Characteristic.call(this, 'Total', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -260,7 +252,7 @@ eDomoticzPlatform.TodayConsumption = function() {
     Characteristic.call(this, 'Today', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -269,7 +261,7 @@ eDomoticzPlatform.CurrentConsumption = function() {
     Characteristic.call(this, 'Current', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -278,7 +270,7 @@ eDomoticzPlatform.GasConsumption = function() {
     Characteristic.call(this, 'Meter Total', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -315,7 +307,7 @@ eDomoticzPlatform.CurrentUsage = function() {
     Characteristic.call(this, 'Current Usage', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -331,7 +323,7 @@ eDomoticzPlatform.WindSpeed = function() {
     Characteristic.call(this, 'Wind Speed', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -341,7 +333,7 @@ eDomoticzPlatform.WindChill = function() {
     Characteristic.call(this, 'Wind Chill', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -351,7 +343,7 @@ eDomoticzPlatform.WindDirection = function() {
     Characteristic.call(this, 'Wind Direction', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -370,7 +362,7 @@ eDomoticzPlatform.Rainfall = function() {
     Characteristic.call(this, 'Amount today', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -386,7 +378,7 @@ eDomoticzPlatform.Visibility = function() {
     Characteristic.call(this, 'Distance', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -402,7 +394,7 @@ eDomoticzPlatform.SolRad = function() {
     Characteristic.call(this, 'Radiation', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
 };
@@ -418,10 +410,11 @@ eDomoticzPlatform.Barometer = function() {
     Characteristic.call(this, 'Pressure', charUUID);
     this.setProps({
         format: 'string',
-        perms: [Characteristic.Perms.READ]
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
     });
     this.value = this.getDefaultValue();
-}; /* End of Custom Services & Characteristics */
+};
+/* End of Custom Services & Characteristics */
 eDomoticzPlatform.prototype = {
     accessories: function(callback) {
         var that = this;
@@ -489,7 +482,7 @@ function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveD
     this.CounterToday = 1;
     this.onValue = "On";
     this.offValue = "Off";
-    this.param = "switchlight"; //need an if(this.Type=='Lighting 1' || 'Lighting 2'){} etc to set param for all other types.
+    this.param = "switchlight";
     this.access_url = prot + this.server + ":" + this.port + "/json.htm?";
     this.control_url = this.access_url + "type=command&param=" + this.param + "&idx=" + this.idx;
     this.status_url = this.access_url + "type=devices&rid=" + this.idx;
@@ -565,10 +558,10 @@ eDomoticzAccessory.prototype = {
                         value = s.Rain + "mm";
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -590,7 +583,7 @@ eDomoticzAccessory.prototype = {
                         });
                     }
                 } else {
-                    this.log("There was a problem connecting to Domoticz.");
+                    that.log("There was a problem connecting to Domoticz.");
                 }
             });
         }
@@ -635,10 +628,10 @@ eDomoticzAccessory.prototype = {
                         }
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -656,13 +649,13 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = roundToHalf(s.Data.replace(/[^\d.-]/g, ''));
+                        value = oneDP(s.Data.replace(/[^\d.-]/g, ''));
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -698,7 +691,7 @@ eDomoticzAccessory.prototype = {
                             } else {
                               value = true;
                             }
-                        } else { //just return Data prop
+                        } else {
                             if (that.name.indexOf("Gas") > -1 && that.Type=="General" && that.subType=="kWh") {
                               value = s.Usage;
                             } else {
@@ -707,10 +700,10 @@ eDomoticzAccessory.prototype = {
                         }
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -731,10 +724,10 @@ eDomoticzAccessory.prototype = {
                         value = s.CounterToday;
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -752,13 +745,13 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = roundToHalf(s.Counter) + " kWh";
+                        value = oneDP(s.Counter) + " kWh";
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -779,10 +772,10 @@ eDomoticzAccessory.prototype = {
                         value = s.Speed;
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -803,10 +796,10 @@ eDomoticzAccessory.prototype = {
                         value = String(s.Chill);
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -827,10 +820,10 @@ eDomoticzAccessory.prototype = {
                         value = s.Direction + " (" + s.DirectionStr + ")";
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -851,10 +844,10 @@ eDomoticzAccessory.prototype = {
                         value = s.Usage;
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -881,13 +874,12 @@ eDomoticzAccessory.prototype = {
                         var heat = (that.subType=="Zone") ? true : false;
                         var therm = (that.subType=="SetPoint") ? true : false;
                         value = ((heat) || (therm)) ? oneDP(s.SetPoint) : oneDP(s.Temp);
-                        // value = roundToHalf(s.Temp);
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -897,7 +889,7 @@ eDomoticzAccessory.prototype = {
       if (that.subType == "SetPoint"){
         url = that.access_url + "type=command&param=udevice&idx=" + that.idx;
         url = url + "&nvalue=0&svalue=" + setpoint;
-      } else if(that.subType == "Zone"){
+      } else if (that.subType == "Zone"){
         url = that.access_url + "type=setused&idx=" + that.idx + "&setpoint=";
         url = url + setpoint + "&mode=PermanentOverride&used=true";
       }
@@ -948,7 +940,7 @@ eDomoticzAccessory.prototype = {
                       var therm = (that.Type=="Thermostat" && that.subType=="SetPoint") ? true : false;
                       temp = (heat || therm) ? oneDP(s.SetPoint) : oneDP(s.Temp);
 
-                      url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
+                      url = that.access_url + "type=setused&idx=" + that.idx + "&setpoint=";
                       url = url + temp + "&mode=" + mode;
                       url = (mode == "TemporaryOverride")? "&until=" + isonow + "&used=true" : "&used=true";
                       that.log("Setting thermostat SetPoint to " + setpoint +", mode to " + mode);
@@ -966,18 +958,16 @@ eDomoticzAccessory.prototype = {
                           }
                           callback(null,setuntil);
                       });
-                      // value = roundToHalf(s.Temp);
                   });
               }
           } else {
-              this.log("There was a problem connecting to Domoticz.");
+              that.log("There was a problem connecting to Domoticz.");
               callback();
           }
         }.bind(this));
     },
     getTempOverride: function(callback) {
         var that = this;
-        var now = new Date().getTime();
         request.get({
             url: that.status_url,
             header: {
@@ -991,15 +981,15 @@ eDomoticzAccessory.prototype = {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
                         var d1 = new Date(s.Until);
+                        var now = new Date().getTime();
                         var diff = d1 - now;
                         value = (diff/(60*1000));
-                        // value = roundToHalf(s.Temp);
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -1017,13 +1007,13 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = roundToHalf(s.Humidity);
+                        value = oneDP(s.Humidity);
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -1041,13 +1031,13 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = roundToHalf(s.Barometer) + "hPa";
+                        value = oneDP(s.Barometer) + "hPa";
                     });
                 }
-                this.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -1074,7 +1064,7 @@ eDomoticzAccessory.prototype = {
                     callback(null, 1);
                 }
             } else {
-                this.log("There was a problem connecting to Domoticz.");
+                that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
@@ -1167,7 +1157,7 @@ eDomoticzAccessory.prototype = {
               break;
             }
           }
-        } else { // is a custom sensor
+        } else { // is a sensor
           switch(true){
             case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV":{
               if (this.subType == "kWh" || this.subType == "YouLess counter") {
@@ -1208,7 +1198,7 @@ eDomoticzAccessory.prototype = {
                 var temperatureSensorService = new Service.TemperatureSensor(this.name);
                 temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
                 temperatureSensorService.getCharacteristic(Characteristic.CurrentTemperature).setProps({
-                    minValue: -100
+                    minValue: -50
                 });
                 if (this.Type == "Temp + Humidity" || this.Type == "Temp + Humidity + Baro") {
                     temperatureSensorService.addCharacteristic(new Characteristic.CurrentRelativeHumidity()).on('get', this.getHumidity.bind(this));
@@ -1216,7 +1206,7 @@ eDomoticzAccessory.prototype = {
                         temperatureSensorService.addCharacteristic(new eDomoticzPlatform.Barometer()).on('get', this.getPressure.bind(this));
                     }
                 }
-                if (this.batteryRef && this.batteryRef !== 255) { // if batteryRef == 255 we're running on mains
+                if (this.batteryRef && this.batteryRef !== 255) {
                     temperatureSensorService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
                 }
                 services.push(temperatureSensorService);
