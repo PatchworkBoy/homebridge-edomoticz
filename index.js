@@ -1,4 +1,6 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.21 - 2016/02/20
+//    - More work on Thermostat / SetPoint support
 // V0.1.20 - 2016/02/19
 //    - Dimmers reflect power state
 // V0.1.19 - 2016/02/19
@@ -536,13 +538,14 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                     var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        if (this.swTypeVal == 7){
+                        if (that.swTypeVal == 7){
                           value = (s.LevelInt > 0) ? 1 : 0;
                         } else {
                           value = (s.Data == "On") ? 1 : 0;
                         }
                     });
                 }
+                that.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 that.log("There was a problem connecting to Domoticz.");
@@ -566,6 +569,7 @@ eDomoticzAccessory.prototype = {
                         value = s.Rain + "mm";
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -630,6 +634,7 @@ eDomoticzAccessory.prototype = {
                         value = value * that.factor;
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -653,6 +658,7 @@ eDomoticzAccessory.prototype = {
                         value = roundToHalf(s.Data.replace(/[^\d.-]/g, ''));
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -700,6 +706,7 @@ eDomoticzAccessory.prototype = {
                         }
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -723,6 +730,7 @@ eDomoticzAccessory.prototype = {
                         value = s.CounterToday;
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -746,6 +754,7 @@ eDomoticzAccessory.prototype = {
                         value = roundToHalf(s.Counter) + " kWh";
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -769,6 +778,7 @@ eDomoticzAccessory.prototype = {
                         value = s.Speed;
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -792,6 +802,7 @@ eDomoticzAccessory.prototype = {
                         value = String(s.Chill);
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -815,6 +826,7 @@ eDomoticzAccessory.prototype = {
                         value = s.Direction + " (" + s.DirectionStr + ")";
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -838,6 +850,7 @@ eDomoticzAccessory.prototype = {
                         value = s.Usage;
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -846,6 +859,7 @@ eDomoticzAccessory.prototype = {
     },
     getState: function(callback) {
       value = 1;
+      this.log("Static Data for "+this.name+": "+value);
       callback(null,value);
     },
     getTemperature: function(callback) {
@@ -859,15 +873,17 @@ eDomoticzAccessory.prototype = {
         }, function(err, response, json) {
             if (!err && response.statusCode == 200) {
                 var value;
+                // json = (new Function('return ' + json))();
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        var heat = (this.Type=="Heating" && this.subType=="Zone") ? true : false;
-                        var therm = (this.Type=="Thermostat" && this.subType=="SetPoint") ? true : false;
-                        value = (heat || therm) ? oneDP(s.SetPoint) : oneDP(s.Temp);
+                        var heat = (that.subType=="Zone") ? true : false;
+                        var therm = (that.subType=="SetPoint") ? true : false;
+                        value = ((heat) || (therm)) ? oneDP(s.SetPoint) : oneDP(s.Temp);
                         // value = roundToHalf(s.Temp);
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -927,8 +943,8 @@ eDomoticzAccessory.prototype = {
               if (json.result !== undefined) {
                 var sArray = sortByKey(json.result, "Name");
                   sArray.map(function(s) {
-                      var heat = (this.Type=="Heating" && this.subType=="Zone") ? true : false;
-                      var therm = (this.Type=="Thermostat" && this.subType=="SetPoint") ? true : false;
+                      var heat = (that.Type=="Heating" && that.subType=="Zone") ? true : false;
+                      var therm = (that.Type=="Thermostat" && that.subType=="SetPoint") ? true : false;
                       temp = (heat || therm) ? oneDP(s.SetPoint) : oneDP(s.Temp);
 
                       url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
@@ -979,6 +995,7 @@ eDomoticzAccessory.prototype = {
                         // value = roundToHalf(s.Temp);
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -1002,6 +1019,7 @@ eDomoticzAccessory.prototype = {
                         value = roundToHalf(s.Humidity);
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
@@ -1025,6 +1043,7 @@ eDomoticzAccessory.prototype = {
                         value = roundToHalf(s.Barometer) + "hPa";
                     });
                 }
+                this.log("Data Received for "+this.name+": "+value);
                 callback(null, value);
             } else {
                 this.log("There was a problem connecting to Domoticz.");
