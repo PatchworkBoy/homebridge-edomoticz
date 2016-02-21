@@ -1,5 +1,5 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.1.21 - 2016/02/20
+// V0.1.21 & 22 - 2016/02/20
 //    - More work on Thermostat / SetPoint support
 // V0.1.20 - 2016/02/19
 //    - Dimmers reflect power state
@@ -894,10 +894,10 @@ eDomoticzAccessory.prototype = {
       var url, that = this;
 
       if (that.subType == "SetPoint"){
-        url = that.access_url + "&type=command&param=udevice&idx=" + that.idx;
-        url = url + "&svalue=" + setpoint +";0;0;";
+        url = that.access_url + "type=command&param=udevice&idx=" + that.idx;
+        url = url + "&nvalue=0&svalue=" + setpoint;
       } else if(that.subType == "Zone"){
-        url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
+        url = that.access_url + "type=setused&idx=" + that.idx + "&setpoint=";
         url = url + setpoint + "&mode=PermanentOverride&used=true";
       }
       that.log("Setting thermostat SetPoint to " + setpoint);
