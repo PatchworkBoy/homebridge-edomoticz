@@ -1,5 +1,16 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.1.11 - 2016/02/10
+// V0.1.20 - 2016/02/19
+//    - Dimmers reflect power state
+// V0.1.19 - 2016/02/19
+//    - Corrected UV Type checking (@EddyK69)
+// V0.1.16 - 18 - 2016/02/19
+//    - added P1 Smart Meter Energy subtype support
+//    - more work on Evohome
+// V0.1.14 & 15 - 2016/02/19
+//    - added P1 Smart Meter kWh & Gas type / subtype support
+//    - added UVN800 support (@EddyK69)
+//    - added preliminary EvoHom / OpenTherm Gateway Thermostat / SetPoint support
+// V0.1.11 & 12 - 2016/02/10
 //    - rewritten switch detection to use SwitchTypeVal=0>17
 //    - de-verbosed object selectors & jshint'd end-to-end
 //    - added: smoke detector, motion detector
@@ -86,7 +97,10 @@ module.exports = function(homebridge) {
     uuid = homebridge.hap.uuid;
     fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
     fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
+    fixInheritance(eDomoticzPlatform.GasConsumption, Characteristic);
+    fixInheritance(eDomoticzPlatform.TempOverride, Characteristic);
     fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
+    fixInheritance(eDomoticzPlatform.GasDeviceService, Service);
     fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
     fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
     fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
@@ -163,6 +177,34 @@ function eDomoticzPlatform(log, config) {
 }
 
  /* Handy Utility Functions */
+if (!Date.prototype.toISOString) {
+  (function() {
+
+    function pad(number) {
+      if (number < 10) {
+        return '0' + number;
+      }
+      return number;
+    }
+
+    Date.prototype.toISOString = function() {
+      return this.getUTCFullYear() +
+        '-' + pad(this.getUTCMonth() + 1) +
+        '-' + pad(this.getUTCDate()) +
+        'T' + pad(this.getUTCHours()) +
+        ':' + pad(this.getUTCMinutes()) +
+        ':' + pad(this.getUTCSeconds()) +
+        '.' + (this.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+        'Z';
+    };
+
+  }());
+}
+Date.prototype.addMinutes = function(h) {
+  this.setTime(this.getTime() + (h*60*1000));
+  return this;
+};
+
 function sortByKey(array, key) {
     return array.sort(function(a, b) {
         var x = a[key];
@@ -183,6 +225,11 @@ function roundToHalf(value) {
     } else {
         return (parseInt(converted, 10) + 0.5);
     }
+}
+function oneDP(value) {
+   var converted = Math.round(value*10)/10;
+   var fixed = converted.toFixed(1);
+   return parseFloat(fixed);
 }
 
 function fixInheritance(subclass, superclass) {
@@ -224,6 +271,28 @@ eDomoticzPlatform.CurrentConsumption = function() {
     });
     this.value = this.getDefaultValue();
 };
+eDomoticzPlatform.GasConsumption = function() {
+    var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
+    Characteristic.call(this, 'Meter Total', charUUID);
+    this.setProps({
+        format: 'string',
+        perms: [Characteristic.Perms.READ]
+    });
+    this.value = this.getDefaultValue();
+};
+// Custom SetPoint Minutes characteristic for TempOverride modes
+eDomoticzPlatform.TempOverride = function() {
+    var charUUID = uuid.generate('eDomoticz:customchar:OverrideTime');
+    Characteristic.call(this, 'Override (Mins, 0 = Auto, 481 = Permanent)', charUUID);
+    this.setProps({
+        format: 'float',
+        maxValue: 481,
+        minValue: 0,
+        minStep: 1,
+        perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+    });
+    this.value = this.getDefaultValue();
+};
 // The PowerMeter itself
 eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
     var serviceUUID = uuid.generate('eDomoticz:powermeter:customservice');
@@ -231,6 +300,12 @@ eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
     this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption());
     this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption());
     this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption());
+};
+// P1 Smart Meter -> Gas
+eDomoticzPlatform.GasDeviceService = function(displayName, subtype) {
+    var serviceUUID = uuid.generate('eDomoticz:gasmeter:customservice');
+    Service.call(this, displayName, serviceUUID, subtype);
+    this.addCharacteristic(new eDomoticzPlatform.GasConsumption());
 };
 // Usage Meter Characteristics
 eDomoticzPlatform.CurrentUsage = function() {
@@ -358,11 +433,7 @@ eDomoticzPlatform.prototype = {
         asyncCalls++;
         var domurl;
         var prot = (this.ssl == 1) ? "https://" : "http://";
-        if (!(this.room) || this.room === 0) {
-            domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name";
-        } else {
-            domurl = prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
-        }
+        domurl = (!(this.room) || this.room === 0) ? prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name" : prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
         var myopt;
         if (this.authstr) {
             myopt = {
@@ -465,7 +536,11 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                     var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = (s.Data == "On") ? 1 : 0;
+                        if (this.swTypeVal == 7){
+                          value = (s.LevelInt > 0) ? 1 : 0;
+                        } else {
+                          value = (s.Data == "On") ? 1 : 0;
+                        }
                     });
                 }
                 callback(null, value);
@@ -617,7 +692,11 @@ eDomoticzAccessory.prototype = {
                               value = true;
                             }
                         } else { //just return Data prop
-                            value = s.Data;
+                            if (that.name.indexOf("Gas") > -1 && that.Type=="General" && that.subType=="kWh") {
+                              value = s.Usage;
+                            } else {
+                              value = s.Data;
+                            }
                         }
                     });
                 }
@@ -765,6 +844,10 @@ eDomoticzAccessory.prototype = {
             }
         }.bind(this));
     },
+    getState: function(callback) {
+      value = 1;
+      callback(null,value);
+    },
     getTemperature: function(callback) {
         var that = this;
         request.get({
@@ -779,7 +862,121 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = roundToHalf(s.Temp);
+                        var heat = (this.Type=="Heating" && this.subType=="Zone") ? true : false;
+                        var therm = (this.Type=="Thermostat" && this.subType=="SetPoint") ? true : false;
+                        value = (heat || therm) ? oneDP(s.SetPoint) : oneDP(s.Temp);
+                        // value = roundToHalf(s.Temp);
+                    });
+                }
+                callback(null, value);
+            } else {
+                this.log("There was a problem connecting to Domoticz.");
+            }
+        }.bind(this));
+    },
+    setPoint: function(setpoint, callback) {
+      var url, that = this;
+
+      if (that.subType == "SetPoint"){
+        url = that.access_url + "&type=command&param=udevice&idx=" + that.idx;
+        url = url + "&svalue=" + setpoint +";0;0;";
+      } else if(that.subType == "Zone"){
+        url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
+        url = url + setpoint + "&mode=PermanentOverride&used=true";
+      }
+      that.log("Setting thermostat SetPoint to " + setpoint);
+
+      request.put({
+          url: url,
+          header: {
+              'Authorization': 'Basic '+that.authstr
+          }
+      }, function(err, response) {
+          if (err) {
+              that.log("There was a problem sending command to" + that.name);
+              that.log(response);
+          } else {
+              that.log(that.name + " sent command succesfully");
+          }
+          callback(null, setpoint);
+      }.bind(this));
+    },
+    setTempOverride: function(setuntil, callback) {
+      var url, that = this, temp;
+      var now = new Date();
+      var newnow,isonow;
+      var mode;
+      if (setuntil < 1) {
+        mode = "Auto";
+      } else if (setuntil > 480) {
+        mode = "PermanentOverride";
+      } else {
+        mode = "TemporaryOverride";
+        newnow = new Date(now.getTime() + (setuntil * 60 * 1000));
+        isonow = newnow.toISOString();
+      }
+      request.get({
+          url: that.status_url,
+          header: {
+              'Authorization': 'Basic '+that.authstr
+          },
+          json: true
+      }, function(err, response, json) {
+          if (!err && response.statusCode == 200) {
+              var value;
+              if (json.result !== undefined) {
+                var sArray = sortByKey(json.result, "Name");
+                  sArray.map(function(s) {
+                      var heat = (this.Type=="Heating" && this.subType=="Zone") ? true : false;
+                      var therm = (this.Type=="Thermostat" && this.subType=="SetPoint") ? true : false;
+                      temp = (heat || therm) ? oneDP(s.SetPoint) : oneDP(s.Temp);
+
+                      url = that.access_url + "&type=setused&idx=" + that.idx + "&setpoint=";
+                      url = url + temp + "&mode=" + mode;
+                      url = (mode == "TemporaryOverride")? "&until=" + isonow + "&used=true" : "&used=true";
+                      that.log("Setting thermostat SetPoint to " + setpoint +", mode to " + mode);
+                      var putme = request.put({
+                          url: url,
+                          header: {
+                              'Authorization': 'Basic '+that.authstr
+                          }
+                      }, function(err, response) {
+                          if (err) {
+                              that.log("There was a problem sending command to" + that.name);
+                              that.log(response);
+                          } else {
+                              that.log(that.name + " sent command succesfully");
+                          }
+                          callback(null,setuntil);
+                      });
+                      // value = roundToHalf(s.Temp);
+                  });
+              }
+          } else {
+              this.log("There was a problem connecting to Domoticz.");
+              callback();
+          }
+        }.bind(this));
+    },
+    getTempOverride: function(callback) {
+        var that = this;
+        var now = new Date().getTime();
+        request.get({
+            url: that.status_url,
+            header: {
+                'Authorization': 'Basic '+that.authstr
+            },
+            json: true
+        }, function(err, response, json) {
+            if (!err && response.statusCode == 200) {
+                var value;
+                if (json.result !== undefined) {
+                  var sArray = sortByKey(json.result, "Name");
+                    sArray.map(function(s) {
+                        var d1 = new Date(s.Until);
+                        var diff = d1 - now;
+                        value = (diff/(60*1000));
+                        // value = roundToHalf(s.Temp);
                     });
                 }
                 callback(null, value);
@@ -866,6 +1063,9 @@ eDomoticzAccessory.prototype = {
         var informationService = new Service.AccessoryInformation();
         informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
         services.push(informationService);
+        if (this.Type=="P1 Smart Meter" && this.swTypeVal==1 && this.subType=="Gas"){
+          this.swTypeVal = false; //cludgey fix for a P1 SmartMeter Virtual Sensor being ID'd as a doorbell in Domoticz
+        }
         if (typeof this.swTypeVal !=='undefined' && this.swTypeVal){ // is a switch
           switch (true) {
             case this.swTypeVal == 2:{ //contact
@@ -874,7 +1074,6 @@ eDomoticzAccessory.prototype = {
               services.push(contactService);
               break;
             }
-
             case this.swTypeVal == 5:{ //smoke
               var smokeService = new Service.SmokeSensor(this.name);
               smokeService.getCharacteristic(Characteristic.SmokeDetected).on('get', this.getStringValue.bind(this));
@@ -884,7 +1083,6 @@ eDomoticzAccessory.prototype = {
               services.push(smokeService);
               break;
             }
-
             case this.swTypeVal == 7:{ //dimmer
               var lightbulbService = new Service.Lightbulb(this.name);
               lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
@@ -951,7 +1149,7 @@ eDomoticzAccessory.prototype = {
           }
         } else { // is a custom sensor
           switch(true){
-            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current":{
+            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV":{
               if (this.subType == "kWh" || this.subType == "YouLess counter") {
                   var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
@@ -973,7 +1171,7 @@ eDomoticzAccessory.prototype = {
                   VisibilityDeviceService.getCharacteristic(eDomoticzPlatform.Visibility).on('get', this.getStringValue.bind(this));
                   services.push(VisibilityDeviceService);
                   break;
-              } else if (this.subType == "Solar Radiation") {
+              } else if (this.subType == "Solar Radiation" || this.subType == "UVN800") {
                   var SolRadDeviceService = new eDomoticzPlatform.SolRadDeviceService("Current radiation");
                   SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
                   services.push(SolRadDeviceService);
@@ -1017,6 +1215,32 @@ eDomoticzAccessory.prototype = {
                 var rainService = new eDomoticzPlatform.RainDeviceService(this.name);
                 rainService.getCharacteristic(eDomoticzPlatform.Rainfall).on('get', this.getRainfall.bind(this));
                 services.push(rainService);
+                break;
+            }
+            case this.Type == "Heating" || this.Type == "Thermostat":{
+                var HeatingDeviceService = new Service.Thermostat(this.name);
+                HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get',this.getState.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get',this.getState.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('set', this.setPoint.bind(this)).on('get', this.getTemperature.bind(this));
+                if (this.subType == "Zone"){
+                  HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('set',this.setTempOverride.bind(this)).on('get',this.getTempOverride.bind(this));
+                }
+                services.push(HeatingDeviceService);
+                break;
+              }
+            case this.Type == "P1 Smart Meter":{
+                if (this.subType == "Gas"){
+                  var P1GasMeterDeviceService = new eDomoticzPlatform.GasDeviceService("Gas Usage");
+                  P1GasMeterDeviceService.getCharacteristic(eDomoticzPlatform.GasConsumption).on('get', this.getStringValue.bind(this));
+                  services.push(P1GasMeterDeviceService);
+                } else if (this.subType == "kWh" || this.subType == "Energy") {
+                  var P1ElecMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
+                  P1ElecMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
+                  P1ElecMeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getStringValue.bind(this));
+                  P1ElecMeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+                  services.push(P1ElecMeterDeviceService);
+                }
                 break;
             }
             default:{
