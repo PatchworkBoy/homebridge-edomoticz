@@ -538,11 +538,7 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                     var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        if (that.swTypeVal == 7){
-                          value = (s.LevelInt > 0) ? 1 : 0;
-                        } else {
-                          value = (s.Data == "On") ? 1 : 0;
-                        }
+                        value = (s.Status == "Off") ? 0 : 1;
                     });
                 }
                 that.log("Data Received for "+this.name+": "+value);
@@ -629,9 +625,14 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                     var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = s.LevelInt;
-                        that.factor = 100 / s.MaxDimLevel;
-                        value = value * that.factor;
+                        if (s.Status == "Off") {
+                            value = 0;
+                        }
+                        else {
+                            value = s.LevelInt;
+                            that.factor = 100 / s.MaxDimLevel;
+                            value = value * that.factor;
+                        }
                     });
                 }
                 this.log("Data Received for "+this.name+": "+value);
