@@ -1,4 +1,7 @@
 // _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
+// V0.1.24 - 2016/02/26
+//    - fixed batterysensor for Motion Detectors (was: get before it was added = err thrown)
+//    - merge @gerard33/patch-1 pull request: Add smoke detector status Normal
 // V0.1.23 - 2016/02/20
 //    - merge in bugfixes by @EddyK69 - commit/1ae1020146b5761f1aaa9bd69b6675210a777290
 //    - consistent that/this
@@ -534,7 +537,7 @@ eDomoticzAccessory.prototype = {
                         value = (s.Status == "Off") ? 0 : 1;
                     });
                 }
-                that.log("Data Received for "+this.name+": "+value);
+                that.log("Data Received for "+that.name+": "+value);
                 callback(null, value);
             } else {
                 that.log("There was a problem connecting to Domoticz.");
@@ -867,7 +870,6 @@ eDomoticzAccessory.prototype = {
         }, function(err, response, json) {
             if (!err && response.statusCode == 200) {
                 var value;
-                // json = (new Function('return ' + json))();
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
@@ -1104,7 +1106,7 @@ eDomoticzAccessory.prototype = {
               var motionService = new Service.MotionSensor(this.name);
               motionService.getCharacteristic(Characteristic.MotionDetected).on('get', this.getStringValue.bind(this));
               if (this.batteryRef && this.batteryRef !== 255) { // if batteryRef == 255 we're running on mains
-                  motionService.getCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
+                  motionService.addCharacteristic(new Characteristic.StatusLowBattery()).on('get', this.getLowBatteryStatus.bind(this));
               }
               services.push(motionService);
               break;
