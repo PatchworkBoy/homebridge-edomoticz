@@ -11,19 +11,22 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Contact Sensors - Domoticz SwitchTypeVal: 2
 - Smoke Detectors - Domoticz SwitchTypeVal: 5
 - Motion Sensors - Domoticz SwitchTypeVal: 8
+- Thermostats - EvoHome / OpenTherm Gateway Thermostat SetPoint support
 
 ##Provides:
 ###Custom HomeKit Types:
-- General kWh power meters - Types: General, Current; SubType: kWh
+- General kWh power meters - Types: General, Current; SubType: kWh (for Gas, make sure the word Gas features in sensor name)
+- P1 Smart Meters (Gas m3 & Elec W/kW)
 - YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter; SubType: YouLess counter
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General; SubType: Percentage
+- UVN800 support (@EddyK69)
 - Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) - Type: Temp, Temp + Humidty, Temp + Humidity + Baro
 - DarkSkies Virtual Weather Station Sensors (Wind, Solar Radiation, Rainfall, Visibility, Barometer)
 
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [ ] Hue/RGB
-- [ ] m3 (gas usage)
+- [x] m3 (gas usage)
 - [x] Motion sensors
 - [x] Smoke Detectors
 - [x] Brightness/Dimming
