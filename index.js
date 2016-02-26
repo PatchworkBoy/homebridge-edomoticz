@@ -1,67 +1,17 @@
-// _Extended_ (e)Domoticz Platform Plugin for HomeBridge by Marci [http://twitter.com/marcisshadow]
-// V0.1.24 - 2016/02/26
-//    - fixed batterysensor for Motion Detectors (was: get before it was added = err thrown)
-//    - merge @gerard33/patch-1 pull request: Add smoke detector status Normal
-// V0.1.23 - 2016/02/20
-//    - merge in bugfixes by @EddyK69 - commit/1ae1020146b5761f1aaa9bd69b6675210a777290
-//    - consistent that/this
-//    - removed some fluff
-//    - globally switched roundToHalf to OneDP
-// V0.1.21 & 22 - 2016/02/20
-//    - More work on Thermostat / SetPoint support
-// V0.1.20 - 2016/02/19
-//    - Dimmers reflect power state
-// V0.1.19 - 2016/02/19
-//    - Corrected UV Type checking (@EddyK69)
-// V0.1.16 - 18 - 2016/02/19
-//    - added P1 Smart Meter Energy subtype support
-//    - more work on Evohome
-// V0.1.14 & 15 - 2016/02/19
-//    - added P1 Smart Meter kWh & Gas type / subtype support
-//    - added UVN800 support (@EddyK69)
-//    - added preliminary EvoHom / OpenTherm Gateway Thermostat / SetPoint support
-// V0.1.11 & 12 - 2016/02/10
-//    - rewritten switch detection to use SwitchTypeVal=0>17
-//    - de-verbosed object selectors & jshint'd end-to-end
-//    - added: smoke detector, motion detector
-//    - fixed: dimmmer allocation, contact sensors
-// V0.1.10 - 2016/02/08
-//    - more work relating to dimmers and contact sensors
-// V0.1.9 - 2016/02/07
-//    - hopefully fixes an oopsie related to brightness on EVERY switch.
-// V0.1.8 - 2016/02/07
-//    - add support for SwitchType: Contact (basic open / closed)
-// V0.1.6 - 2016/02/07
-//    - add another identifier for Current
-// V0.1.5 - 2016/02/07
-//    - add another identifier for a dimming light
-// V0.1.4 - 2016/02/06
-//    - removed extraneous cruft from Base64
-//    - enable dimming
-// V0.1.2 - 2016/02/05
-//    - Added SSL Protocol support
-//    - authorization header rather than within URL
-// V0.0.7 - 2016/02/05
-//    - Fixed Today counter and WindChill characteristic
-// V0.0.6 - 2016/02/03
-//    - Full DarkSkies Virtual Sensor support (Rain, Wind, Barometer, Solar Radiation, Visibility
-// V0.0.5 - 2016/02/03
-//    - Added YouLess counter support (Type: YouLess Meter, SubType: YouLess counter)
-//    - Expanded Temp sensor to include humidity & pressure (if present)
-//    - fixed UUID generation
-// V0.0.4 - 2016/01/31
-//      - Fixed 'Siri Name' disappearance
-// V0.0.3 - 2016/01/31
-//      - Added General Usage Sensors (Type: General, SubType: Percentage)
-// V0.0.2 - 2016/01/31
-//      - Added Electric Consumption sensors (Type: General, SubType: kWh)
-// V0.0.1 - 2016/01/31
-//      - Initial version
-//      - I make no claims to the quality of this shim. Function over form!
+//         ____                        _   _          
+//     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.25
+//    / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
+//   |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
+//    \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
+//       www.npmjs.com/package/homebridge-edomoticz
 //
-// ** Remember to add platform to config.json **
+//       A Platform Plugin for HomeBridge by Marci
+//           [http://twitter.com/marcisshadow]
 //
-// Example config.json content:
+//
+//     ** Remember to add platform to config.json **
+//
+// Example ~/.homebridge/config.json content:
 //
 // {
 //  "bridge": {
@@ -83,18 +33,6 @@
 //  "accessories":[]
 // }
 //
-//
-// SUPPORTED TYPES:
-// - Lightbulb              (haveDimmer, onValue, offValue options)
-// - Switch                 (onValue, offValue options)
-// - TemperatureSensor      ()
-// - Contact                ()
-// - Temp & Humidity Sensor
-// - Temp & Humidity & Barometer
-// - YouLess Meter
-// - Battery                (batteryThreshold option)
-// - Power Meter            ()
-// - Usage Sensors          () [eg: CPU Load, Disk Load, Mem Load from Motherboard Sensors Hardware Device]
 
 
 var Service, Characteristic, types, uuid, hapLegacyTypes;
