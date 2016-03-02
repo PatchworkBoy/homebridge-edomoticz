@@ -15,15 +15,20 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 ##Provides:
 ###Custom HomeKit Types:
 - General kWh power meters - Types: General, Current; SubType: kWh
+- CurrentCost USB power meter - Type: Usage, SubType: Electric
+- P1 Smart Meter (Electric & Gas)
+- EvoHome** / OpenTherm Thermostat support - Types: Heating, Thermostat; SubTypes: Zone, SetPoint
 - YouLess Meter (Current, Total and Today Total Consumption) - Type: YouLess Meter; SubType: YouLess counter
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General; SubType: Percentage
 - Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) - Type: Temp, Temp + Humidty, Temp + Humidity + Baro
 - DarkSkies Virtual Weather Station Sensors (Wind, Solar Radiation, Rainfall, Visibility, Barometer)
 
+** assumes the EvoHome has been setup according to [this script method](https://www.domoticz.com/wiki/Evohome#Scripting_for_RFG100).
+
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [ ] Hue/RGB
-- [ ] m3 (gas usage)
+- [x] m3 (gas usage)
 - [x] Motion sensors
 - [x] Smoke Detectors
 - [x] Brightness/Dimming
@@ -86,3 +91,6 @@ Therefore, to reduce the number of devices exposed from Domoticz, create a roomp
 
 ### Is my <<some accessory>> supported??
 See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL's#Retrieve_status_of_specific_device) - query your device as per the instructions there, and if your device’s SwitchTypeVal isn't in the 'Supports:' list or Type/SubType aren’t in the ’Provides:' list above then it'll just appear as an On/Off switch. [Open a new issue](https://github.com/PatchworkBoy/homebridge-eDomoticz/issues/new) including the output from the json api and I’ll get look into supporting that particular device more fully!
+
+### What does the Override slider represent on the EvoHome Thermostat?
+Override-Until time in minutes from the current time. Allows setting an override-until time upto 8 hours in the future. Setting this slider to 0 will set the heating mode to Auto. Setting it to 481 will set the override as a PermanentOverride.
