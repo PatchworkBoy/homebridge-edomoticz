@@ -1,5 +1,5 @@
-//         ____                        _   _          
-//     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.25
+//         ____                        _   _
+//     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.26
 //    / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
 //   |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
 //    \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
@@ -782,7 +782,7 @@ eDomoticzAccessory.prototype = {
                 if (json.result !== undefined) {
                   var sArray = sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        value = s.Usage;
+                        value = (that.Type=="Usage" && that.subType=="Electric") ? s.Data : s.Usage;
                     });
                 }
                 that.log("Data Received for "+that.name+": "+value);
@@ -1099,8 +1099,8 @@ eDomoticzAccessory.prototype = {
           }
         } else { // is a sensor
           switch(true){
-            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV":{
-              if (this.subType == "kWh" || this.subType == "YouLess counter") {
+            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV" || this.Type == "Usage":{
+              if (this.subType == "kWh" || this.subType == "YouLess counter" || this.subType == "Electric") {
                   var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
                   if (this.subType == "kWh") {
@@ -1108,7 +1108,9 @@ eDomoticzAccessory.prototype = {
                   } else if (this.subType == "YouLess counter") {
                       MeterDeviceService.getCharacteristic(eDomoticzPlatform.TotalConsumption).on('get', this.getYLTotalValue.bind(this));
                   }
-                  MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+                  if (this.subType !== "Electric"){
+                    MeterDeviceService.getCharacteristic(eDomoticzPlatform.TodayConsumption).on('get', this.getYLTodayValue.bind(this));
+                  }
                   services.push(MeterDeviceService);
                   break;
               } else if (this.subType == "Percentage") {
