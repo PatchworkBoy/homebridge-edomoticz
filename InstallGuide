@@ -1,0 +1,68 @@
+         ____                        _   _
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.26
+    / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
+   |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
+    \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
+       www.npmjs.com/package/homebridge-edomoticz
+
+       A Platform Plugin for HomeBridge by Marci
+           [http://twitter.com/marcisshadow]
+           
+  
+From a clean install of Jessie on Raspberry Pi 3, booted up and connected to WLAN...
+
+sudo apt-get update
+sudo apt-get upgrade
+sudo reboot
+
+sudo rpi-update
+sudo reboot
+
+mkdir ~/domoticz
+cd ~/domoticz
+wget http://www.domoticz.com/releases/release/domoticz_linux_armv7l.tgz
+tar xvfz domoticz_linux_armv7l.tgz
+rm domoticz_linux_armv7l.tgz
+
+sudo cp domoticz.sh /etc/init.d
+sudo chmod +x /etc/init.d/domoticz.sh
+sudo update-rc.d domoticz.sh defaults
+
+cd ~/domoticz
+sudo ./domoticz
+
+[ctrl-c]
+
+sudo service domoticz.sh start
+
+sudo rm -rf /usr/local/{lib/node{,/.npm,_modules},bin,share/man}/{npm*,node*,man1/node*} /var/db/receipts/org.nodejs.*
+hash -r
+sudo su -c 'echo "deb https://deb.nodesource.com/armv6l-node/ weezy main" >> /etc/apt/sources.list'
+sudo curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+sudo apt-get install nodejs
+sudo apt-get install libavahi-compat-libdnssd-dev
+sudo apt-get install git
+
+sudo npm install -g homebridge
+sudo npm install -g forever
+sudo npm install -g homebridge-edomoticz
+
+mkdir ~/.homebridge
+pico ~/.homebridge/config.json [refer to https://github.com/PatchworkBoy/homebridge-eDomoticz]
+
+forever start /usr/local/lib/node_modules/homebridge/bin/homebridge 
+
+[if above doesn't exist, probably: forever start /usr/bin/homebridge]
+
+tail -f `ls -t ~/.forever/*.log | grep -v '^d' | head -n1`
+
+[ctrl-c]
+
+sudo pico /etc/init.d/homebridge.sh [refer to https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272#p72791]
+
+sudo chmod +x homebridge.sh && sudo update-rc.d homebridge.sh defaults
+
+sudo apt-get install pi-bluetooth bluetooth bluez blueman [RaspberryPi 3 only]
+
+sudo reboot
+[done]
