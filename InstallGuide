@@ -18,6 +18,14 @@ sudo reboot
 sudo BRANCH=next rpi-update    [fixes Wifi Ch12/13 issue with rPi3 WiFi]
 iwconfig wlan0 power off       [fixes powermanagement issue with rPi3 WiFi]
 
+sudo touch /etc/network/if-up.d/wlan0                   [these lines make the powermanagement fix permanent]
+sudo chmod +x /etc/network/if-up.d/wlan0
+sudo chmod 777 /etc/network/if-up.d/wlan0
+sudo echo -e '#!/bin/bash\niwconfig wlan0 power off' > /etc/network/if-up.d/wlan0
+sudo chmod 755 /etc/network/if-up.d/wlan0
+
+sudo reboot
+
 
 mkdir ~/domoticz
 cd ~/domoticz
