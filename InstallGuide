@@ -15,8 +15,9 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo reboot
 
-sudo rpi-update
-sudo reboot
+sudo BRANCH=next rpi-update    [fixes Wifi Ch12/13 issue with rPi3 WiFi]
+iwconfig wlan0 power off       [fixes powermanagement issue with rPi3 WiFi]
+
 
 mkdir ~/domoticz
 cd ~/domoticz
