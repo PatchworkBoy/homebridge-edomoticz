@@ -1,5 +1,5 @@
          ____                        _   _
-     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.26
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.27
     / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
    |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
     \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
@@ -8,7 +8,8 @@
        A Platform Plugin for HomeBridge by Marci
            [http://twitter.com/marcisshadow]
 
-
+ V0.1.27 - 2016/03/12
+    - Tweak to EvoHome support
  V0.1.26 - 2016/03/02
     - Added CurrentCost USB support (introduced to stable in v3.4834)
     - Type: Usage, SubType: Electric

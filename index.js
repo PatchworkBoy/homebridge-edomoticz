@@ -883,7 +883,7 @@ eDomoticzAccessory.prototype = {
                       url = that.access_url + "type=setused&idx=" + that.idx + "&setpoint=";
                       url = url + temp + "&mode=" + mode;
                       url = (mode == "TemporaryOverride")? "&until=" + isonow + "&used=true" : "&used=true";
-                      that.log("Setting thermostat SetPoint to " + setpoint +", mode to " + mode);
+                      that.log("Setting thermostat SetPoint to " + temp +", mode to " + mode);
                       var putme = request.put({
                           url: url,
                           header: {
@@ -1174,7 +1174,7 @@ eDomoticzAccessory.prototype = {
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.TargetHeatingCoolingState).on('get',this.getState.bind(this));
                 HeatingDeviceService.getCharacteristic(Characteristic.CurrentTemperature).on('get', this.getTemperature.bind(this));
-                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('set', this.setPoint.bind(this)).on('get', this.getTemperature.bind(this));
+                HeatingDeviceService.getCharacteristic(Characteristic.TargetTemperature).on('get', this.getTemperature.bind(this)).on('set', this.setPoint.bind(this));
                 if (this.subType == "Zone"){
                   HeatingDeviceService.addCharacteristic(new eDomoticzPlatform.TempOverride()).on('set',this.setTempOverride.bind(this)).on('get',this.getTempOverride.bind(this));
                 }
