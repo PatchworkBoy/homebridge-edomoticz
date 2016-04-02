@@ -1108,7 +1108,7 @@ eDomoticzAccessory.prototype = {
               var blindService = new Service.WindowCovering(this.name);
               blindService.getCharacteristic(Characteristic.CurrentPosition).on('get', this.getBlindStatus.bind(this));
               blindService.getCharacteristic(Characteristic.TargetPosition).on('get', this.getBlindStatus.bind(this)).on('set', this.setBlindStatus.bind(this));
-              blindService.getCharacteristic(Characteristic.StatePosition).on('get', this.getBlindPStatus.bind(this));
+              blindService.getCharacteristic(Characteristic.PositionState).on('get', this.getBlindPStatus.bind(this));
               services.push(blindService);
               break;
             }
