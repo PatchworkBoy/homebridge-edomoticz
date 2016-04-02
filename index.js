@@ -882,7 +882,7 @@ eDomoticzAccessory.prototype = {
 
                       url = that.access_url + "type=setused&idx=" + that.idx + "&setpoint=";
                       url = url + temp + "&mode=" + mode;
-                      url = (mode == "TemporaryOverride")? "&until=" + isonow + "&used=true" : "&used=true";
+                      url = (mode == "TemporaryOverride")? url + "&until=" + isonow + "&used=true" : url + "&used=true";
                       that.log("Setting thermostat SetPoint to " + temp +", mode to " + mode);
                       var putme = request.put({
                           url: url,
@@ -1008,6 +1008,61 @@ eDomoticzAccessory.prototype = {
             }
         }.bind(this));
     },
+    getBlindStatus: function(callback) {
+        var that = this;
+        request.get({
+            url: that.status_url,
+            header: {
+                'Authorization': 'Basic '+that.authstr
+            },
+            json: true
+        }, function(err, response, json) {
+            if (!err && response.statusCode == 200) {
+                var value;
+                if (json.result !== undefined) {
+                  var sArray = sortByKey(json.result, "Name");
+                    sArray.map(function(s) {
+                        value = s.Data;
+                    });
+                }
+                if (value == "Open") {
+                    callback(null, 0);
+                } else {
+                    callback(null, 100);
+                }
+            } else {
+                that.log("There was a problem connecting to Domoticz.");
+            }
+        }.bind(this));
+    },
+    setBlindStatus: function(pos,callback) {
+        var url, that = this;
+        if (pos <= 50) {
+            url = that.control_url + "&switchcmd=Off";
+            that.log("Setting Window Cover to Off (Open)");
+        } else {
+            url = that.control_url + "&switchcmd=On";
+            that.log("Setting Window Cover to On (Closed)");
+        }
+        request.put({
+            url: url,
+            header: {
+                'Authorization': 'Basic '+that.authstr
+            }
+        }, function(err, response) {
+            if (err) {
+                that.log("There was a problem sending command to" + that.name);
+                that.log(response);
+            } else {
+                that.log(that.name + " sent command succesfully");
+            }
+            callback();
+        }.bind(this));
+    },
+    getBlindPStatus: function(callback) {
+        var that = this;
+        callback(null, 2);
+    },
     getServices: function() {
         var services = [];
         var informationService = new Service.AccessoryInformation();
@@ -1049,11 +1104,16 @@ eDomoticzAccessory.prototype = {
               services.push(motionService);
               break;
             }
-            /* Following sensors not supported yet...
-            case this.swTypeVal == 1:{ //doorbell
+            case this.swTypeVal == 3:{ //blinds
+              var blindService = new Service.WindowCovering(this.name);
+              blindService.getCharacteristic(Characteristic.CurrentPosition).on('get', this.getBlindStatus.bind(this));
+              blindService.getCharacteristic(Characteristic.TargetPosition).on('get', this.getBlindStatus.bind(this)).on('set', this.setBlindStatus.bind(this));
+              blindService.getCharacteristic(Characteristic.StatePosition).on('get', this.getBlindPStatus.bind(this));
+              services.push(blindService);
               break;
             }
-            case this.swTypeVal == 3:{ //blinds
+            /* Following sensors not supported yet...
+            case this.swTypeVal == 1:{ //doorbell
               break;
             }
             case this.swTypeVal == 4:{ //x10siren
