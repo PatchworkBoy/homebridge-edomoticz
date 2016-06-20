@@ -1068,8 +1068,8 @@ eDomoticzAccessory.prototype = {
         var informationService = new Service.AccessoryInformation();
         informationService.setCharacteristic(Characteristic.Manufacturer, "eDomoticz").setCharacteristic(Characteristic.Model, this.Type).setCharacteristic(Characteristic.SerialNumber, "DomDev" + this.idx);
         services.push(informationService);
-        if (this.Type=="P1 Smart Meter" && this.swTypeVal==1 && this.subType=="Gas"){
-          this.swTypeVal = false; //cludgey fix for a P1 SmartMeter Virtual Sensor being ID'd as a doorbell in Domoticz
+        if ((this.Type=="P1 Smart Meter" && this.swTypeVal==1 && this.subType=="Gas")||(this.Type=="General" && this.swTypeVal==2 && this.subType=="Counter Incremental")){
+          this.swTypeVal = false; //cludgey fix for a P1 SmartMeter Virtual Sensor being ID'd as a doorbell in Domoticz, and Incremental COunters being id'd as contact switches
         }
         if (typeof this.swTypeVal !=='undefined' && this.swTypeVal){ // is a switch
           switch (true) {
@@ -1188,6 +1188,11 @@ eDomoticzAccessory.prototype = {
                   SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
                   services.push(SolRadDeviceService);
                   break;
+              } else if (this.subType == "Counter Incremental"{
+                  var wMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Water Usage");
+                  wMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
+                  services.push(wMeterDeviceService);
+                  break;
               } else {
                   var dMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   dMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
@@ -1241,7 +1246,7 @@ eDomoticzAccessory.prototype = {
                 services.push(HeatingDeviceService);
                 break;
               }
-            case this.Type == "P1 Smart Meter":{
+            case this.Type == "P1 Smart Meter"{
                 if (this.subType == "Gas"){
                   var P1GasMeterDeviceService = new eDomoticzPlatform.GasDeviceService("Gas Usage");
                   P1GasMeterDeviceService.getCharacteristic(eDomoticzPlatform.GasConsumption).on('get', this.getStringValue.bind(this));
