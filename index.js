@@ -1133,11 +1133,16 @@ eDomoticzAccessory.prototype = {
             }
             case this.swTypeVal == 12:{ //dusk
               break;
-            }
+            }*/
             case this.swTypeVal == 13:{ //blinds%
+              var blindService2 = new Service.WindowCovering(this.name);
+              blindService2.getCharacteristic(Characteristic.CurrentPosition).on('get', this.getdValue.bind(this));
+              blindService2.getCharacteristic(Characteristic.TargetPosition).on('get', this.getdValue.bind(this)).on('set', this.setdValue.bind(this));
+              blindService2.getCharacteristic(Characteristic.PositionState).on('get', this.getBlindPStatus.bind(this));
+              services.push(blindService2);
               break;
             }
-            case this.swTypeVal == 14:{ //venetianus
+            /*case this.swTypeVal == 14:{ //venetianus
               break;
             }
             case this.swTypeVal == 15:{ //venetianeu
