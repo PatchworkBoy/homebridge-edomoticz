@@ -1188,7 +1188,7 @@ eDomoticzAccessory.prototype = {
                   SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
                   services.push(SolRadDeviceService);
                   break;
-              } else if (this.subType == "Counter Incremental"{
+              } else if (this.subType == "Counter Incremental"){
                   var wMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Water Usage");
                   wMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
                   services.push(wMeterDeviceService);
@@ -1246,7 +1246,7 @@ eDomoticzAccessory.prototype = {
                 services.push(HeatingDeviceService);
                 break;
               }
-            case this.Type == "P1 Smart Meter"{
+            case this.Type == "P1 Smart Meter":{
                 if (this.subType == "Gas"){
                   var P1GasMeterDeviceService = new eDomoticzPlatform.GasDeviceService("Gas Usage");
                   P1GasMeterDeviceService.getCharacteristic(eDomoticzPlatform.GasConsumption).on('get', this.getStringValue.bind(this));
