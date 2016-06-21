@@ -199,7 +199,7 @@ eDomoticzPlatform.TodayConsumption = function() {
 };
 eDomoticzPlatform.CurrentConsumption = function() {
     var charUUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'; //uuid.generate('eDomoticz:customchar:CurrentConsumption');
-    Characteristic.call(this, 'Current', charUUID);
+    Characteristic.call(this, 'Consumption', charUUID);
     this.setProps({
         format: 'string',
         perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
