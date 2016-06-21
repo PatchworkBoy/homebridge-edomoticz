@@ -180,8 +180,8 @@ function fixInheritance(subclass, superclass) {
 /* Define Custom Services & Characteristics */
 // PowerMeter Characteristics
 eDomoticzPlatform.TotalConsumption = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:TotalConsumption');
-    Characteristic.call(this, 'Total', charUUID);
+    var charUUID = 'E863F10C-079E-48FF-8F27-9C2605A29F52'; //uuid.generate('eDomoticz:customchar:TotalConsumption');
+    Characteristic.call(this, 'Total Consumption', charUUID);
     this.setProps({
         format: 'string',
         perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
@@ -198,7 +198,7 @@ eDomoticzPlatform.TodayConsumption = function() {
     this.value = this.getDefaultValue();
 };
 eDomoticzPlatform.CurrentConsumption = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
+    var charUUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'; //uuid.generate('eDomoticz:customchar:CurrentConsumption');
     Characteristic.call(this, 'Current', charUUID);
     this.setProps({
         format: 'string',
