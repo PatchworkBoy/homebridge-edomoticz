@@ -63,6 +63,7 @@ module.exports = function(homebridge) {
     fixInheritance(eDomoticzPlatform.VisibilityDeviceService, Service);
     fixInheritance(eDomoticzPlatform.SolRad, Characteristic);
     fixInheritance(eDomoticzPlatform.SolRadDeviceService, Service);
+    fixInheritance(eDomoticzPlatform.LocationService, Service);
     homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 };
@@ -257,6 +258,12 @@ eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
     var serviceUUID = uuid.generate('eDomoticz:usagedevice:customservice');
     Service.call(this, displayName, serviceUUID, subtype);
     this.addCharacteristic(new eDomoticzPlatform.CurrentUsage());
+};
+// Location Meter (sensor should have 'Location' in title)
+eDomoticzPlatform.LocationService = function(displayName, subtype) {
+    var serviceUUID = uuid.generate('eDomoticz:location:customservice');
+    Service.call(this, displayName, serviceUUID, subtype);
+    this.addCharacteristic(new Characteristic.Version());
 };
 // DarkSkies WindSpeed Characteristic
 eDomoticzPlatform.WindSpeed = function() {
@@ -1193,6 +1200,11 @@ eDomoticzAccessory.prototype = {
                   SolRadDeviceService.getCharacteristic(eDomoticzPlatform.SolRad).on('get', this.getStringValue.bind(this));
                   services.push(SolRadDeviceService);
                   break;
+              } else if ((this.subType) == "Text" && (this.name.indexOf('Location')>-1)) {
+                  var LocationDeviceService = new eDomoticzPlatform.LocationService("Current Location");
+                  LocationDeviceService.getCharacteristic(Characteristic.Version).on('get', this.getStringValue.bind(this));
+                  services.push(LocationDeviceService);
+                  break;
               } else if (this.subType == "Counter Incremental"){
                   var wMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Water Usage");
                   wMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
@@ -1266,10 +1278,17 @@ eDomoticzAccessory.prototype = {
                 break;
             }
             default:{
-              var dswitchService = new Service.Switch(this.name);
-              dswitchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-              services.push(dswitchService);
-              break;
+              if (this.name.indexOf("Occupied") > -1) {
+                        var occServiceB = new Service.OccupancySensor(this.name);
+                        occServiceB.getCharacteristic(Characteristic.OccupancyDetected).on('get',this.getPowerState.bind(this));
+                        services.push(occServiceB);
+                        break;
+                 } else {
+                        var dswitchService = new Service.Switch(this.name);
+                        dswitchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+                        services.push(dswitchService);
+                        break;
+                }
             }
           }
         }
