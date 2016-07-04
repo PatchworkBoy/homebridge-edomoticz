@@ -1161,12 +1161,19 @@ eDomoticzAccessory.prototype = {
             case this.swTypeVal == 17:{ //media
               break;
             }
-            ...so instead, default to switch */
+            ...so instead, default to switch, but check whether switch name contains 'Fan' and if so use Fan Service */
             default:{
-              var switchService = new Service.Switch(this.name);
-              switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
-              services.push(switchService);
-              break;
+                if (this.name.indexOf("Fan") > -1) {
+                    var fanService = new Service.Fan(this.name);
+                    fanService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+                    services.push(fanService);
+                    break;
+                } else {
+                    var switchService = new Service.Switch(this.name);
+                    switchService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
+                    services.push(switchService);
+                    break;
+                }
             }
           }
         } else { // is a sensor
