@@ -639,6 +639,8 @@ eDomoticzAccessory.prototype = {
                             } else {
                               value = true;
                             }
+                        } else if (that.Type=="Lux") { //motion
+                            value = parseInt(s.Data, 10);
                         } else {
                             if (that.name.indexOf("Gas") > -1 && that.Type=="General" && that.subType=="kWh") {
                               value = s.Usage;
@@ -1178,7 +1180,7 @@ eDomoticzAccessory.prototype = {
           }
         } else { // is a sensor
           switch(true){
-            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV" || this.Type == "Usage":{
+            case this.Type == "General" || this.Type == "YouLess Meter" || this.Type == "Current" || this.Type == "UV" || this.Type == "Usage" || this.Type == "Lux":{
               if (this.subType == "kWh" || this.subType == "YouLess counter" || this.subType == "Electric") {
                   var MeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
                   MeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getCPower.bind(this));
@@ -1216,6 +1218,11 @@ eDomoticzAccessory.prototype = {
                   var wMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Water Usage");
                   wMeterDeviceService.getCharacteristic(eDomoticzPlatform.CurrentConsumption).on('get', this.getStringValue.bind(this));
                   services.push(wMeterDeviceService);
+                  break;
+              } else if (this.subType == "Lux"){
+                  var lightSensorService = new Service.LightSensor("Current Luminiscence");
+                  lightSensorService.getCharacteristic(Characteristic.CurrentAmbientLightLevel).on('get', this.getStringValue.bind(this));
+                  services.push(lightSensorService);
                   break;
               } else {
                   var dMeterDeviceService = new eDomoticzPlatform.MeterDeviceService("Power Usage");
