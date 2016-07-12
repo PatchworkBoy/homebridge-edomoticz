@@ -27,7 +27,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 
 ###Todo:
 - [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
-- [ ] Hue/RGB
+- [x] Hue/RGB
 - [x] m3 (gas usage)
 - [x] Motion sensors
 - [x] Smoke Detectors
