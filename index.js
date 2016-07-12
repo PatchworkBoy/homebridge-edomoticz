@@ -583,6 +583,57 @@ eDomoticzAccessory.prototype = {
             }
         }.bind(this));
     },
+    getHueValue: function(type, callback) {        
+        // TODO: Wait for Domoticz to add RGB/HSB status to their lights. Return last known value or 'white' for now.
+
+        if (type == 'Hue') {
+            callback(null, (this.hueValue !== undefined ? this.hueValue : 0));
+        }
+        else if (type == 'Saturation') {
+            callback(null, (this.saturationValue !== undefined ? this.saturationValue : 0));
+        }
+        else {
+            callback(null, 0);
+        }
+    },
+    setHueValue: function(type, value, callback) {
+        var that = this;
+
+        if (type == 'Hue')
+        {
+            that.hueValue = value;
+            that.hueSemaphore = (that.hueSemaphore === undefined ? 0 : that.hueSemaphore + 1);
+        }
+        else if (type == 'Saturation')
+        {
+            that.saturationValue = value;
+            that.hueSemaphore = (that.hueSemaphore === undefined ? 0 : that.hueSemaphore + 1);
+        }
+
+        if (that.hueValue !== undefined && that.saturationValue !== undefined && that.hueSemaphore !== undefined && that.hueSemaphore > 0)
+        {
+            var parameters = "&hue=" + that.hueValue + "&brightness=100&sat=" + that.saturationValue + "&iswhite=" + (that.saturationValue < 3 && that.hueValue < 3 ? "true" : "false");
+            var url = that.control_url.replace(that.param, "setcolbrightnessvalue") + parameters;
+            that.hueSemaphore = undefined;
+            request.put({
+                url: url,
+                header: {
+                    'Authorization': 'Basic '+that.authstr
+                }
+            }, function(err, response) {
+                if (err) {
+                    that.log("There was a problem sending command to" + that.name);
+                    that.log(response);
+                } else {
+                    that.log(that.name + " sent command succesfully");
+                }
+                callback();
+            }.bind(this));
+        }
+        else {
+            callback();
+        }
+    },
     getValue: function(callback) {
         var that = this;
         request.get({
@@ -1097,10 +1148,17 @@ eDomoticzAccessory.prototype = {
               services.push(smokeService);
               break;
             }
-            case this.swTypeVal == 7:{ //dimmer
+            case this.swTypeVal == 7:{ //dimmer (and RGBW)
               var lightbulbService = new Service.Lightbulb(this.name);
               lightbulbService.getCharacteristic(Characteristic.On).on('set', this.setPowerState.bind(this)).on('get', this.getPowerState.bind(this));
               lightbulbService.addCharacteristic(new Characteristic.Brightness()).on('set', this.setdValue.bind(this)).on('get', this.getdValue.bind(this));
+
+              if (this.subType == "RGBW")
+              {
+                lightbulbService.addCharacteristic(new Characteristic.Hue()).on('set', this.setHueValue.bind(this, 'Hue')).on('get', this.getHueValue.bind(this, 'Hue'));
+                lightbulbService.addCharacteristic(new Characteristic.Saturation()).on('set', this.setHueValue.bind(this, 'Saturation')).on('get', this.getHueValue.bind(this, 'Saturation'));
+              }
+              
               services.push(lightbulbService);
               break;
             }
