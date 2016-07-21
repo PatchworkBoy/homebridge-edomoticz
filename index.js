@@ -1070,6 +1070,12 @@ eDomoticzAccessory.prototype = {
     },
     getBlindStatus: function(callback) {
         var that = this;
+
+        if (this.isPercentageBlind) {
+            that.getdValue(callback);
+            return;
+        }
+
         request.get({
             url: that.status_url,
             header: {
@@ -1085,25 +1091,36 @@ eDomoticzAccessory.prototype = {
                         value = s.Data;
                     });
                 }
+                
                 if (value == "Open") {
-                    callback(null, 0);
-                } else {
                     callback(null, 100);
+                } else {
+                    callback(null, 0);
                 }
             } else {
                 that.log("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     },
-    setBlindStatus: function(pos,callback) {
+    setBlindStatus: function(blindService, pos, callback) {
         var url, that = this;
-        if (pos <= 50) {
-            url = that.control_url + "&switchcmd=Off";
-            that.log("Setting Window Cover to Off (Open)");
-        } else {
-            url = that.control_url + "&switchcmd=On";
-            that.log("Setting Window Cover to On (Closed)");
+        var shouldOpen = (pos <= 50);
+        if (that.isInvertedBlind) {
+            shouldOpen = !shouldOpen;
         }
+
+        var command = (shouldOpen ? "On" : "Off");
+
+        if (that.isPercentageBlind && pos > 0 && pos < 100)
+        {
+            that.setdValue(pos, function() {
+                blindService.getCharacteristic(Characteristic.CurrentPosition).setValue(pos, false, that);
+                callback();
+            });
+            return;
+        }
+
+        url = that.control_url + "&switchcmd=" + command;
         request.put({
             url: url,
             header: {
@@ -1117,11 +1134,13 @@ eDomoticzAccessory.prototype = {
                 that.log(that.name + " sent command succesfully");
             }
             callback();
+
+            blindService.getCharacteristic(Characteristic.CurrentPosition).setValue(pos, false, that);
         }.bind(this));
     },
     getBlindPStatus: function(callback) {
         var that = this;
-        callback(null, 2);
+        callback(null, Characteristic.PositionState.STOPPED);
     },
     getServices: function() {
         var services = [];
@@ -1171,10 +1190,15 @@ eDomoticzAccessory.prototype = {
               services.push(motionService);
               break;
             }
-            case this.swTypeVal == 3:{ //blinds
+            case this.swTypeVal == 3: //blinds
+            case this.swTypeVal == 6: //blinds inv
+            case this.swTypeVal == 13: //blinds percentage
+            case this.swTypeVal == 16:{ //blinds percentage inv
+              this.isInvertedBlind = (this.swTypeVal == 6 || this.swTypeVal == 16);
+              this.isPercentageBlind = (this.swTypeVal == 13 || this.swTypeVal == 16);
               var blindService = new Service.WindowCovering(this.name);
               blindService.getCharacteristic(Characteristic.CurrentPosition).on('get', this.getBlindStatus.bind(this));
-              blindService.getCharacteristic(Characteristic.TargetPosition).on('get', this.getBlindStatus.bind(this)).on('set', this.setBlindStatus.bind(this));
+              blindService.getCharacteristic(Characteristic.TargetPosition).on('get', this.getBlindStatus.bind(this)).on('set', this.setBlindStatus.bind(this, blindService));
               blindService.getCharacteristic(Characteristic.PositionState).on('get', this.getBlindPStatus.bind(this));
               services.push(blindService);
               break;
@@ -1184,9 +1208,6 @@ eDomoticzAccessory.prototype = {
               break;
             }
             case this.swTypeVal == 4:{ //x10siren
-              break;
-            }
-            case this.swTypeVal == 6:{ //blinds inv
               break;
             }
             case this.swTypeVal == 9:{ //pushon
@@ -1200,22 +1221,10 @@ eDomoticzAccessory.prototype = {
             }
             case this.swTypeVal == 12:{ //dusk
               break;
-            }*/
-            case this.swTypeVal == 13:{ //blinds%
-              var blindService2 = new Service.WindowCovering(this.name);
-              blindService2.getCharacteristic(Characteristic.CurrentPosition).on('get', this.getdValue.bind(this));
-              blindService2.getCharacteristic(Characteristic.TargetPosition).on('get', this.getdValue.bind(this)).on('set', this.setdValue.bind(this));
-              blindService2.getCharacteristic(Characteristic.PositionState).on('get', this.getBlindPStatus.bind(this));
-              services.push(blindService2);
-              break;
-            }
-            /*case this.swTypeVal == 14:{ //venetianus
+            }case this.swTypeVal == 14:{ //venetianus
               break;
             }
             case this.swTypeVal == 15:{ //venetianeu
-              break;
-            }
-            case this.swTypeVal == 16:{ //blinds% inv
               break;
             }
             case this.swTypeVal == 17:{ //media
