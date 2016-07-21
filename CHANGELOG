@@ -1,5 +1,5 @@
          ____                        _   _
-     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.27
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.2.1
     / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
    |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
     \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
@@ -7,7 +7,17 @@
 
        A Platform Plugin for HomeBridge by Marci
            [http://twitter.com/marcisshadow]
-           
+ 
+ V0.2.1 - 2016/06/21
+    - Added handling for sensors of type 'Lux' - cheers @100hz
+    - Hue/RGB support - cheers @xTheRamon
+    - Improved BlindSupport (iOS10 compatible) - cheers @xTheRamon
+ V0.1.32 - 2016/04/04
+    - Add Occupancy Sensor support - power switches in Domotics
+      featuring the word "Occupied" (case sensitive) in the Name
+      will be created in HomeKit as an Occupancy Sensor
+ V0.1.31 - 2016/04/01
+    - Revert blind support
  V0.1.28 - 2016/04/01
     - Tweak to EvoHome support
     - Add Blind (switchType 3) support
