@@ -27,7 +27,13 @@
 //         "server": "127.0.0.1",   // or "user:pass@ip"
 //         "port": "8080",
 //         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//         "ssl": 0
+//         "ssl": 0,
+//         "mqttenable": 1,
+//         "mqttserver": "127.0.0.1",
+//         "mqttport": "1883",
+//         "mqttauth": 1,          //only needed if you've password protected mosquitto via mosquitto.conf
+//         "mqttuser": "username", //only needed if you've password protected mosquitto via mosquitto.conf
+//         "mqttpass": "password"  //only needed if you've password protected mosquitto via mosquitto.conf
 //      }],
 //
 //  "accessories":[]
@@ -39,6 +45,7 @@ var Service, Characteristic, types, uuid, hapLegacyTypes;
 var request = require("request");
 var inherits = require('util').inherits;
 var Mqtt = require('./lib/mqtt.js').Mqtt;
+
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
@@ -422,40 +429,7 @@ eDomoticzPlatform.prototype = {
         }.bind(this));
     }
 };
-// MQTT EXPERIMENTS!
-eDomoticzPlatform.prototype.getAccessories=function(name){
-    var def = {};
-    var service, characteristics;
 
-    switch (name) {
-    case "*":
-    case "all":
-            for (var k in this.accessories) {
-                    //this.log("getAccessories %s", JSON.stringify(this.accessories[k], null, 2));
-                    service = this.accessories[k].service_name;
-                    characteristics =  this.accessories[k].i_value;
-                    def = {"service": service, "characteristics": characteristics};
-                    accessories[k] = def;
-            }
-            break;
-    default:
-            service = this.accessories[name].service_name;
-            characteristics =  this.accessories[name].i_value;
-            def = {"service": service, "characteristics": characteristics};
-            accessories[name] = def;
-    }
-}
-eDomoticzPlatform.prototype.buildParams = function (accessoryDef) {
-  var params = {
-    "accessoryDef": accessoryDef,
-    "log": this.log,
-    "Service": Service,
-    "Characteristic": Characteristic,
-    "Mqtt": this.Mqtt
-  }
-  return params;
-}
-// END OF MQTT EXPERIMENTS!
 function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth, swType, swTypeVal, prot, hwType) {
     if ((haveDimmer) || (swType == "Dimmer")) {
         if ((hwType!==51)&&(swType!=="On/Off")){
