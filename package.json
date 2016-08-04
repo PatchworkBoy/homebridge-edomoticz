@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "inherits": "^2.0.1",
-    "request": "2.65.x"
+    "request": "2.65.x",
+    "mqtt": "^1.0.0"
   },
   "author": "PatchworkBoy (aka Marci) <apatchworkboy@gmail.com> (https://github.com/patchworkboy)",
   "license": "CC0",
