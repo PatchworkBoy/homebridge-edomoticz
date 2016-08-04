@@ -38,6 +38,7 @@
 var Service, Characteristic, types, uuid, hapLegacyTypes;
 var request = require("request");
 var inherits = require('util').inherits;
+var Mqtt = require('./lib/mqtt.js').Mqtt;
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
@@ -68,7 +69,7 @@ module.exports = function(homebridge) {
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 };
 
-function eDomoticzPlatform(log, config) {
+function eDomoticzPlatform(log, config, api) {
     this.log = log;
     this.config = config;
     this.server = config.server;
@@ -120,9 +121,27 @@ function eDomoticzPlatform(log, config) {
         this.authstr = Base64.encode(tmparr[0]);
         this.server = tmparr[1];
     }
+    this.mqttenable = config.mqttenable;
     this.ssl = config.ssl;
     this.port = config.port;
     this.room = config.roomid;
+    if (config.mqttenable===1){
+        var params = {
+            "log": this.log,
+            "plugin_name": "homebridge-edomoticz",
+            "accessories": this.accessories,
+            "Characteristic": Characteristic,
+        }
+        this.url = 'mqtt://'+config.mqttserver+':'+config.mqttport;
+        this.Mqtt = new Mqtt(params);
+        if (api) {
+            this.api = api;
+
+            this.api.on('didFinishLaunching', function() {
+                    this.Mqtt.connect(this.url,[{"username":config.mqttuser,"password":config.mqttpass}]);
+            }.bind(this));
+        }
+    }
 }
 
  /* Handy Utility Functions */
@@ -403,7 +422,40 @@ eDomoticzPlatform.prototype = {
         }.bind(this));
     }
 };
+// MQTT EXPERIMENTS!
+eDomoticzPlatform.prototype.getAccessories=function(name){
+    var def = {};
+    var service, characteristics;
 
+    switch (name) {
+    case "*":
+    case "all":
+            for (var k in this.accessories) {
+                    //this.log("getAccessories %s", JSON.stringify(this.accessories[k], null, 2));
+                    service = this.accessories[k].service_name;
+                    characteristics =  this.accessories[k].i_value;
+                    def = {"service": service, "characteristics": characteristics};
+                    accessories[k] = def;
+            }
+            break;
+    default:
+            service = this.accessories[name].service_name;
+            characteristics =  this.accessories[name].i_value;
+            def = {"service": service, "characteristics": characteristics};
+            accessories[name] = def;
+    }
+}
+eDomoticzPlatform.prototype.buildParams = function (accessoryDef) {
+  var params = {
+    "accessoryDef": accessoryDef,
+    "log": this.log,
+    "Service": Service,
+    "Characteristic": Characteristic,
+    "Mqtt": this.Mqtt
+  }
+  return params;
+}
+// END OF MQTT EXPERIMENTS!
 function eDomoticzAccessory(log, server, port, IsScene, status, idx, name, haveDimmer, maxDimLevel, subType, Type, batteryRef, auth, swType, swTypeVal, prot, hwType) {
     if ((haveDimmer) || (swType == "Dimmer")) {
         if ((hwType!==51)&&(swType!=="On/Off")){
