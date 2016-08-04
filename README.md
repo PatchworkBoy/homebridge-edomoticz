@@ -69,7 +69,13 @@ sudo npm update -g homebridge-edomoticz
             "server": "127.0.0.1",
             "port": "8080",
             "ssl": 0,
-            "roomid": 0
+            "roomid": 0,
+            "mqttenable": 1,
+            "mqttserver": "127.0.0.1",
+            "mqttport": "1883",
+            "mqttauth": 1,          //only needed if you've password protected mosquitto via mosquitto.conf
+            "mqttuser": "username", //only needed if you've password protected mosquitto via mosquitto.conf
+            "mqttpass": "password"  //only needed if you've password protected mosquitto via mosquitto.conf
         }
     ],
     "accessories": []
