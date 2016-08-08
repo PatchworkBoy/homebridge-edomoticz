@@ -50,6 +50,7 @@ var request = require("request");
 var Mqtt = require('./lib/mqtt.js').Mqtt;
 var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
 var Helper = require('./lib/helper.js').Helper;
+var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
@@ -57,27 +58,27 @@ module.exports = function(homebridge) {
     types = homebridge.hapLegacyTypes;
     uuid = homebridge.hap.uuid;
 
-    Helper.fixInheritance(eDomoticzPlatform.TotalConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.CurrentConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.GasConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.TempOverride, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.MeterDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.GasDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.CurrentUsage, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.UsageDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.TodayConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.Barometer, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.WindSpeed, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.WindChill, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.WindDirection, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.WindDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.Rainfall, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.RainDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.Visibility, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.VisibilityDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.SolRad, Characteristic);
-    Helper.fixInheritance(eDomoticzPlatform.SolRadDeviceService, Service);
-    Helper.fixInheritance(eDomoticzPlatform.LocationService, Service);
+    Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.GasConsumption, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WindDirection, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WindDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.Rainfall, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.RainDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.Visibility, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.VisibilityDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.SolRad, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.SolRadDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.LocationService, Service);
     homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 };
@@ -149,191 +150,6 @@ function eDomoticzPlatform(log, config, api) {
     }
 }
 
-/* Define Custom Services & Characteristics */
-// PowerMeter Characteristics
-eDomoticzPlatform.TotalConsumption = function() {
-    var charUUID = 'E863F10C-079E-48FF-8F27-9C2605A29F52'; //uuid.generate('eDomoticz:customchar:TotalConsumption');
-    Characteristic.call(this, 'Total Consumption', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-eDomoticzPlatform.TodayConsumption = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:TodayConsumption');
-    Characteristic.call(this, 'Today', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-eDomoticzPlatform.CurrentConsumption = function() {
-    var charUUID = 'E863F10D-079E-48FF-8F27-9C2605A29F52'; //uuid.generate('eDomoticz:customchar:CurrentConsumption');
-    Characteristic.call(this, 'Consumption', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-eDomoticzPlatform.GasConsumption = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:CurrentConsumption');
-    Characteristic.call(this, 'Meter Total', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// Custom SetPoint Minutes characteristic for TempOverride modes
-eDomoticzPlatform.TempOverride = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:OverrideTime');
-    Characteristic.call(this, 'Override (Mins, 0 = Auto, 481 = Permanent)', charUUID);
-    this.setProps({
-        format: 'float',
-        maxValue: 481,
-        minValue: 0,
-        minStep: 1,
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// The PowerMeter itself
-eDomoticzPlatform.MeterDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:powermeter:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.CurrentConsumption());
-    this.addOptionalCharacteristic(new eDomoticzPlatform.TotalConsumption());
-    this.addOptionalCharacteristic(new eDomoticzPlatform.TodayConsumption());
-};
-// P1 Smart Meter -> Gas
-eDomoticzPlatform.GasDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:gasmeter:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.GasConsumption());
-};
-// Usage Meter Characteristics
-eDomoticzPlatform.CurrentUsage = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:CurrentUsage');
-    Characteristic.call(this, 'Current Usage', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// The Usage Meter itself
-eDomoticzPlatform.UsageDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:usagedevice:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.CurrentUsage());
-};
-// Location Meter (sensor should have 'Location' in title)
-eDomoticzPlatform.LocationService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:location:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new Characteristic.Version());
-};
-// DarkSkies WindSpeed Characteristic
-eDomoticzPlatform.WindSpeed = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:WindSpeed');
-    Characteristic.call(this, 'Wind Speed', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies WindChill Characteristic
-eDomoticzPlatform.WindChill = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:WindChill');
-    Characteristic.call(this, 'Wind Chill', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies WindDirection Characteristic
-eDomoticzPlatform.WindDirection = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:WindDirection');
-    Characteristic.call(this, 'Wind Direction', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies Virtual Wind Sensor
-eDomoticzPlatform.WindDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:winddevice:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.WindSpeed());
-    this.addOptionalCharacteristic(new eDomoticzPlatform.WindChill());
-    this.addOptionalCharacteristic(new eDomoticzPlatform.WindDirection());
-    this.addOptionalCharacteristic(new Characteristic.CurrentTemperature());
-};
-// DarkSkies Rain Characteristics
-eDomoticzPlatform.Rainfall = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:Rainfall');
-    Characteristic.call(this, 'Amount today', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies Rain Meter itself
-eDomoticzPlatform.RainDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:raindevice:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.Rainfall());
-};
-// DarkSkies Visibility Characteristics
-eDomoticzPlatform.Visibility = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:Visibility');
-    Characteristic.call(this, 'Distance', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies Visibility Meter itself
-eDomoticzPlatform.VisibilityDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:visibilitydevice:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.Visibility());
-};
-// DarkSkies Solar Radiation Characteristics
-eDomoticzPlatform.SolRad = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:SolRad');
-    Characteristic.call(this, 'Radiation', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-// DarkSkies Solar Radiation Meter itself
-eDomoticzPlatform.SolRadDeviceService = function(displayName, subtype) {
-    var serviceUUID = uuid.generate('eDomoticz:solraddevice:customservice');
-    Service.call(this, displayName, serviceUUID, subtype);
-    this.addCharacteristic(new eDomoticzPlatform.SolRad());
-};
-// Barometer Characteristic
-eDomoticzPlatform.Barometer = function() {
-    var charUUID = uuid.generate('eDomoticz:customchar:CurrentPressure');
-    Characteristic.call(this, 'Pressure', charUUID);
-    this.setProps({
-        format: 'string',
-        perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
-    });
-    this.value = this.getDefaultValue();
-};
-/* End of Custom Services & Characteristics */
 eDomoticzPlatform.prototype = {
     accessories: function(callback) {
         if (this._cachedAccessories && this._cachedAccessories.length > 0) {
