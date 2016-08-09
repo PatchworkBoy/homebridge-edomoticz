@@ -40,23 +40,18 @@
 // }
 //
 
-//var Service, Characteristic, types, uuid, hapLegacyTypes;
-global.Service;
-global.Characteristic;
-global.types;
-global.uuid;
-global.hapLegacyTypes;
 var request = require("request");
 var Mqtt = require('./lib/mqtt.js').Mqtt;
 var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
+var Constants = require('./lib/constants.js');
 var Helper = require('./lib/helper.js').Helper;
 var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    types = homebridge.hapLegacyTypes;
-    uuid = homebridge.hap.uuid;
+    Types = homebridge.hapLegacyTypes;
+    UUID = homebridge.hap.uuid;
 
     Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
     Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
