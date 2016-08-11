@@ -1,0 +1,167 @@
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.90","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"48.2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"464.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"470.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.4","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"319.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"321.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":73,"name":"Temperature (LR3)","nvalue":0,"stype":"LaCrosse TX3","svalue1":"22.7","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"462.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.40","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"12.69","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.90","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"48.2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"468.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"445.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.4","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"315.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"420.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.40","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"16.42","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"459.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"466.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.4","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"462.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"488.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp + Humidity + Baro","id":"1","idx":31,"name":"Barometer","nvalue":0,"stype":"THB1 - BTHR918, BTHGN129","svalue1":"16.8","svalue2":"81","svalue3":"3","svalue4":"1018","svalue5":"2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Wind","id":"1","idx":32,"name":"Wind","nvalue":0,"stype":"TFA","svalue1":"272.00","svalue2":"W","svalue3":"91","svalue4":"0","svalue5":"16.8","svalue6":"16.8","unit":0}
+{"Battery":255,"RSSI":12,"dtype":"Rain","id":"1","idx":33,"name":"Rainfall","nvalue":0,"stype":"WWW","svalue1":"0","svalue2":"0.0","unit":0}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0","idx":34,"name":"Visibility","nvalue":0,"stype":"Visibility","svalue1":"14.9","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0","idx":35,"name":"Solar Radiation","nvalue":0,"stype":"Solar Radiation","svalue1":"297.2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.59","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"11.90","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"485.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":73,"name":"Temperature (LR3)","nvalue":0,"stype":"LaCrosse TX3","svalue1":"22.2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"486.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"473.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"387.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.70","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"15.05","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"420.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"394.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"374.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"386.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"415.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.72","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"10.16","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"48.2","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"413.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"430.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.74","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"13.35","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":73,"name":"Temperature (LR3)","nvalue":0,"stype":"LaCrosse TX3","svalue1":"22.7","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"323.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"317.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"438.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"435.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"P1 Smart Meter","id":"82064","idx":65,"name":"Gas Usage","nvalue":0,"stype":"Gas","svalue1":"9187850.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"00082065","idx":66,"name":"Household Gas","nvalue":0,"stype":"kWh","svalue1":"0.00","svalue2":"24.56","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"82074","idx":75,"name":"Household Gas2","nvalue":0,"stype":"Electric","svalue1":"0.00","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.75","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"398.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"10.68","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"423.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"336.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"350.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"352.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.74","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"13.67","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"390.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65499","idx":107,"name":"Temperature (Kitchen)","nvalue":0,"stype":"TFA 30.3133","svalue1":"18.2","unit":219}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"65455","idx":106,"name":"Temperature (Living Room)","nvalue":0,"stype":"TFA 30.3133","svalue1":"20.5","unit":175}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":73,"name":"Temperature (LR3)","nvalue":0,"stype":"LaCrosse TX3","svalue1":"21.7","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"464.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"481.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Usage","id":"0000002","idx":74,"name":"Household Power","nvalue":0,"stype":"Electric","svalue1":"482.0","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":1,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044C","idx":15,"name":"Node1 Mem","nvalue":0,"stype":"Percentage","svalue1":"47.76","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044D","idx":19,"name":"Node1 CPU","nvalue":0,"stype":"Percentage","svalue1":"10.52","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044E","idx":16,"name":"Node1 /boot","nvalue":0,"stype":"Percentage","svalue1":"36.73","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"General","id":"0000044F","idx":17,"name":"Node1 /","nvalue":0,"stype":"Percentage","svalue1":"57.91","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Temp","id":"1","idx":18,"name":"Node1","nvalue":0,"stype":"LaCrosse TX3","svalue1":"47.6","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B1","idx":98,"name":"Pond Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Light/Switch","id":"000140B5","idx":102,"name":"Shed Motion","nvalue":0,"stype":"Switch","svalue1":"0","switchType":"Motion Sensor","unit":1}
+{"Battery":255,"RSSI":12,"dtype":"Lighting 1","id":"70","idx":110,"name":"Central Heating","nvalue":0,"stype":"X10","switchType":"On/Off","unit":1}
