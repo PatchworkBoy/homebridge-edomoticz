@@ -5,9 +5,9 @@
 //    \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
 //       www.npmjs.com/package/homebridge-edomoticz
 //
-//       A Platform Plugin for HomeBridge by Marci
-//           [http://twitter.com/marcisshadow]
-//
+//   A Platform Plugin for HomeBridge by Marci & TheRamon
+//           [http://twitter.com/marcisshadow] 
+// [http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
 //
 //     ** Remember to add platform to config.json **
 //
