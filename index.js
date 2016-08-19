@@ -46,6 +46,7 @@ var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
 var Constants = require('./lib/constants.js');
 var Helper = require('./lib/helper.js').Helper;
 var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
+const util = require('util');
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
@@ -84,7 +85,12 @@ module.exports = function(homebridge) {
 
 function eDomoticzPlatform(log, config, api) {
     this._cachedAccessories = [];
-    this.log = log;
+    this.log = function() {
+        if (typeof process.env.DEBUG !== 'undefined') {
+            log(util.format.apply(this, arguments));
+        }
+    };
+
     this.config = config;
     this.server = config.server;
     if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
