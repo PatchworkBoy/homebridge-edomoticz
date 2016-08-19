@@ -6,7 +6,7 @@
 //       www.npmjs.com/package/homebridge-edomoticz
 //
 //   A Platform Plugin for HomeBridge by Marci & TheRamon
-//           [http://twitter.com/marcisshadow] 
+//           [http://twitter.com/marcisshadow]
 // [http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
 //
 //     ** Remember to add platform to config.json **
@@ -63,6 +63,7 @@ module.exports = function(homebridge) {
     Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
     Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
     Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WeatherService, Service);
     Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
     Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
     Helper.fixInheritance(eDomoticzServices.WindDirection, Characteristic);
@@ -74,6 +75,9 @@ module.exports = function(homebridge) {
     Helper.fixInheritance(eDomoticzServices.SolRad, Characteristic);
     Helper.fixInheritance(eDomoticzServices.SolRadDeviceService, Service);
     Helper.fixInheritance(eDomoticzServices.LocationService, Service);
+    Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
+    Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
     homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 };
@@ -181,7 +185,7 @@ eDomoticzPlatform.prototype = {
                 if (json.result !== undefined) {
                     var sArray = Helper.sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal);
+                        accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, that.eve);
                         foundAccessories.push(accessory);
                     });
                 }
