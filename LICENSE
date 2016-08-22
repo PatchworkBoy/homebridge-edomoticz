@@ -1,14 +1,15 @@
-      ____                        _   _
-  ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.1.25
- / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
-|  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
- \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
-    www.npmjs.com/package/homebridge-edomoticz
+         ____                        _   _
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.2.2
+    / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
+   |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
+    \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
+       www.npmjs.com/package/homebridge-edomoticz
 
-    A Platform Plugin for HomeBridge by Marci
-        [http://twitter.com/marcisshadow]
+   A Platform Plugin for HomeBridge by Marci & TheRamon
+           [http://twitter.com/marcisshadow] 
+[http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
 
-   Copyright (c) 2016, Marci (aka PatchworkBoy)
+   Copyright (c) 2016, Marci (aka PatchworkBoy) & TheRamon
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above

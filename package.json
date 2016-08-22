@@ -1,6 +1,6 @@
 {
   "name": "homebridge-edomoticz",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "homebridge-plugin for Domoticz https://github.com/nfarina/homebridge",
   "main": "index.js",
   "scripts": {
@@ -22,9 +22,10 @@
   },
   "dependencies": {
     "inherits": "^2.0.1",
-    "request": "2.65.x"
+    "request": "2.65.x",
+    "mqtt": "^1.0.0"
   },
-  "author": "PatchworkBoy (aka Marci) <apatchworkboy@gmail.com> (https://github.com/patchworkboy)",
+  "author": "PatchworkBoy (aka Marci) (https://github.com/patchworkboy) & xTheRamon (https://github.com/xTheRamon)",
   "license": "CC0",
   "bugs": {
     "url": "https://github.com/patchworkboy/homebridge-eDomoticz/issues"
