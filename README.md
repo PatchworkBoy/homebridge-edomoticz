@@ -14,6 +14,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Lamps (dimmer) - Domoticz SwitchTypeVal: 7
 - Motion Sensors - Domoticz SwitchTypeVal: 8
 - Push Switches -  Domoticz SwitchTypeVal: 9
+- Lock Mechanisms - Domoticz SwitchTypeVal: 11
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 
