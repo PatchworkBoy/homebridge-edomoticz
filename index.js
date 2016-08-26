@@ -85,6 +85,7 @@ module.exports = function(homebridge) {
 
 function eDomoticzPlatform(log, config, api) {
     this._cachedAccessories = [];
+    this.forceLog = log;
     this.log = function() {
         if (typeof process.env.DEBUG !== 'undefined') {
             log(util.format.apply(this, arguments));
@@ -187,8 +188,10 @@ eDomoticzPlatform.prototype = {
             headers: myopt,
             json: true
         }, function(err, response, json) {
-            if (!err && response.statusCode == 200) {
-                if (json.result !== undefined) {
+            if (!err && response.statusCode == 200)
+            {
+                if (json.result !== undefined)
+                {
                     var sArray = Helper.sortByKey(json.result, "Name");
                     sArray.map(function(s) {
                         accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, that.eve);
