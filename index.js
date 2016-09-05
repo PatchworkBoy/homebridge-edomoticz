@@ -147,6 +147,7 @@ function eDomoticzPlatform(log, config, api) {
     this.port = config.port;
     this.room = config.roomid;
     this.api = api;
+	this.agOptions = (this.ssl==1)? {rejectUnauthorized: false}:{};
 
     if (config.mqttenable===1 && this.api)
     {
@@ -185,6 +186,7 @@ eDomoticzPlatform.prototype = {
         }
         request.get({
             url: domurl,
+            agentOptions: this.agOptions,
             headers: myopt,
             json: true
         }, function(err, response, json) {
