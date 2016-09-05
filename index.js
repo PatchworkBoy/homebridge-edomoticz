@@ -121,6 +121,7 @@ function eDomoticzPlatform(log, config) {
         this.server = tmparr[1];
     }
     this.ssl = config.ssl;
+    this.agOptions = (this.ssl==1) ? {rejectUnauthorized: false}:{};
     this.port = config.port;
     this.room = config.roomid;
 }
@@ -385,6 +386,7 @@ eDomoticzPlatform.prototype = {
         }
         request.get({
             url: domurl,
+            agentOptions: this.agOptions,
             headers: myopt,
             json: true
         }, function(err, response, json) {
