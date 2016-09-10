@@ -47,7 +47,6 @@ var Constants = require('./lib/constants.js');
 var Helper = require('./lib/helper.js').Helper;
 var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
 const util = require('util');
-var baserequest;
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
@@ -146,24 +145,8 @@ function eDomoticzPlatform(log, config, api) {
     this.mqttenable = config.mqttenable;
     this.ssl = config.ssl;
     this.port = config.port;
-    if(this.ssl==1){
-	    this.agOptions = {
-		  rejectUnauthorized: false
-		};
-    } else {
-	    this.agOptions = {};
-    }
-    var myopt;
-        if (this.authstr) {
-            myopt = {
-                'Authorization': this.authstr
-            };
-        }
-    baserequest = request.defaults({
-	    	agentOptions: agOptions,
-            headers: myopt,
-            json: true
-    });
+    this.agOptions = (this.ssl==1) ? {rejectUnauthorized: false} : {};
+    this.myopt = (this.authstr) ? { 'Authorization': this.authstr } : {};
     this.room = config.roomid;
     this.api = api;
     if (config.mqttenable===1 && this.api)
@@ -195,14 +178,11 @@ eDomoticzPlatform.prototype = {
         var domurl;
         var prot = (this.ssl == 1) ? "https://" : "http://";
         domurl = (!(this.room) || this.room === 0) ? prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name" : prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
-        var myopt;
-        if (this.authstr) {
-            myopt = {
-                'Authorization': this.authstr
-            };
-        }
-        baserequest.get({
-            url: domurl
+        request.get({
+            url: domurl,
+            agentOptions: this.agOptions,
+            headers: this.myopt,
+            json: true
         }, function(err, response, json) {
             if (!err && response.statusCode == 200)
             {
