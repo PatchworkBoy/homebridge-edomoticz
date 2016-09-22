@@ -145,6 +145,14 @@ function eDomoticzPlatform(log, config, api) {
     this.mqttenable = config.mqttenable;
     this.ssl = config.ssl;
     this.port = config.port;
+    if(this.ssl==1){
+	    this.agOptions = {
+		  rejectUnauthorized: false
+		};
+    } else {
+	    this.agOptions = {};
+    }
+    this.myopt = (this.authstr) ? { 'Authorization': 'Basic '+this.authstr } : {};
     this.room = config.roomid;
     this.api = api;
 
@@ -171,19 +179,14 @@ eDomoticzPlatform.prototype = {
         var domurl;
         var prot = (this.ssl == 1) ? "https://" : "http://";
         domurl = (!(this.room) || this.room === 0) ? prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name" : prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
-        var myopt;
-        if (this.authstr) {
-            myopt = {
-                'Authorization': 'Basic ' + this.authstr
-            };
-        }
 
         request.get({
             url: domurl,
-            headers: myopt,
+            agentOptions: this.agOptions,
+            headers: this.myopt,
             json: true
         }, function(err, response, json) {
-            // console.log(err);
+	        // console.log(err);
             // console.log(response);
             // console.log(json);
             if (!err && response.statusCode == 200)
@@ -194,12 +197,12 @@ eDomoticzPlatform.prototype = {
                     sArray.map(function(s) {
                         accessory = new eDomoticzAccessory(this.log, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
                         foundAccessories.push(accessory);
-                    }.bind(this));
-                }
-                
+                }.bind(this));
+
                 this._cachedAccessories = foundAccessories;
                 if (--asyncCalls === 0) callback(foundAccessories);
                 this.api.emit("domoticzAccessoriesLoaded");
+
             } else {
                 this.forceLog("There was a problem connecting to Domoticz.");
             }
