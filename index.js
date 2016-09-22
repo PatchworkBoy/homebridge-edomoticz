@@ -163,15 +163,9 @@ eDomoticzPlatform.prototype = {
             return;
         }
 
-        var that = this;
         var foundAccessories = [];
         var asyncCalls = 0;
 
-        function callbackLater() {
-            that._cachedAccessories = foundAccessories;
-            if (--asyncCalls === 0) callback(foundAccessories);
-            that.api.emit("domoticzAccessoriesLoaded");
-        }
         this.log("Fetching Domoticz lights and switches...");
         asyncCalls++;
         var domurl;
@@ -180,27 +174,34 @@ eDomoticzPlatform.prototype = {
         var myopt;
         if (this.authstr) {
             myopt = {
-                'Authorization': this.authstr
+                'Authorization': 'Basic ' + this.authstr
             };
         }
+
         request.get({
             url: domurl,
             headers: myopt,
             json: true
         }, function(err, response, json) {
+            // console.log(err);
+            // console.log(response);
+            // console.log(json);
             if (!err && response.statusCode == 200)
             {
                 if (json.result !== undefined)
                 {
                     var sArray = Helper.sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(that.log, that.server, that.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, that.eve);
+                        accessory = new eDomoticzAccessory(this.log, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
                         foundAccessories.push(accessory);
-                    });
+                    }.bind(this));
                 }
-                callbackLater();
+                
+                this._cachedAccessories = foundAccessories;
+                if (--asyncCalls === 0) callback(foundAccessories);
+                this.api.emit("domoticzAccessoriesLoaded");
             } else {
-                that.log("There was a problem connecting to Domoticz.");
+                this.forceLog("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
     }
