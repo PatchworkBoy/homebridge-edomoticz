@@ -197,8 +197,8 @@ eDomoticzPlatform.prototype = {
                     sArray.map(function(s) {
                         accessory = new eDomoticzAccessory(this.log, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
                         foundAccessories.push(accessory);
-                }.bind(this));
-
+                    }.bind(this));
+                }
                 this._cachedAccessories = foundAccessories;
                 if (--asyncCalls === 0) callback(foundAccessories);
                 this.api.emit("domoticzAccessoriesLoaded");
@@ -207,5 +207,5 @@ eDomoticzPlatform.prototype = {
                 this.forceLog("There was a problem connecting to Domoticz.");
             }
         }.bind(this));
-    }
+ }
 };
