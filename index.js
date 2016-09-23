@@ -64,6 +64,9 @@ module.exports = function(homebridge) {
     Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
     Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
     Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WaterFlow, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.TotalWaterFlow, Characteristic);
+    Helper.fixInheritance(eDomoticzServices.WaterDeviceService, Service);
     Helper.fixInheritance(eDomoticzServices.WeatherService, Service);
     Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
     Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
