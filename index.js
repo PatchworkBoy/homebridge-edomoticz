@@ -155,14 +155,15 @@ function eDomoticzPlatform(log, config, api) {
     } else {
 	    this.agOptions = {};
     }
-    this.myopt = (this.authstr) ? { 'Authorization': 'Basic '+this.authstr } : {};
+    this.myopt = (this.authstr) ? { 'Authorization': 'Basic ' + this.authstr } : {};
     this.room = config.roomid;
     this.api = api;
+    this.mqtt = false;
 
     if (config.mqttenable===1 && this.api)
     {
         this.api.on("domoticzAccessoriesLoaded", function() {
-            this.Mqtt = new Mqtt(this, 'mqtt://'+config.mqttserver+':'+config.mqttport, [{"username":config.mqttuser,"password":config.mqttpass}]);
+            this.mqtt = new Mqtt(this, 'mqtt://'+config.mqttserver+':'+config.mqttport, [{"username":config.mqttuser,"password":config.mqttpass}]);
         }.bind(this));
     }
 }
@@ -198,7 +199,7 @@ eDomoticzPlatform.prototype = {
                 {
                     var sArray = Helper.sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(this.log, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
+                        accessory = new eDomoticzAccessory(this, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
                         foundAccessories.push(accessory);
                     }.bind(this));
                 }
