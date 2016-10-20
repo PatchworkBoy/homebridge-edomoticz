@@ -190,9 +190,6 @@ eDomoticzPlatform.prototype = {
             headers: this.myopt,
             json: true
         }, function(err, response, json) {
-	        // console.log(err);
-            // console.log(response);
-            // console.log(json);
             if (!err && response.statusCode == 200)
             {
                 if (json.result !== undefined)
