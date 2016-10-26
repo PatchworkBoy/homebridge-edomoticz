@@ -196,7 +196,7 @@ eDomoticzPlatform.prototype = {
                 {
                     var sArray = Helper.sortByKey(json.result, "Name");
                     sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(this, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, s.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
+                        accessory = new eDomoticzAccessory(this, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, this.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
                         foundAccessories.push(accessory);
                     }.bind(this));
                 }
