@@ -163,7 +163,7 @@ function eDomoticzPlatform(log, config, api) {
     if (config.mqttenable===1 && this.api)
     {
         this.api.on("domoticzAccessoriesLoaded", function() {
-            this.mqtt = new Mqtt(this, 'mqtt://'+config.mqttserver+':'+config.mqttport, [{"username":config.mqttuser,"password":config.mqttpass}]);
+            this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
         }.bind(this));
     }
 }
