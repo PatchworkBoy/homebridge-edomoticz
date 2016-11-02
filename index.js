@@ -87,7 +87,7 @@ module.exports = function(homebridge) {
 };
 
 function eDomoticzPlatform(log, config, api) {
-    this._cachedAccessories = [];
+    this._cachedAccessories = false;
     this.forceLog = log;
     this.log = function() {
         if (typeof process.env.DEBUG !== 'undefined') {
@@ -163,14 +163,18 @@ function eDomoticzPlatform(log, config, api) {
     if (config.mqttenable===1 && this.api)
     {
         this.api.on("domoticzAccessoriesLoaded", function() {
-            this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
+            this.accessories(function(accessories) {
+                if (accessories.length > 0) {
+                    this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
+                }
+            }.bind(this));
         }.bind(this));
     }
 }
 
 eDomoticzPlatform.prototype = {
     accessories: function(callback) {
-        if (this._cachedAccessories && this._cachedAccessories.length > 0) {
+        if (this._cachedAccessories) {
             callback(this._cachedAccessories);
             return;
         }
@@ -203,6 +207,16 @@ eDomoticzPlatform.prototype = {
                 this._cachedAccessories = foundAccessories;
                 if (--asyncCalls === 0) callback(foundAccessories);
                 this.api.emit("domoticzAccessoriesLoaded");
+
+                if (this._cachedAccessories.length == 0)
+                {
+                    if (this.config.roomid == 0) {
+                        this.forceLog("You do not have any Domoticz devices yet. Please add some devices and restart HomeBridge.");
+                    }
+                    else {
+                        this.forceLog("You do not have any Domoticz devices in this room (roomid: " + this.config.roomid + ") yet. Please add some devices to this room and restart HomeBridge.");
+                    }
+                }
 
             } else {
                 this.forceLog("There was a problem connecting to Domoticz.");
