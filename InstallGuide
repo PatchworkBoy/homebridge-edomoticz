@@ -38,7 +38,7 @@ sudo chmod +x /etc/init.d/domoticz.sh
 sudo update-rc.d domoticz.sh defaults
 
 cd ~/domoticz
-sudo ./domoticz
+./domoticz
 
 [ctrl-c]
 
