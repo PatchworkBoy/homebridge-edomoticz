@@ -40,7 +40,7 @@
 // }
 //
 
-var request = require("request");
+var Domoticz = require('./lib/domoticz.js').Domoticz;
 var Mqtt = require('./lib/mqtt.js').Mqtt;
 var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
 var Constants = require('./lib/constants.js');
@@ -49,178 +49,165 @@ var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
 const util = require('util');
 
 module.exports = function(homebridge) {
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
-    Types = homebridge.hapLegacyTypes;
-    UUID = homebridge.hap.uuid;
+  Service = homebridge.hap.Service;
+  Characteristic = homebridge.hap.Characteristic;
+  Types = homebridge.hapLegacyTypes;
+  UUID = homebridge.hap.uuid;
 
-    Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.GasConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WaterFlow, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.TotalWaterFlow, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WaterDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.WeatherService, Service);
-    Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindDirection, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Rainfall, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.RainDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Visibility, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.VisibilityDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.SolRad, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.SolRadDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.LocationService, Service);
-    Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
-    homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
-    homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
+  Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.GasConsumption, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.WaterFlow, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.TotalWaterFlow, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.WaterDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.WeatherService, Service);
+  Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.WindDirection, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.WindDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Rainfall, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.RainDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Visibility, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.VisibilityDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.SolRad, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.SolRadDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.LocationService, Service);
+  Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
+  homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
+  homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
 };
 
 function eDomoticzPlatform(log, config, api) {
-    this._cachedAccessories = false;
-    this.forceLog = log;
-    this.log = function() {
-        if (typeof process.env.DEBUG !== 'undefined') {
-            log(util.format.apply(this, arguments));
+  this._cachedAccessories = false;
+  this.forceLog = log;
+  this.log = function() {
+      if (typeof process.env.DEBUG !== 'undefined') {
+          log(util.format.apply(this, arguments));
+      }
+  };
+
+  this.config = config;
+  this.server = config.server;
+  this.authorizationToken = false;
+  if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1)
+  {
+    tmparr = this.server.split("@");
+    var Base64 = {
+        _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+        encode: function(e) {
+            var t = "";
+            var n, r, i, s, o, u, a;
+            var f = 0;
+            e = Base64._utf8_encode(e);
+            while (f < e.length) {
+                n = e.charCodeAt(f++);
+                r = e.charCodeAt(f++);
+                i = e.charCodeAt(f++);
+                s = n >> 2;
+                o = (n & 3) << 4 | r >> 4;
+                u = (r & 15) << 2 | i >> 6;
+                a = i & 63;
+                if (isNaN(r)) {
+                    u = a = 64;
+                } else if (isNaN(i)) {
+                    a = 64;
+                }
+                t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a);
+            }
+            return t;
+        },
+        _utf8_encode: function(e) {
+            e = e.replace(/\r\n/g, "\n");
+            var t = "";
+            for (var n = 0; n < e.length; n++) {
+                var r = e.charCodeAt(n);
+                if (r < 128) {
+                    t += String.fromCharCode(r);
+                } else if (r > 127 && r < 2048) {
+                    t += String.fromCharCode(r >> 6 | 192);
+                    t += String.fromCharCode(r & 63 | 128);
+                } else {
+                    t += String.fromCharCode(r >> 12 | 224);
+                    t += String.fromCharCode(r >> 6 & 63 | 128);
+                    t += String.fromCharCode(r & 63 | 128);
+                }
+            }
+            return t;
         }
     };
+    this.authorizationToken = Base64.encode(tmparr[0]);
+    this.server = tmparr[1];
+  }
+  this.mqttenable = config.mqttenable;
+  this.ssl = (config.ssl == 1);
+  this.port = config.port;
+  this.room = config.roomid;
+  this.api = api;
+  this.mqtt = false;
 
-    this.config = config;
-    this.server = config.server;
-    if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
-        tmparr = this.server.split("@");
-        var Base64 = {
-            _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-            encode: function(e) {
-                var t = "";
-                var n, r, i, s, o, u, a;
-                var f = 0;
-                e = Base64._utf8_encode(e);
-                while (f < e.length) {
-                    n = e.charCodeAt(f++);
-                    r = e.charCodeAt(f++);
-                    i = e.charCodeAt(f++);
-                    s = n >> 2;
-                    o = (n & 3) << 4 | r >> 4;
-                    u = (r & 15) << 2 | i >> 6;
-                    a = i & 63;
-                    if (isNaN(r)) {
-                        u = a = 64;
-                    } else if (isNaN(i)) {
-                        a = 64;
-                    }
-                    t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a);
-                }
-                return t;
-            },
-            _utf8_encode: function(e) {
-                e = e.replace(/\r\n/g, "\n");
-                var t = "";
-                for (var n = 0; n < e.length; n++) {
-                    var r = e.charCodeAt(n);
-                    if (r < 128) {
-                        t += String.fromCharCode(r);
-                    } else if (r > 127 && r < 2048) {
-                        t += String.fromCharCode(r >> 6 | 192);
-                        t += String.fromCharCode(r & 63 | 128);
-                    } else {
-                        t += String.fromCharCode(r >> 12 | 224);
-                        t += String.fromCharCode(r >> 6 & 63 | 128);
-                        t += String.fromCharCode(r & 63 | 128);
-                    }
-                }
-                return t;
-            }
-        };
-        this.authstr = Base64.encode(tmparr[0]);
-        this.server = tmparr[1];
-    }
-    this.mqttenable = config.mqttenable;
-    this.ssl = config.ssl;
-    this.port = config.port;
-    if(this.ssl==1){
-	    this.agOptions = {
-		  rejectUnauthorized: false
-		};
-    } else {
-	    this.agOptions = {};
-    }
-    this.myopt = (this.authstr) ? { 'Authorization': 'Basic ' + this.authstr } : {};
-    this.room = config.roomid;
-    this.api = api;
-    this.mqtt = false;
+  if (this.authorizationToken) {
+    this.requestHeaders['Authorization'] = 'Basic ' + this.authorizationToken;
+  }
+  Domoticz.initialize(this.ssl, this.requestHeaders);
 
-    if (config.mqttenable===1 && this.api)
-    {
-        this.api.on("domoticzAccessoriesLoaded", function() {
-            this.accessories(function(accessories) {
-                if (accessories.length > 0) {
-                    this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
-                }
-            }.bind(this));
-        }.bind(this));
-    }
+  if (config.mqttenable===1 && this.api)
+  {
+    this.api.once("domoticzAccessoriesLoaded", function() {
+      this.accessories(function(accessories) {
+        if (accessories.length > 0) {
+          this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
+        }
+      }.bind(this));
+    }.bind(this));
+  }
 }
 
 eDomoticzPlatform.prototype = {
-    accessories: function(callback) {
-        if (this._cachedAccessories) {
-            callback(this._cachedAccessories);
-            return;
+  accessories: function(callback, forceUpdate) {
+    if (this._cachedAccessories && ((typeof forceUpdate === 'undefined') || !forceUpdate)) {
+      callback(this._cachedAccessories);
+      return;
+    }
+
+    this.log("Fetching Domoticz lights and switches...");
+
+    var baseUrl = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
+    Domoticz.devices(baseUrl, this.room, function(devices) {
+      this.log("You have " + devices.length + " devices defined in Domoticz.");
+
+      var newAccessories = [];
+      for (var i = 0; i < devices.length; i++)
+      {
+        var device = devices[i];
+
+        var accessory = new eDomoticzAccessory(this, baseUrl, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
+        newAccessories.push(accessory);
+      }
+
+      this._cachedAccessories = newAccessories;
+      callback(this._cachedAccessories);
+      this.api.emit("domoticzAccessoriesLoaded");
+
+      if (this._cachedAccessories.length == 0)
+      {
+        if (this.room == 0) {
+          this.forceLog("You do not have any Domoticz devices yet. Please add some devices and restart HomeBridge.");
         }
-
-        var foundAccessories = [];
-        var asyncCalls = 0;
-
-        this.log("Fetching Domoticz lights and switches...");
-        asyncCalls++;
-        var domurl;
-        var prot = (this.ssl == 1) ? "https://" : "http://";
-        domurl = (!(this.room) || this.room === 0) ? prot + this.server + ":" + this.port + "/json.htm?type=devices&used=true&order=Name" : prot + this.server + ":" + this.port + "/json.htm?type=devices&plan=" + this.room + "&used=true&order=Name";
-
-        request.get({
-            url: domurl,
-            agentOptions: this.agOptions,
-            headers: this.myopt,
-            json: true
-        }, function(err, response, json) {
-            if (!err && response.statusCode == 200)
-            {
-                if (json.result !== undefined)
-                {
-                    var sArray = Helper.sortByKey(json.result, "Name");
-                    sArray.map(function(s) {
-                        accessory = new eDomoticzAccessory(this, this.server, this.port, false, s.Used, s.idx, s.Name, s.HaveDimmer, s.MaxDimLevel, s.SubType, s.Type, s.BatteryLevel, this.authstr, s.SwitchType, s.SwitchTypeVal, prot, s.HardwareTypeVal, this.eve);
-                        foundAccessories.push(accessory);
-                    }.bind(this));
-                }
-                this._cachedAccessories = foundAccessories;
-                if (--asyncCalls === 0) callback(foundAccessories);
-                this.api.emit("domoticzAccessoriesLoaded");
-
-                if (this._cachedAccessories.length == 0)
-                {
-                    if (this.config.roomid == 0) {
-                        this.forceLog("You do not have any Domoticz devices yet. Please add some devices and restart HomeBridge.");
-                    }
-                    else {
-                        this.forceLog("You do not have any Domoticz devices in this room (roomid: " + this.config.roomid + ") yet. Please add some devices to this room and restart HomeBridge.");
-                    }
-                }
-
-            } else {
-                this.forceLog("There was a problem connecting to Domoticz.");
-            }
-        }.bind(this));
- }
+        else {
+          this.forceLog("You do not have any Domoticz devices in this room (roomid: " + this.room + ") yet. Please add some devices to this room and restart HomeBridge.");
+        }
+      }
+    }.bind(this), function() {
+      this.forceLog("There was a problem connecting to Domoticz.");
+    }.bind(this));
+  }
 };
