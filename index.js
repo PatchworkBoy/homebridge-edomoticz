@@ -154,10 +154,11 @@ function eDomoticzPlatform(log, config, api) {
   this.api = api;
   this.mqtt = false;
 
+  var requestHeaders = {};
   if (this.authorizationToken) {
-    this.requestHeaders['Authorization'] = 'Basic ' + this.authorizationToken;
+    requestHeaders['Authorization'] = 'Basic ' + this.authorizationToken;
   }
-  Domoticz.initialize(this.ssl, this.requestHeaders);
+  Domoticz.initialize(this.ssl, requestHeaders);
 
   if (config.mqttenable===1 && this.api)
   {
