@@ -1,5 +1,5 @@
          ____                        _   _
-     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.2.1
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.2.3
     / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
    |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
     \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
@@ -7,7 +7,7 @@
 
    A Platform Plugin for HomeBridge by Marci & TheRamon
            [http://twitter.com/marcisshadow] 
-[http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
+           [http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
   
 From a clean install of Jessie on Raspberry Pi, booted up and connected to WLAN...
 
@@ -15,6 +15,7 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo reboot
 
+sudo apt-get install rpi-update
 sudo BRANCH=next rpi-update    [fixes Wifi Ch12/13 issue with rPi3 WiFi]
 iwconfig wlan0 power off       [fixes powermanagement issue with WiFi on all Raspberry Pi]
 
@@ -27,22 +28,7 @@ sudo chmod 755 /etc/network/if-up.d/wlan0
 sudo reboot
 
 [Installing Domoticz]
-mkdir ~/domoticz
-cd ~/domoticz
-wget http://www.domoticz.com/releases/release/domoticz_linux_armv7l.tgz
-tar xvfz domoticz_linux_armv7l.tgz
-rm domoticz_linux_armv7l.tgz
-
-sudo cp domoticz.sh /etc/init.d
-sudo chmod +x /etc/init.d/domoticz.sh
-sudo update-rc.d domoticz.sh defaults
-
-cd ~/domoticz
-sudo ./domoticz
-
-[ctrl-c]
-
-sudo service domoticz.sh start
+sudo curl -L install.domoticz.com | bash
 
 [Only need to do the following lines if on RaspberryPi Model B / B+ / nonARM7 CPU]
 sudo rm -rf /usr/local/{lib/node{,/.npm,_modules},bin,share/man}/{npm*,node*,man1/node*} /var/db/receipts/org.nodejs.*

@@ -1,4 +1,4 @@
-# homebridge-eDomoticz - with MQTT Integration
+# homebridge-eDomoticz
 A fully-fledged up-to-date Homebridge-Plugin
 for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
