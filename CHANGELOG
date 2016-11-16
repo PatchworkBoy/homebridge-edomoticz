@@ -1,5 +1,5 @@
          ____                        _   _
-     ___|  _ \  ___  _ __ ___   ___ | |_(_) _v0.2.3
+     ___|  _ \  ___  _ __ ___   ___ | |_(_) ________
     / _ | | | |/ _ \| '_ ` _ \ / _ \| __| |/ __|_  /
    |  __| |_| | (_) | | | | | | (_) | |_| | (__ / /
     \___|____/ \___/|_| |_| |_|\___/ \__|_|\___/___|
@@ -9,7 +9,9 @@
            [http://twitter.com/marcisshadow] 
            [http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
  
- V0.2.3 - 2016/10/26
+V1.0.1 - see https://github.com/PatchworkBoy/homebridge-edomoticz/commits/master
+V1.0.0 - MQTT Merge
+V0.2.3 - 2016/10/26
     - MQTT Integration
     - Switch and dimmer values caching
     - Support for Domoticz Security panel
