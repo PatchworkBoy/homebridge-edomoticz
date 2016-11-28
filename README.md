@@ -78,17 +78,35 @@ sudo npm update -g homebridge-edomoticz
             "port": "8080",
             "ssl": 0,
             "roomid": 0,
-            "mqttenable": 1,
-            "mqttserver": "127.0.0.1",
-            "mqttport": "1883",
-            "mqttauth": 0,
-            "mqttuser": "",
-            "mqttpass": ""
+            "mqtt": 1
         }
     ],
     "accessories": []
 }
 ```
+
+By default, the plugin will grab hardware information regarding MQTT from Domoticz if `mqtt` is 1 or true in the configuration file.
+Advanced users can override their MQTT configuration as follows:
+
+```
+"mqtt": {
+  "host": "alternate.mqtt.com",
+  "port": 1234,
+  "topic": "domoticz/out",
+  "username": "username",
+  "password": "password"
+}
+```
+
+Values can be omitted from this dictionary, and the values that need overriding can be kept, e.g.
+
+```
+"mqtt": {
+    "port": 1234
+}
+```
+
+to only override the port value.
 
 ## Tips
 

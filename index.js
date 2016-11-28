@@ -28,12 +28,7 @@
 //         "port": "8080",
 //         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
 //         "ssl": 0,
-//         "mqttenable": 1,
-//         "mqttserver": "127.0.0.1",
-//         "mqttport": "1883",
-//         "mqttauth": 1,          //only needed if you've password protected mosquitto via mosquitto.conf
-//         "mqttuser": "username", //only needed if you've password protected mosquitto via mosquitto.conf
-//         "mqttpass": "password"  //only needed if you've password protected mosquitto via mosquitto.conf
+//         "mqtt": true
 //      }],
 //
 //  "accessories":[]
@@ -147,11 +142,11 @@ function eDomoticzPlatform(log, config, api) {
     this.authorizationToken = Base64.encode(tmparr[0]);
     this.server = tmparr[1];
   }
-  this.mqttenable = config.mqttenable;
   this.ssl = (config.ssl == 1);
   this.port = config.port;
   this.room = config.roomid;
   this.api = api;
+  this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
   this.mqtt = false;
 
   var requestHeaders = {};
@@ -160,12 +155,17 @@ function eDomoticzPlatform(log, config, api) {
   }
   Domoticz.initialize(this.ssl, requestHeaders);
 
-  if (config.mqttenable===1 && this.api)
+  // Legacy, will be deprecated soon:
+  if (typeof config.mqtt === 'undefined' && typeof config.mqttenable !== 'undefined') {
+    config.mqtt = (config.mqttenable === 1);
+  }
+
+  if (config.mqtt && this.api)
   {
     this.api.once("domoticzAccessoriesLoaded", function() {
       this.accessories(function(accessories) {
         if (accessories.length > 0) {
-          this.mqtt = new Mqtt(this, config.mqttserver, config.mqttport, 'domoticz/out', {username: config.mqttuser, password: config.mqttpass});
+          setupMqttConnection(this);
         }
       }.bind(this));
     }.bind(this));
@@ -181,8 +181,7 @@ eDomoticzPlatform.prototype = {
 
     this.log("Fetching Domoticz lights and switches...");
 
-    var baseUrl = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
-    Domoticz.devices(baseUrl, this.room, function(devices) {
+    Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
       this.log("You have " + devices.length + " devices defined in Domoticz.");
 
       var newAccessories = [];
@@ -190,7 +189,7 @@ eDomoticzPlatform.prototype = {
       {
         var device = devices[i];
 
-        var accessory = new eDomoticzAccessory(this, baseUrl, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
+        var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
         newAccessories.push(accessory);
       }
 
@@ -212,3 +211,53 @@ eDomoticzPlatform.prototype = {
     }.bind(this));
   }
 };
+
+function setupMqttConnection(platform)
+{
+  var connectionInformation = {
+    host: (typeof platform.config.mqtt.host !== 'undefined' ? platform.config.mqtt.host : '127.0.0.1'),
+    port: (typeof platform.config.mqtt.port !== 'undefined' ? platform.config.mqtt.port : 1883),
+    topic: (typeof platform.config.mqtt.topic !== 'undefined' ? platform.config.mqtt.topic : 'domoticz/out'),
+    username: (typeof platform.config.mqtt.username !== 'undefined' ? platform.config.mqtt.username : ''),
+    password: (typeof platform.config.mqtt.password !== 'undefined' ? platform.config.mqtt.password : ''),
+  };
+
+  var mqttError = function() {
+    platform.forceLog("There was an error while getting the MQTT Hardware Device from Domoticz.\nPlease verify that you have added the MQTT Hardware Device and that the hardware device is enabled.");
+  };
+
+  Domoticz.hardware(platform.apiBaseURL, function(hardware) {
+    var mqttHardware = false;
+    for (var i = 0; i < hardware.length; i++)
+    {
+      if (hardware[i].Type == Constants.HardwareTypeMQTT)
+      {
+        mqttHardware = hardware[i];
+        break;
+      }
+    }
+
+    if (mqttHardware === false || (mqttHardware.Enabled != "true")) {
+      mqttError();
+      return;
+    }
+
+    if (typeof platform.config.mqtt.host === 'undefined') {
+      connectionInformation.host = mqttHardware.Address;
+    }
+
+    if (typeof platform.config.mqtt.port === 'undefined') {
+      connectionInformation.port = mqttHardware.Port;
+    }
+
+    if (typeof platform.config.mqtt.username === 'undefined') {
+      connectionInformation.username = mqttHardware.Username;
+    }
+
+    if (typeof platform.config.mqtt.password === 'undefined') {
+      connectionInformation.password = mqttHardware.Password;
+    }
+
+    platform.mqtt = new Mqtt(platform, connectionInformation.host, connectionInformation.port, connectionInformation.topic, {username: connectionInformation.username, password: connectionInformation.password});
+  }, mqttError);
+}
