@@ -206,8 +206,8 @@ eDomoticzPlatform.prototype = {
           this.forceLog("You do not have any Domoticz devices in this room (roomid: " + this.room + ") yet. Please add some devices to this room and restart HomeBridge.");
         }
       }
-    }.bind(this), function() {
-      this.forceLog("There was a problem connecting to Domoticz.");
+    }.bind(this), function(response, err) {
+      Helper.LogConnectionError(this, response, err);
     }.bind(this));
   }
 };
