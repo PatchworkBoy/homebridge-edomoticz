@@ -28,7 +28,8 @@
 //         "port": "8080",
 //         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
 //         "ssl": 0,
-//         "mqtt": true
+//         "mqtt": true,
+//         "exceptions": [12,14]   // exceptions of devices (idx)
 //      }],
 //
 //  "accessories":[]
@@ -148,6 +149,7 @@ function eDomoticzPlatform(log, config, api) {
   this.api = api;
   this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
   this.mqtt = false;
+  this.exceptions = config.exceptions;
 
   var requestHeaders = {};
   if (this.authorizationToken) {
@@ -185,12 +187,17 @@ eDomoticzPlatform.prototype = {
       this.log("You have " + devices.length + " devices defined in Domoticz.");
 
       var newAccessories = [];
+
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
-
-        var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
-        newAccessories.push(accessory);
+        if (this.exceptions.indexOf(device.idx) > -1) {
+          this.forceLog("Skipped device: "+device.idx+" - "+device.Name);
+        }
+        else {
+          var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
+          newAccessories.push(accessory);
+        }
       }
 
       this._cachedAccessories = newAccessories;
