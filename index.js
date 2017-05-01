@@ -179,6 +179,8 @@ eDomoticzPlatform.prototype = {
       return;
     }
 
+    var excludedDevices = (typeof this.config.excludedDevices !== 'undefined' ? this.config.excludedDevices : []);
+
     this.log("Fetching Domoticz lights and switches...");
 
     Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
@@ -189,8 +191,11 @@ eDomoticzPlatform.prototype = {
       {
         var device = devices[i];
 
-        var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
-        newAccessories.push(accessory);
+        // Check if we need to exclude the device
+        if (!(excludedDevices.indexOf(device.ID) > -1)) {
+            var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
+            newAccessories.push(accessory);
+        }
       }
 
       this._cachedAccessories = newAccessories;

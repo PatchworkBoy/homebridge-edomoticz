@@ -78,7 +78,8 @@ sudo npm update -g homebridge-edomoticz
             "port": "8080",
             "ssl": 0,
             "roomid": 0,
-            "mqtt": 1
+            "mqtt": 1,
+            "excludedDevices": []
         }
     ],
     "accessories": []
@@ -107,6 +108,13 @@ Values can be omitted from this dictionary, and the values that need overriding 
 ```
 
 to only override the port value.
+
+To prevent certain Domoticz devices from showing up in HomeBridge it is possible to exclude them by setting the "excludedDevices" parameter.
+Provide an array of Domoticz Device ID's, which can be found in the Domoticz dashboard on the "Setup > Devices" page and look for the "ID" column (not the "idx" column).
+
+```
+"excludedDevices": ["0000001","0000002"]
+```
 
 ## Tips
 
