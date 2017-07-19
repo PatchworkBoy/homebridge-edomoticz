@@ -77,17 +77,18 @@ module.exports = function(homebridge) {
   Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
   Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
-  homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
-  homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform);
+
+  //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
+  homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
 };
 
 function eDomoticzPlatform(log, config, api) {
-  this._cachedAccessories = false;
+  this.accessories = [];
   this.forceLog = log;
   this.log = function() {
-      if (typeof process.env.DEBUG !== 'undefined') {
-          log(util.format.apply(this, arguments));
-      }
+    if (typeof process.env.DEBUG !== 'undefined') {
+      log(util.format.apply(this, arguments));
+    }
   };
 
   this.config = config;
@@ -95,51 +96,8 @@ function eDomoticzPlatform(log, config, api) {
   this.authorizationToken = false;
   if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1)
   {
-    tmparr = this.server.split("@");
-    var Base64 = {
-        _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-        encode: function(e) {
-            var t = "";
-            var n, r, i, s, o, u, a;
-            var f = 0;
-            e = Base64._utf8_encode(e);
-            while (f < e.length) {
-                n = e.charCodeAt(f++);
-                r = e.charCodeAt(f++);
-                i = e.charCodeAt(f++);
-                s = n >> 2;
-                o = (n & 3) << 4 | r >> 4;
-                u = (r & 15) << 2 | i >> 6;
-                a = i & 63;
-                if (isNaN(r)) {
-                    u = a = 64;
-                } else if (isNaN(i)) {
-                    a = 64;
-                }
-                t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a);
-            }
-            return t;
-        },
-        _utf8_encode: function(e) {
-            e = e.replace(/\r\n/g, "\n");
-            var t = "";
-            for (var n = 0; n < e.length; n++) {
-                var r = e.charCodeAt(n);
-                if (r < 128) {
-                    t += String.fromCharCode(r);
-                } else if (r > 127 && r < 2048) {
-                    t += String.fromCharCode(r >> 6 | 192);
-                    t += String.fromCharCode(r & 63 | 128);
-                } else {
-                    t += String.fromCharCode(r >> 12 | 224);
-                    t += String.fromCharCode(r >> 6 & 63 | 128);
-                    t += String.fromCharCode(r & 63 | 128);
-                }
-            }
-            return t;
-        }
-    };
-    this.authorizationToken = Base64.encode(tmparr[0]);
+    var tmparr = this.server.split("@");
+    this.authorizationToken = Helper.Base64.encode(tmparr[0]);
     this.server = tmparr[1];
   }
   this.ssl = (config.ssl == 1);
@@ -155,65 +113,77 @@ function eDomoticzPlatform(log, config, api) {
   }
   Domoticz.initialize(this.ssl, requestHeaders);
 
-  // Legacy, will be deprecated soon:
-  if (typeof config.mqtt === 'undefined' && typeof config.mqttenable !== 'undefined') {
-    config.mqtt = (config.mqttenable === 1);
-  }
-
-  if (config.mqtt && this.api)
+  if (this.api)
   {
-    this.api.once("domoticzAccessoriesLoaded", function() {
-      this.accessories(function(accessories) {
-        if (accessories.length > 0) {
-          setupMqttConnection(this);
-        }
-      }.bind(this));
+    this.api.once("didFinishLaunching", function() {
+      this.synchronizeAccessories();
+
+      if (config.mqtt) {
+        setupMqttConnection(this);
+      }
     }.bind(this));
   }
 }
 
 eDomoticzPlatform.prototype = {
-  accessories: function(callback, forceUpdate) {
-    if (this._cachedAccessories && ((typeof forceUpdate === 'undefined') || !forceUpdate)) {
-      callback(this._cachedAccessories);
-      return;
-    }
-
+  synchronizeAccessories: function() {
     var excludedDevices = (typeof this.config.excludedDevices !== 'undefined' ? this.config.excludedDevices : []);
 
-    this.log("Fetching Domoticz lights and switches...");
-
     Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
-      this.log("You have " + devices.length + " devices defined in Domoticz.");
-
-      var newAccessories = [];
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
 
-        // Check if we need to exclude the device
-        if (!(excludedDevices.indexOf(device.ID) > -1)) {
-            var accessory = new eDomoticzAccessory(this, false, device.Used, device.idx, device.Name, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
-            newAccessories.push(accessory);
+        if (!(excludedDevices.indexOf(device.ID) <= -1)) {
+          continue;
         }
+
+        var existingAccessory = this.accessories.find(function(existingAccessory) {
+          return existingAccessory.idx == device.idx;
+        });
+
+        if (existingAccessory) {
+          continue;
+        }
+
+        // Generate a new accessory
+        var uuid = UUID.generate(device.idx + "_" + device.Name);
+        var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
+        this.accessories.push(accessory);
+        this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+        accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
       }
 
-      this._cachedAccessories = newAccessories;
-      callback(this._cachedAccessories);
-      this.api.emit("domoticzAccessoriesLoaded");
-
-      if (this._cachedAccessories.length == 0)
+      for (var i = 0; i < this.accessories.length; i++)
       {
-        if (this.room == 0) {
-          this.forceLog("You do not have any Domoticz devices yet. Please add some devices and restart HomeBridge.");
-        }
-        else {
-          this.forceLog("You do not have any Domoticz devices in this room (roomid: " + this.room + ") yet. Please add some devices to this room and restart HomeBridge.");
+        var removedAccessory = this.accessories[i];
+        var existingDevice = devices.find(function(existingDevice) {
+          return existingDevice.idx == removedAccessory.idx;
+        });
+
+        if (!existingDevice) {
+          this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [removedAccessory.platformAccessory]);
         }
       }
     }.bind(this), function(response, err) {
       Helper.LogConnectionError(this, response, err);
     }.bind(this));
+  },
+  configureAccessory: function(platformAccessory) {
+    if (!platformAccessory.context || !platformAccessory.context.device)
+    {
+      // Remove this invalid device from the cache.
+      this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory]);
+      return;
+    }
+
+    var device = platformAccessory.context.device;
+    var uuid = platformAccessory.context.uuid;
+    var eve = platformAccessory.context.eve;
+
+    // Generate the already cached accessory again
+    var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, eve);
+    this.accessories.push(accessory);
   }
 };
 
