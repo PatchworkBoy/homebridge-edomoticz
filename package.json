@@ -22,14 +22,14 @@
   },
   "dependencies": {
     "inherits": "^2.0.1",
-    "request": "2.65.x",
-    "mqtt": "^1.0.0"
+    "mqtt": "^2.9.1",
+    "request": "^2.81.0"
   },
   "author": {
     "name": "PatchworkBoy",
     "url": "aka Marci"
   },
-  "license": "CC0",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/patchworkboy/homebridge-eDomoticz/issues"
   },
