@@ -161,8 +161,13 @@ eDomoticzPlatform.prototype = {
           return existingDevice.idx == removedAccessory.idx;
         });
 
-        if (!existingDevice) {
-          this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [removedAccessory.platformAccessory]);
+        if (!existingDevice)
+        {
+          try {
+            this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [removedAccessory.platformAccessory]);
+          } catch (e) {
+            console.log("Could not unregister platform accessory! " + e);
+          }
         }
       }
     }.bind(this), function(response, err) {
@@ -173,7 +178,11 @@ eDomoticzPlatform.prototype = {
     if (!platformAccessory.context || !platformAccessory.context.device)
     {
       // Remove this invalid device from the cache.
-      this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory]);
+      try {
+        this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory]);
+      } catch (e) {
+        console.log("Could not unregister platform accessory! " + e);
+      }
       return;
     }
 
