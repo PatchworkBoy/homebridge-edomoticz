@@ -3,8 +3,8 @@ A fully-fledged up-to-date Homebridge-Plugin
 for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
 
-##Supports:
-###Standard HomeKit Types:
+## Supports:
+### Standard HomeKit Types:
 - Sockets (on/off) - Domoticz SwitchTypeVal: 0
 - Lamps (on/off) - Domoticz SwitchTypeVal: 0
 - Contact Sensors - Domoticz SwitchTypeVal: 2
@@ -18,8 +18,8 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 
-##Provides:
-###Custom HomeKit Types:
+## Provides:
+### Custom HomeKit Types:
 - General kWh power meters - Types: General, Current; SubType: kWh, mapped to Eve chars where possible
 - CurrentCost USB power meter - Type: Usage, SubType: Electric, mapped to Eve chars where possible
 - P1 Smart Meter (Electric & Gas), mapped to Eve chars where possible
@@ -31,8 +31,8 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 
 ** assumes the EvoHome has been setup according to [this script method](https://www.domoticz.com/wiki/Evohome#Scripting_for_RFG100).
 
-###Todo:
-- [ ] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
+## Todo:
+- [x] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [x] MQTT-based realtime updates
 - [x] Hue/RGB
 - [x] Blinds
