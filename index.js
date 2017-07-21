@@ -185,10 +185,10 @@ eDomoticzPlatform.prototype = {
         this.accessories.splice(index, 1);
       }
 
-      setTimeout(this.synchronizeAccessories.bind(this), 60000);
+      setTimeout(this.synchronizeAccessories.bind(this), 600000); // Every 10 minutes, refresh
     }.bind(this), function(response, err) {
       Helper.LogConnectionError(this, response, err);
-      setTimeout(this.synchronizeAccessories.bind(this), 60000);
+      setTimeout(this.synchronizeAccessories.bind(this), 600000); // Every 10 minutes, refresh
     }.bind(this));
   },
   configureAccessory: function(platformAccessory) {
