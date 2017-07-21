@@ -83,6 +83,7 @@ module.exports = function(homebridge) {
 };
 
 function eDomoticzPlatform(log, config, api) {
+  this.isSynchronizingAccessories = false;
   this.accessories = [];
   this.forceLog = log;
   this.log = function() {
@@ -116,7 +117,11 @@ function eDomoticzPlatform(log, config, api) {
   if (this.api)
   {
     this.api.once("didFinishLaunching", function() {
-      this.synchronizeAccessories();
+      var syncDevices = function() {
+        this.synchronizeAccessories();
+        setTimeout(syncDevices.bind(this), 600000); // Sync devices every 10 minutes
+      }.bind(this);
+      syncDevices();
 
       if (config.mqtt) {
         setupMqttConnection(this);
@@ -127,6 +132,11 @@ function eDomoticzPlatform(log, config, api) {
 
 eDomoticzPlatform.prototype = {
   synchronizeAccessories: function() {
+    if (this.isSynchronizingAccessories) {
+      return;
+    }
+
+    this.isSynchronizingAccessories = true;
     var excludedDevices = (typeof this.config.excludedDevices !== 'undefined' ? this.config.excludedDevices : []);
 
     Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
@@ -185,10 +195,10 @@ eDomoticzPlatform.prototype = {
         this.accessories.splice(index, 1);
       }
 
-      setTimeout(this.synchronizeAccessories.bind(this), 600000); // Every 10 minutes, refresh
+      this.isSynchronizingAccessories = false;
     }.bind(this), function(response, err) {
       Helper.LogConnectionError(this, response, err);
-      setTimeout(this.synchronizeAccessories.bind(this), 600000); // Every 10 minutes, refresh
+      this.isSynchronizingAccessories = false;
     }.bind(this));
   },
   configureAccessory: function(platformAccessory) {
