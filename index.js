@@ -150,10 +150,16 @@ eDomoticzPlatform.prototype = {
         var uuid = UUID.generate(device.idx + "_" + device.Name);
         var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, this.eve);
         this.accessories.push(accessory);
-        this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+
+        try {
+          this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+        } catch (e) {
+          this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+        }
         accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
       }
 
+      var removedAccessories = [];
       for (var i = 0; i < this.accessories.length; i++)
       {
         var removedAccessory = this.accessories[i];
@@ -163,15 +169,26 @@ eDomoticzPlatform.prototype = {
 
         if (!existingDevice)
         {
+          removedAccessories.push(removedAccessory);
           try {
             this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [removedAccessory.platformAccessory]);
           } catch (e) {
-            console.log("Could not unregister platform accessory! " + e);
+            this.forceLog("Could not unregister platform accessory! (" + removedAccessory.name + ")\n" + e);
           }
         }
       }
+
+      for (var i = 0; i < removedAccessories.length; i++)
+      {
+        var removedAccessory = removedAccessories[i];
+        var index = this.accessories.indexOf(removedAccessory);
+        this.accessories.splice(index, 1);
+      }
+
+      setTimeout(this.synchronizeAccessories.bind(this), 5000);
     }.bind(this), function(response, err) {
       Helper.LogConnectionError(this, response, err);
+      setTimeout(this.synchronizeAccessories.bind(this), 5000);
     }.bind(this));
   },
   configureAccessory: function(platformAccessory) {
@@ -179,9 +196,9 @@ eDomoticzPlatform.prototype = {
     {
       // Remove this invalid device from the cache.
       try {
-        this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory]);
+        this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [platformAccessory]);
       } catch (e) {
-        console.log("Could not unregister platform accessory! " + e);
+        this.forceLog("Could not unregister cached platform accessory!\n" + e);
       }
       return;
     }
