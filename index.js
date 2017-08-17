@@ -140,6 +140,7 @@ eDomoticzPlatform.prototype = {
     var excludedDevices = (typeof this.config.excludedDevices !== 'undefined' ? this.config.excludedDevices : []);
 
     Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
+      var removedAccessories = [];
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
@@ -152,8 +153,21 @@ eDomoticzPlatform.prototype = {
           return existingAccessory.idx == device.idx;
         });
 
-        if (existingAccessory) {
-          continue;
+        if (existingAccessory)
+        {
+          if (device.SwitchTypeVal > 0 && device.SwitchTypeVal != existingAccessory.swTypeVal)
+          {
+            this.log("Device " + existingAccessory.name + " has changed it's type. Recreating...");
+            removedAccessories.push(existingAccessory);
+            try {
+              this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [existingAccessory.platformAccessory]);
+            } catch (e) {
+              this.forceLog("Could not unregister platform accessory! (" + removedAccessory.name + ")\n" + e);
+            }
+          }
+          else {
+            continue;
+          }
         }
 
         // Generate a new accessory
@@ -169,7 +183,6 @@ eDomoticzPlatform.prototype = {
         accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
       }
 
-      var removedAccessories = [];
       for (var i = 0; i < this.accessories.length; i++)
       {
         var removedAccessory = this.accessories[i];
