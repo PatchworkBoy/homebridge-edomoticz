@@ -145,7 +145,11 @@ eDomoticzPlatform.prototype = {
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
-
+        if (device.Image == undefined){
+          
+          device.Image='Switch';
+          this.forceLog(device.Name);
+        }
         if (!(excludedDevices.indexOf(device.ID) <= -1)) {
           continue;
         }
