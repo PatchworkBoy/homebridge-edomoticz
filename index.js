@@ -91,9 +91,13 @@ function eDomoticzPlatform(log, config, api) {
       log(util.format.apply(this, arguments));
     }
   };
-
+  
   this.config = config;
-  this.server = config.server;
+  try{
+    this.server = config.server;
+  }catch(e){
+    return;
+  }
   this.authorizationToken = false;
   if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1)
   {
