@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "inherits": "^2.0.1",
-    "mqtt": "^2.9.1",
+    "mqtt": "^2.15.0",
     "request": "^2.81.0"
   },
   "author": {
