@@ -4,7 +4,7 @@ for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
 
 ## Supports:
-### Standard HomeKit Types:
+### Standard HomeKit Types (supported by Home.app):
 - Sockets (on/off) - Domoticz SwitchTypeVal: 0
 - Lamps (on/off) - Domoticz SwitchTypeVal: 0
 - Contact Sensors - Domoticz SwitchTypeVal: 2
@@ -19,7 +19,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 
 ## Provides:
-### Custom HomeKit Types:
+### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
 - General kWh power meters - Types: General, Current; SubType: kWh, mapped to Eve chars where possible
 - CurrentCost USB power meter - Type: Usage, SubType: Electric, mapped to Eve chars where possible
 - P1 Smart Meter (Electric & Gas), mapped to Eve chars where possible
