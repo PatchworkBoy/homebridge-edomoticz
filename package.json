@@ -1,6 +1,6 @@
 {
   "name": "homebridge-edomoticz",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "homebridge-plugin for Domoticz https://github.com/nfarina/homebridge",
   "main": "index.js",
   "scripts": {
