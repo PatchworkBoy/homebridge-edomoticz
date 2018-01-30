@@ -110,10 +110,10 @@ Values can be omitted from this dictionary, and the values that need overriding 
 to only override the port value.
 
 To prevent certain Domoticz devices from showing up in HomeBridge it is possible to exclude them by setting the "excludedDevices" parameter.
-Provide an array of Domoticz Device ID's, which can be found in the Domoticz dashboard on the "Setup > Devices" page and look for the "ID" column (not the "idx" column).
+Provide an array of Domoticz Device IDX's, which can be found in the Domoticz dashboard on the "Setup > Devices" page and look for the  "idx" column.
 
 ```
-"excludedDevices": ["0000001","0000002"]
+"excludedDevices": ["122","15","77"]
 ```
 
 ## Tips
@@ -127,7 +127,7 @@ Set "ssl":1 in config.json to turn on SSL (ie: server connects with https:// rat
 ### Issues pairing to Homebridge when you have a lot of Domoticz sensors...
 If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (HomeKit only supports 100 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
 
-Therefore, to reduce the number of devices exposed from Domoticz, create a roomplan within Domoticz via Setup > More Options > Plans > roomplan. Add only the devices you wish to be exposed to HomeKit to this new roomplan within Domoticz, and then get it's roomidx number. Set "roomid" in your config.json file to this room number.
+Therefore, to reduce the number of devices exposed from Domoticz, create a roomplan within Domoticz via Setup > More Options > Plans > roomplan. Add only the devices you wish to be exposed to HomeKit to this new roomplan within Domoticz, and then get it's roomidx number. Set "roomid" in your config.json file to this room number. Alternatively, use excludeDevices in config.json to restrict the number of devices the plugin will detect.
 
 ### Is my <<some accessory>> supported??
 See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL's#Retrieve_status_of_specific_device) - query your device as per the instructions there, and if your device’s SwitchTypeVal isn't in the 'Supports:' list or Type/SubType aren’t in the ’Provides:' list above then it'll just appear as an On/Off switch. [Open a new issue](https://github.com/PatchworkBoy/homebridge-eDomoticz/issues/new) including the output from the json api and I’ll get look into supporting that particular device more fully!
