@@ -77,6 +77,8 @@ module.exports = function(homebridge) {
   Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
   Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.UVDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.UVIndex, Characteristic);
 
   //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
   homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
