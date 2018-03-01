@@ -18,6 +18,8 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 - Push Buttons (selectors) - Domoticz SwitchTypeVal: 18
+- Temperature sensors (only temperature characteristic)
+- Thermostat SetPoints
 
 ## Provides:
 ### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
