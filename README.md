@@ -18,7 +18,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 - Push Buttons (selectors) - Domoticz SwitchTypeVal: 18
-- Temperature sensors (only temperature characteristic)
+- Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
 - Thermostat SetPoints
 
 ## Provides:
