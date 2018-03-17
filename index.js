@@ -55,6 +55,10 @@ module.exports = function(homebridge) {
   Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
   Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Ampere, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.AMPDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Volt, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.VOLTDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
   Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
