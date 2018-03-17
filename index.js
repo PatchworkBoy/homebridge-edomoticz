@@ -51,6 +51,10 @@ module.exports = function(homebridge) {
 
   Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
   Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.Ampere, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.AMPDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Volt, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.VOLTDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.GasConsumption, Characteristic);
   Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
   Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
@@ -93,7 +97,7 @@ function eDomoticzPlatform(log, config, api) {
       log(util.format.apply(this, arguments));
     }
   };
-  
+
   this.config = config;
   try{
     this.server = config.server;
@@ -151,16 +155,14 @@ eDomoticzPlatform.prototype = {
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
-        
         if (!(excludedDevices.indexOf(device.idx) <= -1)) {
           exclude = !0;
-          this.forceLog(device.Name + '(idx:' + device.idx + ') excluded via config array');
+          this.forceLog(device.Name + ' excluded via config array');
           continue;
         }
-        
+
         if (device.Image == undefined){
           device.Image='Switch';
-          this.forceLog(device.Name);
         }
 
         var existingAccessory = this.accessories.find(function(existingAccessory) {
@@ -184,21 +186,18 @@ eDomoticzPlatform.prototype = {
           }
         }
 
-        
-          // Generate a new accessory
-          var uuid = UUID.generate(device.idx + "_" + device.Name);
-          this.forceLog(device.Image);
-          var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
-          this.accessories.push(accessory);
+        // Generate a new accessory
+        var uuid = UUID.generate(device.idx + "_" + device.Name);
 
-          try {
-            this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
-          } catch (e) {
-            this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
-          }
-          accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
-          
-         
+        var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
+        this.accessories.push(accessory);
+
+        try {
+          this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+        } catch (e) {
+          this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+        }
+        accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
       }
 
       for (var i = 0; i < this.accessories.length; i++)
