@@ -14,18 +14,17 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Lamps (dimmer) - Domoticz SwitchTypeVal: 7
 - Motion Sensors - Domoticz SwitchTypeVal: 8
 - Push Switches -  Domoticz SwitchTypeVal: 9
-- Lock Contact - Domoticz SwitchTypeVal: 11
+- Lock Contact  - Domoticz SwitchTypeVal: 11
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 - Push Buttons (selectors) - Domoticz SwitchTypeVal: 18
 - Lock Mechanisms - Domoticz SwitchTypeVal: 19
 - Lock Mechanisms (inverted) - Domoticz SwitchTypeVal: 20
-- Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
-- Thermostat SetPoints
 
 ## Provides:
 ### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
 - General kWh power meters - Types: General, Current; SubType: kWh, mapped to Eve chars where possible
+- General Current, Voltage - Types: General, SubType: Current,Voltage, mapped to Eve chars where possible
 - CurrentCost USB power meter - Type: Usage, SubType: Electric, mapped to Eve chars where possible
 - P1 Smart Meter (Electric & Gas), mapped to Eve chars where possible
 - EvoHome** / OpenTherm Thermostat support - Types: Heating, Thermostat; SubTypes: Zone, SetPoint
@@ -33,13 +32,12 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - General Usage % meters (eg: Motherboard Sensors Hardware Device - CPU %, Mem %, HDD % etc) - Type: General; SubType: Percentage
 - Temperature, Temp + Humidity, Temp + Humidity + Baro (Current Temperature, Current Humidity, Current Pressure in hPA) - Type: Temp, Temp + Humidty, Temp + Humidity + Baro [id'd as Eve Weather]
 - DarkSkies Virtual Weather Station Sensors (Wind, Solar Radiation, Rainfall, Visibility, Barometer [id'd as Eve Weather])
-
 ** assumes the EvoHome has been setup according to [this script method](https://www.domoticz.com/wiki/Evohome#Scripting_for_RFG100).
 
 ## Todo:
 - [x] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [x] MQTT-based realtime updates
-- [x] Hue/RGB (partial - see https://github.com/domoticz/domoticz/issues/1808)
+- [x] Hue/RGB (Hue - partial)
 - [x] Blinds
 - [x] m3 (gas usage)
 - [x] Motion sensors
@@ -130,7 +128,7 @@ If Domoticz is set up to use basic or form login authentication, set "server":"u
 Set "ssl":1 in config.json to turn on SSL (ie: server connects with https:// rather than http://). You will need to specify your SSL port - usually "port":"443" by default.
 
 ### Issues pairing to Homebridge when you have a lot of Domoticz sensors...
-If you have more than 99 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (Homebridge only supports 99 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
+If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (HomeKit only supports 100 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
 
 Therefore, to reduce the number of devices exposed from Domoticz, create a roomplan within Domoticz via Setup > More Options > Plans > roomplan. Add only the devices you wish to be exposed to HomeKit to this new roomplan within Domoticz, and then get it's roomidx number. Set "roomid" in your config.json file to this room number.
 
