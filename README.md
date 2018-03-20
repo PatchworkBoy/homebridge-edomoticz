@@ -14,16 +14,19 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Lamps (dimmer) - Domoticz SwitchTypeVal: 7
 - Motion Sensors - Domoticz SwitchTypeVal: 8
 - Push Switches -  Domoticz SwitchTypeVal: 9
-- Lock Mechanisms - Domoticz SwitchTypeVal: 11
+- Lock Contact  - Domoticz SwitchTypeVal: 11
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
 - Push Buttons (selectors) - Domoticz SwitchTypeVal: 18
+- Lock Mechanisms - Domoticz SwitchTypeVal: 19
+- Lock Mechanisms (inverted) - Domoticz SwitchTypeVal: 20
 - Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
 - Thermostat SetPoints
 
 ## Provides:
 ### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
 - General kWh power meters - Types: General, Current; SubType: kWh, mapped to Eve chars where possible
+- General Current, Voltage - Types: General, SubType: Current,Voltage, mapped to Eve chars where possible
 - CurrentCost USB power meter - Type: Usage, SubType: Electric, mapped to Eve chars where possible
 - P1 Smart Meter (Electric & Gas), mapped to Eve chars where possible
 - EvoHome** / OpenTherm Thermostat support - Types: Heating, Thermostat; SubTypes: Zone, SetPoint
