@@ -55,6 +55,10 @@ module.exports = function(homebridge) {
   Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
   Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Ampere, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.AMPDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.Volt, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.VOLTDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
   Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
@@ -77,6 +81,8 @@ module.exports = function(homebridge) {
   Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
   Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
   Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
+  Helper.fixInheritance(eDomoticzServices.UVDeviceService, Service);
+  Helper.fixInheritance(eDomoticzServices.UVIndex, Characteristic);
 
   //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
   homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
@@ -91,9 +97,13 @@ function eDomoticzPlatform(log, config, api) {
       log(util.format.apply(this, arguments));
     }
   };
-
+  
   this.config = config;
-  this.server = config.server;
+  try{
+    this.server = config.server;
+  }catch(e){
+    return;
+  }
   this.authorizationToken = false;
   if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1)
   {
@@ -137,21 +147,24 @@ eDomoticzPlatform.prototype = {
     }
 
     this.isSynchronizingAccessories = true;
-    var excludedDevices = (typeof this.config.excludedDevices !== 'undefined' ? this.config.excludedDevices : []);
+    var excludedDevices = (typeof this.config.excludedDevices !== 'undefined') ? this.config.excludedDevices : [];
 
     Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
-      var removedAccessories = [];
+      var removedAccessories = [], exclude = !1;
 
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
+        
+        if (!(excludedDevices.indexOf(device.idx) <= -1)) {
+          exclude = !0;
+          this.forceLog(device.Name + '(idx:' + device.idx + ') excluded via config array');
+          continue;
+        }
+        
         if (device.Image == undefined){
-          
           device.Image='Switch';
           this.forceLog(device.Name);
-        }
-        if (!(excludedDevices.indexOf(device.ID) <= -1)) {
-          continue;
         }
 
         var existingAccessory = this.accessories.find(function(existingAccessory) {
@@ -175,18 +188,21 @@ eDomoticzPlatform.prototype = {
           }
         }
 
-        // Generate a new accessory
-        var uuid = UUID.generate(device.idx + "_" + device.Name);
-        this.forceLog(device.Image);
-        var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
-        this.accessories.push(accessory);
+        
+          // Generate a new accessory
+          var uuid = UUID.generate(device.idx + "_" + device.Name);
+          this.forceLog(device.Image);
+          var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
+          this.accessories.push(accessory);
 
-        try {
-          this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
-        } catch (e) {
-          this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
-        }
-        accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
+          try {
+            this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+          } catch (e) {
+            this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+          }
+          accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
+          
+         
       }
 
       for (var i = 0; i < this.accessories.length; i++)

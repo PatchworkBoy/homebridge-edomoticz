@@ -4,7 +4,7 @@ for use with [Homebridge](https://github.com/nfarina/homebridge) v0.2.1+
 and [Domoticz](https://github.com/domoticz/domoticz)
 
 ## Supports:
-### Standard HomeKit Types:
+### Standard HomeKit Types (supported by Home.app):
 - Sockets (on/off) - Domoticz SwitchTypeVal: 0
 - Lamps (on/off) - Domoticz SwitchTypeVal: 0
 - Contact Sensors - Domoticz SwitchTypeVal: 2
@@ -14,13 +14,19 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Lamps (dimmer) - Domoticz SwitchTypeVal: 7
 - Motion Sensors - Domoticz SwitchTypeVal: 8
 - Push Switches -  Domoticz SwitchTypeVal: 9
-- Lock Mechanisms - Domoticz SwitchTypeVal: 11
+- Lock Contact  - Domoticz SwitchTypeVal: 11
 - Blinds (%) - Domoticz SwitchTypeVal: 13
 - Blinds (& inverted) - Domoticz SwitchTypeVal: 16
+- Push Buttons (selectors) - Domoticz SwitchTypeVal: 18
+- Lock Mechanisms - Domoticz SwitchTypeVal: 19
+- Lock Mechanisms (inverted) - Domoticz SwitchTypeVal: 20
+- Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
+- Thermostat SetPoints
 
 ## Provides:
-### Custom HomeKit Types:
+### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
 - General kWh power meters - Types: General, Current; SubType: kWh, mapped to Eve chars where possible
+- General Current, Voltage - Types: General, SubType: Current,Voltage, mapped to Eve chars where possible
 - CurrentCost USB power meter - Type: Usage, SubType: Electric, mapped to Eve chars where possible
 - P1 Smart Meter (Electric & Gas), mapped to Eve chars where possible
 - EvoHome** / OpenTherm Thermostat support - Types: Heating, Thermostat; SubTypes: Zone, SetPoint
@@ -34,7 +40,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 ## Todo:
 - [x] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
 - [x] MQTT-based realtime updates
-- [x] Hue/RGB
+- [x] Hue/RGB (partial - see https://github.com/domoticz/domoticz/issues/1808)
 - [x] Blinds
 - [x] m3 (gas usage)
 - [x] Motion sensors
@@ -110,10 +116,10 @@ Values can be omitted from this dictionary, and the values that need overriding 
 to only override the port value.
 
 To prevent certain Domoticz devices from showing up in HomeBridge it is possible to exclude them by setting the "excludedDevices" parameter.
-Provide an array of Domoticz Device ID's, which can be found in the Domoticz dashboard on the "Setup > Devices" page and look for the "ID" column (not the "idx" column).
+Provide an array of Domoticz Device IDX's, which can be found in the Domoticz dashboard on the "Setup > Devices" page and look for the "idx" column.
 
 ```
-"excludedDevices": ["0000001","0000002"]
+"excludedDevices": ["12","30","129"]
 ```
 
 ## Tips
@@ -125,7 +131,7 @@ If Domoticz is set up to use basic or form login authentication, set "server":"u
 Set "ssl":1 in config.json to turn on SSL (ie: server connects with https:// rather than http://). You will need to specify your SSL port - usually "port":"443" by default.
 
 ### Issues pairing to Homebridge when you have a lot of Domoticz sensors...
-If you have more than 100 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (HomeKit only supports 100 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
+If you have more than 99 devices in Domoticz, you need to limit the number of devices exposed to HomeKit (Homebridge only supports 99 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
 
 Therefore, to reduce the number of devices exposed from Domoticz, create a roomplan within Domoticz via Setup > More Options > Plans > roomplan. Add only the devices you wish to be exposed to HomeKit to this new roomplan within Domoticz, and then get it's roomidx number. Set "roomid" in your config.json file to this room number.
 
