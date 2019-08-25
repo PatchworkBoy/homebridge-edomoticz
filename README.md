@@ -85,12 +85,15 @@ sudo npm update -g homebridge-edomoticz
             "ssl": 0,
             "roomid": 0,
             "mqtt": 1,
-            "excludedDevices": []
+            "excludedDevices": [],
+            "dimFix": 0
         }
     ],
     "accessories": []
 }
 ```
+
+The dimFix variable relates to an early issue between HomeKit and Domoticz regarding scaling of dimmer values. These days, for the majority of setups this variable can be set to 0 or omitted entirely. If you find that you can never set your dimmers to 100%, then set this variable to 1. If you find that, when you set your dimmers, this starts a never ending loop of brightness increasing by 1%, then you MUST omit this variable or set it to 0.
 
 By default, the plugin will grab hardware information regarding MQTT from Domoticz if `mqtt` is 1 or true in the configuration file.
 Advanced users can override their MQTT configuration as follows:
