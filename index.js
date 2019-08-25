@@ -97,7 +97,7 @@ function eDomoticzPlatform(log, config, api) {
       log(util.format.apply(this, arguments));
     }
   };
-  
+
   this.config = config;
   try{
     this.server = config.server;
@@ -155,15 +155,15 @@ eDomoticzPlatform.prototype = {
       for (var i = 0; i < devices.length; i++)
       {
         var device = devices[i];
-        
+
         if (!(excludedDevices.indexOf(device.idx) <= -1)) {
           exclude = !0;
           this.forceLog(device.Name + '(idx:' + device.idx + ') excluded via config array');
           continue;
         }
-        
+
         if (device.Image == undefined){
-          device.Image='Switch';
+          device.Image = 'Switch';
           this.forceLog(device.Name);
         }
 
@@ -188,7 +188,7 @@ eDomoticzPlatform.prototype = {
           }
         }
 
-        
+
           // Generate a new accessory
           var uuid = UUID.generate(device.idx + "_" + device.Name);
           this.forceLog(device.Image);
@@ -201,8 +201,8 @@ eDomoticzPlatform.prototype = {
             this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
           }
           accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
-          
-         
+
+
       }
 
       for (var i = 0; i < this.accessories.length; i++)
