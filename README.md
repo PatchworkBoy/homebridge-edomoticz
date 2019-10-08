@@ -39,6 +39,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 
 ## Todo:
 - [x] homebridge [plugin 2.0](https://github.com/nfarina/homebridge/pull/497) support
+- [x] [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x)
 - [x] MQTT-based realtime updates
 - [x] Hue/RGB (partial - see https://github.com/domoticz/domoticz/issues/1808)
 - [x] Blinds
