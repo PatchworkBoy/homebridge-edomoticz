@@ -1,0 +1,52 @@
+{
+  "pluginAlias": "eDomoticz",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "For more additional settings see https://github.com/PatchworkBoy/homebridge-edomoticz",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true
+      },
+      "server": {
+        "title": "Server",
+        "type": "string",
+        "default": "127.0.0.1",
+        "required": true,
+        "description": "If Domoticz is set up to use basic or form login authentication, set Server to 'user:pass@ipadress'."
+      },
+      "port": {
+        "title": "Port",
+        "type": "string",
+        "default": "8080",
+        "required": true
+      },
+      "roomid": {
+        "title": "Room ID",
+        "type": "integer",
+        "default": 0,
+        "required": true,
+        "description": "If Room ID is set to 0 homebridge loads ALL sensors."
+      },
+      "mqtt": {
+        "title": "MQTT",
+        "type": "boolean",
+        "default": 1,
+        "required": false,
+        "description": "By default, the plugin will grab hardware information regarding MQTT from Domoticz if mqtt is true. Advanced users can override their MQTT."
+      },
+      "ssl": {
+        "title": "SSL",
+        "type": "boolean",
+        "default": 0,
+        "required": false,
+        "description": "Set SSL to true to turn on SSL. You will need to specify your SSL port - usually Port 443 by default."
+      }
+    }
+  },
+  "form": null,
+  "display": null
+}
