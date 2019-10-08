@@ -10,6 +10,7 @@
       "name": {
         "title": "Name",
         "type": "string",
+        "default": "eDomoticz",
         "required": true
       },
       "server": {
