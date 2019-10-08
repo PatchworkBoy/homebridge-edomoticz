@@ -3,7 +3,7 @@
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "Homebridge plugin for Domoticz",
-  "footerDisplay": "For additional settings or help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz)",
+  "footerDisplay": "For additional settings or help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz) or [Domoticz forum thread](https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272).",
   "schema": {
     "type": "object",
     "properties": {
@@ -30,7 +30,7 @@
         "type": "integer",
         "default": 0,
         "required": true,
-        "description": "If Room ID is set to 0 homebridge loads ALL sensors."
+        "description": "If Room ID is set to 0, homebridge loads ALL sensors. Note that Room ID is domoticz roomplan’s idx number."
       },
       "mqtt": {
         "title": "MQTT",
