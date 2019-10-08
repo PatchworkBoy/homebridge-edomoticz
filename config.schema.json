@@ -2,7 +2,8 @@
   "pluginAlias": "eDomoticz",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "For more additional settings see https://github.com/PatchworkBoy/homebridge-edomoticz",
+  "headerDisplay": "Homebridge plugin for Domoticz",
+  "footerDisplay": "For additional settings or help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz)",
   "schema": {
     "type": "object",
     "properties": {
