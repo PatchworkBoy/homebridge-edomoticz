@@ -3,7 +3,7 @@
 	"pluginType": "platform",
 	"singular": true,
 	"headerDisplay": "Homebridge plugin for Domoticz",
-	"footerDisplay": "For more additional settings or help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz) or [Domoticz forum thread](https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272)",
+	"footerDisplay": "For help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz) or [Domoticz forum thread](https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272)",
 	"schema": {
 		"type": "object",
 		"properties": {
@@ -38,7 +38,7 @@
 				"title": "MQTT",
 				"type": "boolean",
 				"default": 1,
-				"description": "By default, the plugin will grab hardware information regarding MQTT from Domoticz if mqtt is true. Advanced users can override their MQTT."
+				"description": "By default, the plugin will grab hardware information regarding MQTT from Domoticz if MQTT is checked. Advanced users can override their MQTT. In config, <code>\"mqtt\": true</code> can be changed to:<br><code>\"mqtt\": {<br>\"host\":\"alternate.mgtt.com\",<br>\"port\": 1234,<br>\"topic\": \"domoticz/out\",<br>\"username\": \"username\",<br>\"password\": \"password\"<br>}</code>"
 			},
 			"ssl": {
 				"title": "SSL",
@@ -58,7 +58,7 @@
 				"items": {
 					"title": "Excluded Device IDX",
 					"type": "string",
-					"pattern": "^[0-9]"
+                    "pattern": "^[0-9]"
 				}
 			}
 		}
@@ -78,7 +78,7 @@
 			"expanded": false,
 			"items": [{
 					"type": "help",
-					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>Prevent certain Domoticz devices from showing up in HomeBridge. Add IDX of the device</em>"
+					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge, add IDX of the device.</em>"
 				}, {
 					"nodescription": true,
 					"notitle": true,
