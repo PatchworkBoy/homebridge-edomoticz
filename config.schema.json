@@ -24,7 +24,8 @@
 				"title": "Port",
 				"type": "string",
 				"default": "8080",
-				"required": true
+				"required": true,
+				"pattern": "^[0-9]"
 			},
 			"roomid": {
 				"title": "Room ID",
@@ -43,13 +44,13 @@
 				"title": "Enable SSL",
 				"type": "boolean",
 				"default": 0,
-				"description": "Set SSL to true to turn on SSL. You will need to specify your SSL port - usually Port 443 by default."
+				"description": "You will need to specify your SSL port - usually Port 443 by default."
 			},
 			"debug": {
 				"title": "Enable Debug",
 				"type": "boolean",
 				"default": 0,
-				"description": "Set Debug to true to enable debug logging."
+				"description": "Enable debug logging."
 			},
 			"dimFix": {
 				"title": "Dim Offset",
@@ -63,7 +64,7 @@
 				"items": {
 					"title": "Excluded Device IDX",
 					"type": "string",
-                    "pattern": "^[0-9]"
+                    			"pattern": "^[0-9]"
 				}
 			}
 		}
