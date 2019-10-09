@@ -93,7 +93,7 @@ function eDomoticzPlatform(log, config, api) {
   this.accessories = [];
   this.forceLog = log;
   this.log = function() {
-    if (typeof process.env.DEBUG !== 'undefined' || this.debug != false) {
+    if (typeof process.env.DEBUG !== 'undefined' || this.debug == true) {
       log(util.format.apply(this, arguments));
     }
   };
