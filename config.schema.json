@@ -22,9 +22,8 @@
 			},
 			"port": {
 				"title": "Port",
-				"type": "integer",
-				"default": 8080,
-				"maximum": 65535,
+				"type": "string",
+				"default": "8080",
 				"required": true
 			},
 			"roomid": {
