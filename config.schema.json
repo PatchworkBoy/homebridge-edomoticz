@@ -34,16 +34,22 @@
 				"description": "If Room ID is set to 0 homebridge loads ALL sensors. Room ID is domoticz roomplan’s idx number"
 			},
 			"mqtt": {
-				"title": "MQTT",
+				"title": "Enable MQTT",
 				"type": "boolean",
 				"default": 1,
 				"description": "By default, the plugin will grab hardware information regarding MQTT from Domoticz if MQTT is checked. Advanced users can override their MQTT. In config, <code>\"mqtt\": true</code> can be changed to:<br><code>\"mqtt\": {<br>\"host\":\"alternate.mgtt.com\",<br>\"port\": 1234,<br>\"topic\": \"domoticz/out\",<br>\"username\": \"username\",<br>\"password\": \"password\"<br>}</code>"
 			},
 			"ssl": {
-				"title": "SSL",
+				"title": "Enable SSL",
 				"type": "boolean",
 				"default": 0,
 				"description": "Set SSL to true to turn on SSL. You will need to specify your SSL port - usually Port 443 by default."
+			},
+			"debug": {
+				"title": "Enable Debug",
+				"type": "boolean",
+				"default": 0,
+				"description": "Set Debug to true to enable debug logging."
 			},
 			"dimFix": {
 				"title": "Dim Offset",
@@ -106,7 +112,8 @@
 
 				"dimFix",
 				"mqtt",
-				"ssl"
+				"ssl",
+                		"debug"
 			]
 		}
 	]
