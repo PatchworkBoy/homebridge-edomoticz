@@ -57,7 +57,8 @@
 				"type": "array",
 				"items": {
 					"title": "Excluded Device IDX",
-					"type": "string"
+					"type": "string",
+					"pattern": "^[0-9]"
 				}
 			}
 		}
@@ -77,7 +78,7 @@
 			"expanded": false,
 			"items": [{
 					"type": "help",
-					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge add IDX of the device</em>"
+					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>Prevent certain Domoticz devices from showing up in HomeBridge. Add IDX of the device</em>"
 				}, {
 					"nodescription": true,
 					"notitle": true,
