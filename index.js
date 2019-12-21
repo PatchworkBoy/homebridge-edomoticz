@@ -145,7 +145,7 @@ eDomoticzPlatform.prototype = {
     if (this.isSynchronizingAccessories) {
       return;
     }
-
+	
     this.isSynchronizingAccessories = true;
     var excludedDevices = (typeof this.config.excludedDevices !== 'undefined') ? this.config.excludedDevices : [];
 
@@ -175,7 +175,7 @@ eDomoticzPlatform.prototype = {
         {
           if (device.SwitchTypeVal > 0 && device.SwitchTypeVal != existingAccessory.swTypeVal)
           {
-            this.log("Device " + existingAccessory.name + " has changed it's type. Recreating...");
+            this.forceLog("Device " + existingAccessory.name + " has changed it's type. Recreating...");
             removedAccessories.push(existingAccessory);
             try {
               this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [existingAccessory.platformAccessory]);
@@ -229,6 +229,7 @@ eDomoticzPlatform.prototype = {
       for (var i = 0; i < removedAccessories.length; i++)
       {
         var removedAccessory = removedAccessories[i];
+		removedAccessory.removed();
         var index = this.accessories.indexOf(removedAccessory);
         this.accessories.splice(index, 1);
       }

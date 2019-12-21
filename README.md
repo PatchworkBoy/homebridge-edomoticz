@@ -22,6 +22,7 @@ and [Domoticz](https://github.com/domoticz/domoticz)
 - Lock Mechanisms (inverted) - Domoticz SwitchTypeVal: 20
 - Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
 - Thermostat SetPoints
+- Televisions - Domoticz SwitchTypeVal: 17
 
 ## Provides:
 ### Custom HomeKit Types (supported by 3rd Party HomeKit Apps only - eg: Elgato Eve):
