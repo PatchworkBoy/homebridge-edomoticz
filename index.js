@@ -195,10 +195,6 @@ eDomoticzPlatform.prototype = {
 		this.accessories.push(accessory);	
 
 		// Register the accessories
-		if(accessory.services.length <= 1) {
-			continue; // Hide empty devices.
-		}			
-		
 		try {
 			this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
 		} catch (e) {
