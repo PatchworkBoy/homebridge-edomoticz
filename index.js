@@ -188,23 +188,22 @@ eDomoticzPlatform.prototype = {
           }
         }
 
+	// Generate a new accessory
+	var uuid = UUID.generate(device.idx + "_" + device.Name);
+	this.forceLog("Device: " + device.Name + " (" + device.idx + ")");
+	var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
+	this.accessories.push(accessory);	
 
-          // Generate a new accessory
-          var uuid = UUID.generate(device.idx + "_" + device.Name);
-          this.forceLog(device.Image);
-          var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve);
-          this.accessories.push(accessory);
-
-          try {
-            this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
-          } catch (e) {
-            this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
-          }
-          accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};
-
-
+	// Register the accessories
+	try {
+		this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+	} catch (e) {
+		this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+	}
+	accessory.platformAccessory.context = {device: device, uuid: uuid, eve: this.eve};		
       }
-
+	  	  
+      // Remove the old accessories
       for (var i = 0; i < this.accessories.length; i++)
       {
         var removedAccessory = this.accessories[i];
@@ -226,6 +225,7 @@ eDomoticzPlatform.prototype = {
       for (var i = 0; i < removedAccessories.length; i++)
       {
         var removedAccessory = removedAccessories[i];
+	removedAccessory.removed();
         var index = this.accessories.indexOf(removedAccessory);
         this.accessories.splice(index, 1);
       }
