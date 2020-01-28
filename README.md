@@ -91,7 +91,7 @@ To configure homebridge-eDomoticz you must also be running [homebridge-config-ui
     },
     "platforms": [
         {
-            "platform": "eDomoticz-ui-x",
+            "platform": "eDomoticz",
             "name": "Domoticz",
             "server": "127.0.0.1",
             "port": "8080",
