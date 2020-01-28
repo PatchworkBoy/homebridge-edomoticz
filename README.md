@@ -69,7 +69,7 @@ sudo npm update -g homebridge-edomoticz
 
 ## Configuration
 
-To configure homebridge-gsh you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
+To configure homebridge-eDomoticz you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
 
  1. Navigate to the Plugins page in homebridge-config-ui-x.
  2. Click the Settings button for the eDomoticz-ui-x plugin.
