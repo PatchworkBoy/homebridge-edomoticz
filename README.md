@@ -48,7 +48,7 @@ This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Ho
 **Option 1: Install via Homebridge Config UI X:**
 
  1. Navigate to the Plugins page in in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
- 2. Search for "domoticz" and install homebridge-edomoticz-ui-x.
+ 2. Search for "domoticz" and install homebridge-edomoticz.
 
 **Option 2: Manually Install:**
 ```
@@ -60,7 +60,7 @@ sudo npm install -g homebridge-edomoticz
 **Option 1: Update via Homebridge Config UI X:**
 
  1. Navigate to the Plugins page in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
- 2. Click the Update button for the eDomoticz-ui-x plugin.
+ 2. Click the Update button for the eDomoticz plugin.
 
 **Option 2: Manually Update:**
 ```
@@ -72,7 +72,7 @@ sudo npm update -g homebridge-edomoticz
 To configure homebridge-eDomoticz you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
 
  1. Navigate to the Plugins page in homebridge-config-ui-x.
- 2. Click the Settings button for the eDomoticz-ui-x plugin.
+ 2. Click the Settings button for the eDomoticz plugin.
  
  ![sDomoticz](edomoticz.png)
  
