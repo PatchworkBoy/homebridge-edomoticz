@@ -3,7 +3,7 @@
 	"pluginType": "platform",
 	"singular": false,
 	"headerDisplay": "Homebridge plugin for Domoticz",
-	"footerDisplay": "For help visit [eDomoticz](https://github.com/PatchworkBoy/homebridge-edomoticz) or [Domoticz forum thread](https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272)",
+	"footerDisplay": "For help visit [eDomoticz on GitHub](https://github.com/PatchworkBoy/homebridge-edomoticz) or [Domoticz forum thread](https://www.domoticz.com/forum/viewtopic.php?f=36&t=10272)",
 	"schema": {
 		"type": "object",
 		"properties": {
@@ -77,7 +77,7 @@
 			"expanded": false,
 			"items": [{
 					"type": "help",
-					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge, add IDX of the device.</em>"
+					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge, add IDX of the device.</em><em><strong>WARNING:</strong> adding values here after initial device discovery may require you to remove your ~/.homebridge/accessories/cachedAccessories file for changes to take effect.</em>"
 				}, {
 					"nodescription": true,
 					"notitle": true,
