@@ -168,7 +168,7 @@ eDomoticzPlatform.prototype = {
                 });
 
                 if (existingAccessory) {
-                    if (device.SwitchTypeVal > 0 && device.SwitchTypeVal !== existingAccessory.swTypeVal || exclude == !0) {
+                    if (device.SwitchTypeVal > 0 && device.SwitchTypeVal !== existingAccessory.swTypeVal) {
                         this.log("Device " + existingAccessory.name + " has changed it's type. Recreating...");
                         removedAccessories.push(existingAccessory);
                         try {
@@ -187,19 +187,19 @@ eDomoticzPlatform.prototype = {
                     this.forceLog("Device: " + device.Name + " (" + device.idx + ")");
                     var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
                     this.accessories.push(accessory);
-                }
 
-                // Register the accessories
-                try {
-                    this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
-                } catch (e) {
-                    this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+                    // Register the accessories
+                    try {
+                        this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+                    } catch (e) {
+                        this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
+                    }
+                    accessory.platformAccessory.context = {
+                        device: device,
+                        uuid: uuid,
+                        eve: this.eve
+                    };
                 }
-                accessory.platformAccessory.context = {
-                    device: device,
-                    uuid: uuid,
-                    eve: this.eve
-                };
             }
 
             // Remove the old accessories
