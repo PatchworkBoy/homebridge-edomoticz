@@ -77,7 +77,7 @@
 			"expanded": false,
 			"items": [{
 					"type": "help",
-					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge, add IDX of the device.</em><em><strong>WARNING:</strong> adding values here after initial device discovery may require you to remove your ~/.homebridge/accessories/cachedAccessories file for changes to take effect.</em>"
+					"helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Domoticz devices from showing up in HomeBridge, add IDX of the device.</em>"
 				}, {
 					"nodescription": true,
 					"notitle": true,

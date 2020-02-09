@@ -155,7 +155,7 @@ eDomoticzPlatform.prototype = {
                 if (!(excludedDevices.indexOf(device.idx) <= -1)) {
                     exclude = !0;
                     this.forceLog(device.Name + ' (idx:' + device.idx + ') excluded via config array');
-                    continue;
+                    //continue;
                 }
 
                 if (device.Image == undefined) {
@@ -169,12 +169,16 @@ eDomoticzPlatform.prototype = {
 
                 if (existingAccessory) {
                     if ((device.SwitchTypeVal > 0 && device.SwitchTypeVal !== existingAccessory.swTypeVal) || exclude == !0) {
-                        this.log("Device " + existingAccessory.name + " has changed it's type. Recreating...");
+                        if (exclude == !1) {
+                            this.forceLog("Device " + existingAccessory.name + " has changed it's type. Recreating...");
+                        } else {
+                            this.forceLog("Device " + existingAccessory.name + " has been excluded. Removing...");
+                        }
                         removedAccessories.push(existingAccessory);
                         try {
                             this.api.unregisterPlatformAccessories("homebridge-edomoticz", "eDomoticz", [existingAccessory.platformAccessory]);
                         } catch (e) {
-                            this.forceLog("Could not unregister platform accessory! (" + removedAccessory.name + ")\n" + e);
+                            this.forceLog("Could not unregister platform accessory! (" + existingAccessory.name + ")\n" + e);
                         }
                     } else {
                         continue;
