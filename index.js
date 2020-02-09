@@ -147,11 +147,11 @@ eDomoticzPlatform.prototype = {
         var excludedDevices = (typeof this.config.excludedDevices !== 'undefined') ? this.config.excludedDevices : [];
 
         Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
-            var removedAccessories = [],
-                exclude = !1;
+            var removedAccessories = [];
+
 
             for (var i = 0; i < devices.length; i++) {
-                var device = devices[i];
+                var device = devices[i], exclude = !1;
                 if (!(excludedDevices.indexOf(device.idx) <= -1)) {
                     exclude = !0;
                     this.forceLog(device.Name + ' (idx:' + device.idx + ') excluded via config array');
