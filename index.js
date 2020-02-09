@@ -154,7 +154,7 @@ eDomoticzPlatform.prototype = {
                 var device = devices[i];
                 if (!(excludedDevices.indexOf(device.idx) <= -1)) {
                     exclude = !0;
-                    this.forceLog(device.Name + '(idx:' + device.idx + ') excluded via config array');
+                    this.forceLog(device.Name + ' (idx:' + device.idx + ') excluded via config array');
                     continue;
                 }
 
@@ -168,7 +168,7 @@ eDomoticzPlatform.prototype = {
                 });
 
                 if (existingAccessory) {
-                    if (device.SwitchTypeVal > 0 && device.SwitchTypeVal !== existingAccessory.swTypeVal) {
+                    if ((device.SwitchTypeVal > 0 && device.SwitchTypeVal !== existingAccessory.swTypeVal) || exclude == !0) {
                         this.log("Device " + existingAccessory.name + " has changed it's type. Recreating...");
                         removedAccessories.push(existingAccessory);
                         try {
