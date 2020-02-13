@@ -144,6 +144,7 @@ eDomoticzPlatform.prototype = {
         }
 
         this.isSynchronizingAccessories = true;
+        this.forceLog('synchronizeAccessories in progress...');
         var excludedDevices = (typeof this.config.excludedDevices !== 'undefined') ? this.config.excludedDevices : [];
 
         Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
@@ -160,7 +161,7 @@ eDomoticzPlatform.prototype = {
 
                 if (device.Image == undefined) {
                     device.Image = 'Switch';
-                    this.forceLog(device.Name);
+                    //this.forceLog(device.Name);
                 }
 
                 var existingAccessory = this.accessories.find(function(existingAccessory) {
@@ -237,6 +238,7 @@ eDomoticzPlatform.prototype = {
         }.bind(this));
     },
     configureAccessory: function(platformAccessory) {
+        this.forceLog('ConfigureAccessory in progress...');
         if (!platformAccessory.context || !platformAccessory.context.device) {
             // Remove this invalid device from the cache.
             try {
