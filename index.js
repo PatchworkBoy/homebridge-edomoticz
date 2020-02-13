@@ -238,7 +238,6 @@ eDomoticzPlatform.prototype = {
         }.bind(this));
     },
     configureAccessory: function(platformAccessory) {
-        this.forceLog('ConfigureAccessory in progress...');
         if (!platformAccessory.context || !platformAccessory.context.device) {
             // Remove this invalid device from the cache.
             try {
