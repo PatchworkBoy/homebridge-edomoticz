@@ -167,5 +167,10 @@ See [Domoticz API Reference](https://www.domoticz.com/wiki/Domoticz_API/JSON_URL
 ### What does the Override slider represent on the EvoHome Thermostat?
 Override-Until time in minutes from the current time. Allows setting an override-until time upto 8 hours in the future. Setting this slider to 0 will set the heating mode to Auto. Setting it to 481 will set the override as a PermanentOverride.
 
+### Why does my iOS10 > iOS12 iPad no longer work as a HomeHub?
+You've added a new 'TV' device type. This is unsupported on < iOS13, and breaks the ability for (for example) an iOS 10.3.4 iPad 4th Gen from being used as a HomeHub. Removing the TV accessory does not resolve the issue. You MUST remove / disable the accessory, and then delete and recreate your home from scratch to continue using non iOS13 devices as HomeHubs. This is not unique to this plugin's implementation of the TV device type. If you (for instance) add the Sky-Q-Experimental platform plugin alongside eDomoticz, this will break non iOS13 homehubs. 
+
+In short, if you do not have an AppleTV4, HomePod, or iPad running iOS13 on your home network and you wish to retain remote control abilities from off-LAN, you cannot use the new HomeKit TV device type in ANY homebridge plugin.
+
 ### Logging
 Complies with Homebridge's native logging & debugging methodology - see https://github.com/nfarina/homebridge/wiki/Basic-Troubleshooting
