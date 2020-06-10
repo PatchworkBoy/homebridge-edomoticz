@@ -114,6 +114,7 @@ function eDomoticzPlatform(log, config, api) {
         this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
         this.mqtt = false;
     } catch (e) {
+        this.forceLog(e);
         return;
     }
     var requestHeaders = {};
