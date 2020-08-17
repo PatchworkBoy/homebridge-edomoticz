@@ -191,7 +191,7 @@ eDomoticzPlatform.prototype = {
                     // Generate a new accessory
                     var uuid = UUID.generate(device.idx + "_" + device.Name);
                     this.forceLog("Device: " + device.Name + " (" + device.idx + ")");
-                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
+                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
                     this.accessories.push(accessory);
 
                     // Register the accessories
@@ -254,7 +254,7 @@ eDomoticzPlatform.prototype = {
         var eve = platformAccessory.context.eve;
 
         // Generate the already cached accessory again
-        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, eve);
+        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve);
         this.accessories.push(accessory);
     }
 };
