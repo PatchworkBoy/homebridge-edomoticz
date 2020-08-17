@@ -100,22 +100,23 @@ function eDomoticzPlatform(log, config, api) {
     this.config = config;
     try {
         this.server = config.server;
+        this.authorizationToken = false;
+        if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
+            var tmparr = this.server.split("@");
+            this.authorizationToken = Helper.Base64.encode(tmparr[0]);
+            this.server = tmparr[1];
+        }
+
+        this.ssl = (config.ssl == 1);
+        this.port = config.port;
+        this.room = config.roomid;
+        this.api = api;
+        this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
+        this.mqtt = false;
     } catch (e) {
+        this.forceLog(e);
         return;
     }
-    this.authorizationToken = false;
-    if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
-        var tmparr = this.server.split("@");
-        this.authorizationToken = Helper.Base64.encode(tmparr[0]);
-        this.server = tmparr[1];
-    }
-    this.ssl = (config.ssl == 1);
-    this.port = config.port;
-    this.room = config.roomid;
-    this.api = api;
-    this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
-    this.mqtt = false;
-
     var requestHeaders = {};
     if (this.authorizationToken) {
         requestHeaders['Authorization'] = 'Basic ' + this.authorizationToken;
