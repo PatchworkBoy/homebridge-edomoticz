@@ -26,6 +26,7 @@
 //         "name": "eDomoticz",
 //         "server": "127.0.0.1",   // or "user:pass@ip"
 //         "port": "8080",
+//         "webroot": "",
 //         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
 //         "ssl": 0,
 //         "mqtt": true
@@ -100,23 +101,24 @@ function eDomoticzPlatform(log, config, api) {
     this.config = config;
     try {
         this.server = config.server;
+        this.authorizationToken = false;
+        if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
+            var tmparr = this.server.split("@");
+            this.authorizationToken = Helper.Base64.encode(tmparr[0]);
+            this.server = tmparr[1];
+        }
+
+        this.ssl = (config.ssl == 1);
+        this.port = config.port;
+        this.webroot = config.webroot;
+        this.room = config.roomid;
+        this.api = api;
+        this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/" + this.webroot + "/json.htm?";
+        this.mqtt = false;
     } catch (e) {
+        this.forceLog(e);
         return;
     }
-    this.authorizationToken = false;
-    if (this.server.indexOf(":") > -1 && this.server.indexOf("@") > -1) {
-        var tmparr = this.server.split("@");
-        this.authorizationToken = Helper.Base64.encode(tmparr[0]);
-        this.server = tmparr[1];
-    }
-    this.ssl = (config.ssl == 1);
-    this.port = config.port;
-    this.webroot = config.webroot;
-    this.room = config.roomid;
-    this.api = api;
-    this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/" + this.webroot + "/json.htm?";
-    this.mqtt = false;
-
     var requestHeaders = {};
     if (this.authorizationToken) {
         requestHeaders['Authorization'] = 'Basic ' + this.authorizationToken;
@@ -191,7 +193,7 @@ eDomoticzPlatform.prototype = {
                     // Generate a new accessory
                     var uuid = UUID.generate(device.idx + "_" + device.Name);
                     this.forceLog("Device: " + device.Name + " (" + device.idx + ")");
-                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
+                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
                     this.accessories.push(accessory);
 
                     // Register the accessories
@@ -254,7 +256,7 @@ eDomoticzPlatform.prototype = {
         var eve = platformAccessory.context.eve;
 
         // Generate the already cached accessory again
-        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareTypeVal, device.Image, eve);
+        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve);
         this.accessories.push(accessory);
     }
 };

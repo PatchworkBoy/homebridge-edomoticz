@@ -1,5 +1,6 @@
 ![npm (tag)](https://img.shields.io/npm/v/homebridge-edomoticz/latest)
 ![npm](https://img.shields.io/npm/dt/homebridge-edomoticz?label=Downloads&style=flat-square)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 # Homebridge-eDomoticz
 This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Domoticz](https://github.com/domoticz/domoticz).
