@@ -114,6 +114,7 @@ function eDomoticzPlatform(log, config, api) {
         this.room = config.roomid;
         this.api = api;
         this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + ((this.webroot === undefined) ? "" : "/" + this.webroot ) + "/json.htm?";
+        this.forceLog("URL: " + this.apiBaseURL);
         this.mqtt = false;
     } catch (e) {
         this.forceLog(e);
