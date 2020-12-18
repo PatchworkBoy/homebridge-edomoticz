@@ -111,9 +111,10 @@ function eDomoticzPlatform(log, config, api) {
     }
     this.ssl = (config.ssl == 1);
     this.port = config.port;
+    this.webroot = config.webroot;
     this.room = config.roomid;
     this.api = api;
-    this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
+    this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/" + this.webroot + "/json.htm?";
     this.mqtt = false;
 
     var requestHeaders = {};
