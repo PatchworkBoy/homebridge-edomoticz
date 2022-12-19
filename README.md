@@ -26,6 +26,7 @@ This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Ho
 - Lock Mechanisms (inverted)
 - Temperature sensors (only temperature characteristic in case of T+H / T+H+B)
 - Thermostat SetPoints
+- TV 
 </details>
 
 ## Provides:
@@ -122,12 +123,6 @@ The dimFix variable relates to an early issue between HomeKit and Domoticz regar
 </details>
 
 <details><summary><b>Advanced Configuration</b></summary>
-
-### Dim Offset
-The dimFix variable relates to an early issue between HomeKit and Domoticz regarding scaling of dimmer values. If you find that you can never set your dimmers to 100%, then set this variable to 1. If you find that, when you set your dimmers, this starts a never ending loop of brightness increasing by 1%, then you MUST omit this variable or set it to 0.
-
-### Use legacy blind support
-If you use blinds, set this option to 1 if you use an older version of domoticz (until 2022-beta.14535). If using a more recent version, set to 0. When set to 0, the new reverse state and position will be used
 
 ### MQTT
 By default, the plugin will grab hardware information regarding MQTT from Domoticz if `mqtt` is 1 or true in the configuration file.

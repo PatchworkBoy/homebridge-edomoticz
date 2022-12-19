@@ -9,31 +9,6 @@
 //           [http://twitter.com/marcisshadow]
 //           [http://domoticz.com/forum/memberlist.php?mode=viewprofile&u=10884]
 //
-//     ** Remember to add platform to config.json **
-//
-// Example ~/.homebridge/config.json content:
-//
-// {
-//  "bridge": {
-//         "name": "Homebridge",
-//         "username": "CC:21:3E:E4:DE:33", // << Randomize this...
-//         "port": 51826,
-//         "pin": "031-45-154",
-//      },
-//
-//  "platforms": [{
-//         "platform": "eDomoticz",
-//         "name": "eDomoticz",
-//         "server": "127.0.0.1",   // or "user:pass@ip"
-//         "port": "8080",
-//         "roomid": 0 ,  // 0 = all sensors, otherwise, room idx as shown at http://server:port/#/Roomplan
-//         "ssl": 0,
-//         "mqtt": true
-//      }],
-//
-//  "accessories":[]
-// }
-//
 var Domoticz = require('./lib/domoticz.js').Domoticz;
 var Mqtt = require('./lib/mqtt.js').Mqtt;
 var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
@@ -45,43 +20,44 @@ const util = require('util');
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    Categories = homebridge.hap.Accessory.Categories;
     Types = homebridge.hapLegacyTypes;
     UUID = homebridge.hap.uuid;
 
-    Helper.fixInheritance(eDomoticzServices.TotalConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.CurrentConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.GasConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.TempOverride, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.MeterDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.GasDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Ampere, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.AMPDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Volt, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.VOLTDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.CurrentUsage, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.UsageDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.TodayConsumption, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.Barometer, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WaterFlow, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.TotalWaterFlow, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WaterDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.WeatherService, Service);
-    Helper.fixInheritance(eDomoticzServices.WindSpeed, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindChill, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindDirection, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.WindDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Rainfall, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.RainDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Visibility, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.VisibilityDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.SolRad, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.SolRadDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.LocationService, Service);
-    Helper.fixInheritance(eDomoticzServices.Location, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.InfotextDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.Infotext, Characteristic);
-    Helper.fixInheritance(eDomoticzServices.UVDeviceService, Service);
-    Helper.fixInheritance(eDomoticzServices.UVIndex, Characteristic);
+    util.inherits(eDomoticzServices.TotalConsumption, Characteristic);
+    util.inherits(eDomoticzServices.CurrentConsumption, Characteristic);
+    util.inherits(eDomoticzServices.GasConsumption, Characteristic);
+    util.inherits(eDomoticzServices.TempOverride, Characteristic);
+    util.inherits(eDomoticzServices.MeterDeviceService, Service);
+    util.inherits(eDomoticzServices.GasDeviceService, Service);
+    util.inherits(eDomoticzServices.Ampere, Characteristic);
+    util.inherits(eDomoticzServices.AMPDeviceService, Service);
+    util.inherits(eDomoticzServices.Volt, Characteristic);
+    util.inherits(eDomoticzServices.VOLTDeviceService, Service);
+    util.inherits(eDomoticzServices.CurrentUsage, Characteristic);
+    util.inherits(eDomoticzServices.UsageDeviceService, Service);
+    util.inherits(eDomoticzServices.TodayConsumption, Characteristic);
+    util.inherits(eDomoticzServices.Barometer, Characteristic);
+    util.inherits(eDomoticzServices.WaterFlow, Characteristic);
+    util.inherits(eDomoticzServices.TotalWaterFlow, Characteristic);
+    util.inherits(eDomoticzServices.WaterDeviceService, Service);
+    util.inherits(eDomoticzServices.WeatherService, Service);
+    util.inherits(eDomoticzServices.WindSpeed, Characteristic);
+    util.inherits(eDomoticzServices.WindChill, Characteristic);
+    util.inherits(eDomoticzServices.WindDirection, Characteristic);
+    util.inherits(eDomoticzServices.WindDeviceService, Service);
+    util.inherits(eDomoticzServices.Rainfall, Characteristic);
+    util.inherits(eDomoticzServices.RainDeviceService, Service);
+    util.inherits(eDomoticzServices.Visibility, Characteristic);
+    util.inherits(eDomoticzServices.VisibilityDeviceService, Service);
+    util.inherits(eDomoticzServices.SolRad, Characteristic);
+    util.inherits(eDomoticzServices.SolRadDeviceService, Service);
+    util.inherits(eDomoticzServices.LocationService, Service);
+    util.inherits(eDomoticzServices.Location, Characteristic);
+    util.inherits(eDomoticzServices.InfotextDeviceService, Service);
+    util.inherits(eDomoticzServices.Infotext, Characteristic);
+    util.inherits(eDomoticzServices.UVDeviceService, Service);
+    util.inherits(eDomoticzServices.UVIndex, Characteristic);
 
     //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
@@ -109,9 +85,10 @@ function eDomoticzPlatform(log, config, api) {
 
         this.ssl = (config.ssl == 1);
         this.port = config.port;
+        this.webroot = config.webroot;
         this.room = config.roomid;
         this.api = api;
-        this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + "/json.htm?";
+        this.apiBaseURL = "http" + (this.ssl ? "s" : "") + "://" + this.server + ":" + this.port + ((this.webroot === undefined) ? "" : "/" + this.webroot ) + "/json.htm?";
         this.mqtt = false;
     } catch (e) {
         this.forceLog(e);
@@ -149,20 +126,19 @@ eDomoticzPlatform.prototype = {
         var excludedDevices = (typeof this.config.excludedDevices !== 'undefined') ? this.config.excludedDevices : [];
 
         Domoticz.devices(this.apiBaseURL, this.room, function(devices) {
-            var removedAccessories = [];
+            var removedAccessories = [],
+                externalAccessories = [];
 
 
             for (var i = 0; i < devices.length; i++) {
                 var device = devices[i], exclude = !1;
                 if (!(excludedDevices.indexOf(device.idx) <= -1)) {
                     exclude = !0;
-                    this.forceLog(device.Name + ' (idx:' + device.idx + ') excluded via config array');
-                    //continue;
+                    this.log(device.Name + ' (idx:' + device.idx + ') excluded via config array');
                 }
 
                 if (device.Image == undefined) {
                     device.Image = 'Switch';
-                    //this.forceLog(device.Name);
                 }
 
                 var existingAccessory = this.accessories.find(function(existingAccessory) {
@@ -191,20 +167,35 @@ eDomoticzPlatform.prototype = {
                     // Generate a new accessory
                     var uuid = UUID.generate(device.idx + "_" + device.Name);
                     this.forceLog("Device: " + device.Name + " (" + device.idx + ")");
-                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout);
+                    var accessory = new eDomoticzAccessory(this, false, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, this.eve, device.HaveTimeout, device.Description);
                     this.accessories.push(accessory);
 
                     // Register the accessories
                     try {
-                        this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+                        accessory.platformAccessory.context = {
+                            device: device,
+                            uuid: uuid,
+                            eve: this.eve
+                        };
+                        if ((device.SwitchTypeVal == Constants.DeviceTypeMedia) || (device.SwitchTypeVal == Constants.DeviceTypeSelector && device.Image == "TV")) {
+                            externalAccessories.push(accessory);
+                        } else {
+                            this.api.registerPlatformAccessories("homebridge-edomoticz", "eDomoticz", [accessory.platformAccessory]);
+                        }
+
                     } catch (e) {
                         this.forceLog("Could not register platform accessory! (" + accessory.name + ")\n" + e);
                     }
-                    accessory.platformAccessory.context = {
-                        device: device,
-                        uuid: uuid,
-                        eve: this.eve
-                    };
+
+                }
+            }
+            // Publish external (ie: TV) accessories now that they're fully assembled
+            for (var ei = 0; ei < externalAccessories.length; ei++) {
+                var externalAccessory = externalAccessories[ei];
+                if (externalAccessory.subType !== 'Selector Switch')
+                {
+                    this.api.publishExternalAccessories("homebridge-edomoticz", [externalAccessory.platformAccessory]);
+                    this.forceLog("External Device: " + externalAccessory.platformAccessory.context.device.Name + " (" + externalAccessory.platformAccessory.context.device.idx + ")");
                 }
             }
 
@@ -231,7 +222,6 @@ eDomoticzPlatform.prototype = {
                 var index = this.accessories.indexOf(removedAccessory);
                 this.accessories.splice(index, 1);
             }
-
             this.isSynchronizingAccessories = false;
         }.bind(this), function(response, err) {
             Helper.LogConnectionError(this, response, err);
@@ -254,7 +244,7 @@ eDomoticzPlatform.prototype = {
         var eve = platformAccessory.context.eve;
 
         // Generate the already cached accessory again
-        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve);
+        var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve, device.HaveTimeout, device.Description);
         this.accessories.push(accessory);
     }
 };
