@@ -123,6 +123,7 @@ The dimFix variable relates to an early issue between HomeKit and Domoticz regar
 </details>
 
 <details><summary><b>Advanced Configuration</b></summary>
+
 ### Dim Offset
 The dimFix variable relates to an early issue between HomeKit and Domoticz regarding scaling of dimmer values. If you find that you can never set your dimmers to 100%, then set this variable to 1. If you find that, when you set your dimmers, this starts a never ending loop of brightness increasing by 1%, then you MUST omit this variable or set it to 0.
 
