@@ -14,7 +14,9 @@ var Mqtt = require('./lib/mqtt.js').Mqtt;
 var eDomoticzAccessory = require('./lib/domoticz_accessory.js');
 var Constants = require('./lib/constants.js');
 var Helper = require('./lib/helper.js').Helper;
-var eDomoticzServices = require('./lib/services.js').eDomoticzServices;
+var Services = require('./lib/services.js');
+var eDomoticzServices = Services.eDomoticzServices;
+var initServices = Services.initServices;
 const util = require('util');
 
 module.exports = function(homebridge) {
@@ -24,40 +26,11 @@ module.exports = function(homebridge) {
     Types = homebridge.hapLegacyTypes;
     UUID = homebridge.hap.uuid;
 
-    util.inherits(eDomoticzServices.TotalConsumption, Characteristic);
-    util.inherits(eDomoticzServices.CurrentConsumption, Characteristic);
-    util.inherits(eDomoticzServices.GasConsumption, Characteristic);
-    util.inherits(eDomoticzServices.TempOverride, Characteristic);
-    util.inherits(eDomoticzServices.MeterDeviceService, Service);
-    util.inherits(eDomoticzServices.GasDeviceService, Service);
-    util.inherits(eDomoticzServices.Ampere, Characteristic);
-    util.inherits(eDomoticzServices.AMPDeviceService, Service);
-    util.inherits(eDomoticzServices.Volt, Characteristic);
-    util.inherits(eDomoticzServices.VOLTDeviceService, Service);
-    util.inherits(eDomoticzServices.CurrentUsage, Characteristic);
-    util.inherits(eDomoticzServices.UsageDeviceService, Service);
-    util.inherits(eDomoticzServices.TodayConsumption, Characteristic);
-    util.inherits(eDomoticzServices.Barometer, Characteristic);
-    util.inherits(eDomoticzServices.WaterFlow, Characteristic);
-    util.inherits(eDomoticzServices.TotalWaterFlow, Characteristic);
-    util.inherits(eDomoticzServices.WaterDeviceService, Service);
-    util.inherits(eDomoticzServices.WeatherService, Service);
-    util.inherits(eDomoticzServices.WindSpeed, Characteristic);
-    util.inherits(eDomoticzServices.WindChill, Characteristic);
-    util.inherits(eDomoticzServices.WindDirection, Characteristic);
-    util.inherits(eDomoticzServices.WindDeviceService, Service);
-    util.inherits(eDomoticzServices.Rainfall, Characteristic);
-    util.inherits(eDomoticzServices.RainDeviceService, Service);
-    util.inherits(eDomoticzServices.Visibility, Characteristic);
-    util.inherits(eDomoticzServices.VisibilityDeviceService, Service);
-    util.inherits(eDomoticzServices.SolRad, Characteristic);
-    util.inherits(eDomoticzServices.SolRadDeviceService, Service);
-    util.inherits(eDomoticzServices.LocationService, Service);
-    util.inherits(eDomoticzServices.Location, Characteristic);
-    util.inherits(eDomoticzServices.InfotextDeviceService, Service);
-    util.inherits(eDomoticzServices.Infotext, Characteristic);
-    util.inherits(eDomoticzServices.UVDeviceService, Service);
-    util.inherits(eDomoticzServices.UVIndex, Characteristic);
+    // Populate eDomoticzServices with ES6 class definitions now that HAP refs
+    // (Service / Characteristic) are available. Replaces the previous pattern
+    // of pre-ES6 constructors + util.inherits, which crashes under HAP-NodeJS
+    // v2 ("Class constructor Service cannot be invoked without 'new'").
+    initServices(Service, Characteristic, UUID, homebridge.hap);
 
     //homebridge.registerAccessory("homebridge-edomoticz", "eDomoticz", eDomoticzAccessory);
     homebridge.registerPlatform("homebridge-edomoticz", "eDomoticz", eDomoticzPlatform, true);
@@ -242,6 +215,18 @@ eDomoticzPlatform.prototype = {
         var device = platformAccessory.context.device;
         var uuid = platformAccessory.context.uuid;
         var eve = platformAccessory.context.eve;
+
+        // Cached characteristics come back with the perms that were persisted
+        // when the cache was written. A cache produced by 3.0.0-3.0.2 under
+        // HAP v2 carries perms [null, "ev"] on every custom characteristic,
+        // which makes iOS refuse to pair. Re-apply the canonical perms.
+        var pairedRead = (this.api.hap.Perms && this.api.hap.Perms.PAIRED_READ)
+            || (Characteristic.Perms && Characteristic.Perms.PAIRED_READ)
+            || 'pr';
+        var healed = Helper.healCustomCharacteristicPerms(platformAccessory, eDomoticzServices, Characteristic, pairedRead);
+        if (healed > 0) {
+            this.log("Repaired " + healed + " cached custom characteristic perms on " + device.Name);
+        }
 
         // Generate the already cached accessory again
         var accessory = new eDomoticzAccessory(this, platformAccessory, false, device.Used, device.idx, device.Name, uuid, device.HaveDimmer, device.MaxDimLevel, device.SubType, device.Type, device.BatteryLevel, device.SwitchType, device.SwitchTypeVal, device.HardwareID, device.HardwareTypeVal, device.Image, eve, device.HaveTimeout, device.Description);
